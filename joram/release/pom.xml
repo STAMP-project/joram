@@ -77,12 +77,12 @@
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>a3-common</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>a3-rt</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.objectweb.joram</groupId>
@@ -92,47 +92,47 @@
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>jndi-shared</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>jndi-server</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-shared</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-mom-core</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-mom-amqp</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>jndi-client</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-client-jms</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-client-jca</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-jca-jonas</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                   <type>rar</type>
                   <side>server</side>
                 </artifactItem>
@@ -140,32 +140,32 @@
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-mom-extensions-amqp</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-mom-extensions-collector</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-mom-extensions-ftp</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-mom-extensions-jmsbridge</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-mom-extensions-mail</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.ow2.joram</groupId>
                   <artifactId>joram-mom-extensions-scheduler</artifactId>
-                  <version>${joram.version}</version>
+                  <version>${project.version}</version>
                 </artifactItem>
               </artifactItems>
             </configuration>
@@ -187,12 +187,12 @@
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>a3-common</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>a3-rt</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.objectweb.joram</groupId>
@@ -202,47 +202,47 @@
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>jndi-shared</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>jndi-server</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-shared</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-mom-core</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-mom-amqp</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>jndi-client</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-client-jms</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-client-jca</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-jca-jonas</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                       <type>rar</type>
                     </artifactItem>
                   </artifactItems>
@@ -254,37 +254,37 @@
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-mom-extensions-amqp</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                       <start>false</start>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-mom-extensions-collector</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                       <start>false</start>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-mom-extensions-ftp</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                       <start>false</start>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-mom-extensions-jmsbridge</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                       <start>false</start>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-mom-extensions-mail</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                       <start>false</start>
                     </artifactItem>
                     <artifactItem>
                       <groupId>org.ow2.joram</groupId>
                       <artifactId>joram-mom-extensions-scheduler</artifactId>
-                      <version>${joram.version}</version>
+                      <version>${project.version}</version>
                       <start>false</start>
                     </artifactItem>
                   </artifactItems>
@@ -494,22 +494,18 @@
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.shell</artifactId>
-      <version>${felix.shell.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.shell.remote</artifactId>
-      <version>${felix.remote.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.shell.tui</artifactId>
-      <version>${felix.tui.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.main</artifactId>
-      <version>${felix.main.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.activation</groupId>
