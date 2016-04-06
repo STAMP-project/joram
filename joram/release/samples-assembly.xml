@@ -31,30 +31,58 @@
       <includes>
         <include>org.ow2.spec.ee:ow2-jms-2.0-spec</include>
         <include>org.ow2.spec.ee:ow2-jta-1.1-spec</include>
-        <include>org.osgi:org.osgi.compendium</include>
         <include>org.objectweb.joram:jcup</include>
         <include>org.ow2.joram:joram-shared</include>
         <include>org.ow2.joram:joram-mom-core</include>
-        <include>org.ow2.joram:joram-mom-amqp</include>
         <include>org.ow2.joram:joram-client-jms</include>
         <include>org.ow2.joram:a3-common</include>
         <include>org.ow2.joram:a3-rt</include>
         <include>org.ow2.joram:a3-osgi</include>
+        <include>org.ow2.joram:a3-services</include>
         <include>org.ow2.joram:jndi-shared</include>
         <include>org.ow2.joram:jndi-server</include>
         <include>org.ow2.joram:jndi-client</include>
         <include>org.ow2.jonas.osgi:monolog</include>
         <include>org.ow2.joram:joram-mom-extensions-amqp</include>
+        <include>commons-io:commons-io</include>
         <include>org.ow2.joram:joram-mom-extensions-ftp</include>
         <include>org.ow2.joram:joram-mom-extensions-jmsbridge</include>
         <include>org.ow2.joram:joram-mom-extensions-mail</include>
         <include>org.ow2.joram:joram-mom-extensions-collector</include>
         <include>org.ow2.joram:joram-mom-extensions-scheduler</include>
         <include>org.ow2.joram:joram-tools-jasp</include>
+        <include>org.ow2.joram:joram-tools-rest-admin</include>
+        <include>org.ow2.joram:joram-tools-rest-jms</include>
+        <include>org.ow2.joram:joram-tools-rest-jmx</include>
         <include>org.apache.felix:org.apache.felix.shell</include>
         <include>org.apache.felix:org.apache.felix.shell.remote</include>
         <include>org.apache.felix:org.apache.felix.shell.tui</include>
+        <include>org.apache.felix:org.apache.felix.gogo.runtime</include>
+        <include>org.apache.felix:org.apache.felix.gogo.command</include>
+        <include>org.apache.felix:org.apache.felix.gogo.shell</include>
+        <include>org.osgi:org.osgi.compendium</include>
+        <include>org.ow2.joram:joram-mom-amqp</include>
+        <include>org.ow2.joram:shell-mom</include>
+        <include>org.ow2.joram:shell-jndi</include>
+        <include>org.ow2.joram:shell-a3</include>
+        <include>org.ow2.util.substitution:substitution</include>
+        <include>org.glassfish.jersey.core:jersey-server</include>
+        <include>org.glassfish.jersey.containers:jersey-container-servlet-core</include>
+        <include>org.eclipse.jetty:jetty-server</include>
+        <include>org.eclipse.jetty:jetty-servlet</include>
+        <include>org.apache.geronimo.specs:geronimo-servlet_3.0_spec</include>
+        <include>org.eclipse.jetty:jetty-continuation</include>
+        <include>org.eclipse.equinox.http:jetty</include>
+        <include>org.eclipse.equinox.http:servlet</include>
       </includes>
+      <excludes>
+        <exclude>org.codehaus.stomp:stompconnect</exclude>
+        <exclude>org.apache.felix:org.apache.felix.bundlerepository</exclude>
+        <exclude>com.rabbitmq:amqp-client</exclude>
+        <exclude>org.objectweb.joram:jftp</exclude>
+      </excludes>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
+      <useProjectArtifact>false</useProjectArtifact>
       <unpack>false</unpack>
     </dependencySet>
 

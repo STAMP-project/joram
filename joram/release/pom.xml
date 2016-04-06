@@ -167,6 +167,27 @@
                   <artifactId>joram-mom-extensions-scheduler</artifactId>
                   <version>${project.version}</version>
                 </artifactItem>
+                <!-- Joram tools -->
+                <artifactItem>
+                  <groupId>org.ow2.joram</groupId>
+                  <artifactId>joram-tools-jasp</artifactId>
+                  <version>${project.version}</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.ow2.joram</groupId>
+                  <artifactId>joram-tools-rest-jms</artifactId>
+                  <version>${project.version}</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.ow2.joram</groupId>
+                  <artifactId>joram-tools-rest-jmx</artifactId>
+                  <version>${project.version}</version>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.ow2.joram</groupId>
+                  <artifactId>joram-tools-rest-admin</artifactId>
+                  <version>${project.version}</version>
+                </artifactItem>
               </artifactItems>
             </configuration>
           </execution>
@@ -377,11 +398,6 @@
       <artifactId>ow2-jta-1.1-spec</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <type>jar</type>
-    </dependency>
-    <dependency>
       <groupId>org.ow2.jonas.osgi</groupId>
       <artifactId>monolog</artifactId>
     </dependency>
@@ -433,6 +449,12 @@
     </dependency>
     <dependency>
       <groupId>org.ow2.joram</groupId>
+      <artifactId>a3-services</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.joram</groupId>
       <artifactId>jndi-shared</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
@@ -454,6 +476,10 @@
       <artifactId>joram-mom-extensions-amqp</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
       <groupId>org.ow2.joram</groupId>
@@ -492,6 +518,24 @@
       <type>jar</type>
     </dependency>
     <dependency>
+      <groupId>org.ow2.joram</groupId>
+      <artifactId>joram-tools-rest-admin</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.joram</groupId>
+      <artifactId>joram-tools-rest-jms</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.joram</groupId>
+      <artifactId>joram-tools-rest-jmx</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.shell</artifactId>
     </dependency>
@@ -507,6 +551,20 @@
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.main</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.gogo.runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.gogo.command</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.gogo.shell</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>javax.activation</groupId>
       <artifactId>activation</artifactId>
@@ -537,5 +595,74 @@
       <version>${project.version}</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.joram</groupId>
+      <artifactId>shell-mom</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.joram</groupId>
+      <artifactId>shell-jndi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.joram</groupId>
+      <artifactId>shell-a3</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.util.substitution</groupId>
+      <artifactId>substitution</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-servlet_3.0_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-continuation</artifactId>
+    </dependency>
+    <!-- This two artifacts are intended to register HTTPService (OSGi) -->
+    <!-- removed when updating jetty -->
+    <dependency>
+      <groupId>org.eclipse.equinox.http</groupId>
+      <artifactId>servlet</artifactId>
+      <version>1.0.0-v20070606</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.equinox.http</groupId>
+      <artifactId>jetty</artifactId>
+      <version>3.0.100</version>
+    </dependency>
   </dependencies>
+  
+  <!-- This repository is needed to the jetty 3.0.100 artifact -->
+  <repositories>
+    <repository>
+      <id>jabylon</id>
+      <url>http://www.jabylon.org/maven/</url>
+    </repository>
+  </repositories>
 </project>
