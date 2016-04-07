@@ -47,8 +47,7 @@
               <descriptors>
                 <descriptor>client-assembly.xml</descriptor>
               </descriptors>
-              <finalName>client-${project.version}</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
+              <appendAssemblyId>true</appendAssemblyId>
               <ignoreDirFormatExtensions>false</ignoreDirFormatExtensions>
             </configuration>
           </execution>
