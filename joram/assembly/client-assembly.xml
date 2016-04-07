@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+  <id>client</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <formats>
+    <format>jar</format>
+  </formats>
+
+  <dependencySets>
+    <dependencySet>
+      <useStrictFiltering>true</useStrictFiltering>
+      <includes>
+        <include>org.ow2.spec.ee:ow2-jms-2.0-spec</include>
+        <include>org.ow2.spec.ee:ow2-jta-1.1-spec</include>
+        <include>org.objectweb.joram:jcup</include>
+        <include>org.ow2.joram:joram-shared</include>
+        <include>org.ow2.joram:joram-client-jms</include>
+        <include>org.ow2.joram:a3-common</include>
+        <include>org.ow2.joram:jndi-shared</include>
+        <include>org.ow2.joram:jndi-client</include>
+        <include>org.ow2.jonas.osgi:monolog</include>
+      </includes>
+      <useTransitiveFiltering>false</useTransitiveFiltering>
+      <useProjectArtifact>false</useProjectArtifact>
+      <unpack>true</unpack>
+    </dependencySet>
+
+  </dependencySets>
+</assembly>
