@@ -31,6 +31,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 
+
 import org.objectweb.joram.client.jms.Topic;
 import org.objectweb.joram.client.jms.admin.AdminModule;
 import org.objectweb.joram.client.jms.admin.Subscription;
@@ -48,9 +49,13 @@ public class ClientTest29 extends TestCase {
     new ClientTest29().run();
   }
 
+  int NbRound = 100;
+  
   public void run() {
     try {
-      System.out.println("servers start");
+      NbRound = Integer.getInteger("NbRound", NbRound).intValue();
+
+      System.out.println("servers start " + NbRound);
       startAgentServer((short)0, new String[]{"-DTransaction.UseLockFile=false"});
       Thread.sleep(1000);
 
@@ -77,7 +82,7 @@ public class ClientTest29 extends TestCase {
       Thread t = new Thread() {
         public void run() {
           try {
-            for (int i=0; i<100; i++)
+            for (int i=0; i<NbRound; i++)
               test(nbmsgs);
           } catch (Exception e) {
             e.printStackTrace();
