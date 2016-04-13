@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C)  2012 ScalAgent Distributed Technologies
+ * Copyright (C)  2012 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -197,7 +197,7 @@ public class BridgeTest13x extends TestCase implements MessageListener {
       String txt2 = ((TextMessage) msg).getText();
       if (! txt1.equals(txt2))
         System.out.println("Expected <" + txt1 + "> but was <" + txt2 + "> ");
-      assertEquals(txt1, txt2);
+      assertEquals("Message " + msg.getJMSMessageID(), txt1, txt2);
     } catch (JMSException e) {
       assertTrue("Exception: " + e, false);
       e.printStackTrace();
