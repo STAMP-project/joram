@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2015 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -62,6 +62,7 @@ public class BridgeTest15x3 extends TestCase {
   int cpt = 0;
   
   public boolean testMsg(int m) {
+//    System.out.println("Receives #" + m);
     TestCase.assertTrue("Receices " + m + " should be " + cpt, cpt == m);
     if (m != cpt) {
       System.out.println("Receices " + m + " should be " + cpt);
