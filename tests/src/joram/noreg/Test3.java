@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2003 - 2007 ScalAgent Distributed Technologies
+ * Copyright (C) 2003 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,6 @@ import fr.dyade.aaa.agent.AgentServer;
 
 /**
  * Test transfer with big messages
- *
  */
 public class Test3 extends BaseTest {
   static int MsgSize = 20*1024*1024;
@@ -97,6 +96,7 @@ public class Test3 extends BaseTest {
       for (int nb=0; nb<NbMsg; nb++) {
         BytesMessage msg1 = sess.createBytesMessage();
         msg1.writeBytes(content);
+        msg1.setBooleanProperty("JMS_JORAM_SWAPALLOWED", true);
         prod.send(msg1);
         if ((nb % MsgPerCommit) == 0) {
           //writeIntoFile(MsgPerCommit+" message sent ;message :" + nb);
