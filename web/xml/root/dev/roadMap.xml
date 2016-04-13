@@ -23,6 +23,27 @@
 	
   </s1>
 
+  <s1 name="Recently done">
+  	<s2 name="JMS 2.0 generic Rest API">
+		<p>The Joram JMS 2.0 generic Rest API allows you to leverage the features of Joram/JMS over a simple
+		Rest/HTTP interface. Messages are produced and consumed through simple HTTP messages, this allows any
+		web capable device to publish or consume messages using a regular HTTP Post or Get request.
+		</p>
+	</s2>
+  	<s2 name="Joram administration Rest API">
+		<p>The Joram Administration Rest API allows you to use several administration features of Joram over a simple
+		Rest/HTTP interface. For example this allows any web capable device to create User or Destination using a regular
+		HTTP Post or Get request.
+		</p>
+  	</s2>
+  	<s2 name="JMX monitoring Rest API">
+		<p>The Joram generic JMX Rest API allows you to expose the JMX Mbeans of the Joram server over a simple Rest/HTTP
+		interface. For example this allows any web capable device to get and show Mbean's attributes using a regular HTTP
+		request.
+		</p>
+  	</s2>
+  </s1>
+
   <s1 name="Work in progress">
 
 		<s2 name="OSGi support and administration tool">

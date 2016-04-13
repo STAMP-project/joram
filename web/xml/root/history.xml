@@ -12,6 +12,19 @@
 
   <body>
     <s1 name="JORAM History">
+      <s2 name="April 13, 2016: JORAM 5.12.0 release is available.">
+      <p>This release introduces improvements and bug fixes, essentially:</p>
+      <ul>
+        <li>Adds JMS 2.0 Rest API.</li>
+        <li>Adds Administration Rest API</li>
+        <li>Adds JMX monitoring Rest API</li>
+        <li>JORAM-246, JORAM-247, JORAM-248.</li>
+      </ul>
+      <p>This version is available for <a href="http://joram.ow2.org/download/index.html">download</a>,
+      and in Maven repository.</p>
+      <p>It is tagged in SVN (JORAM_5_12_0), the complete list of changes can be viewed in
+       <a href="http://websvn.ow2.org/log.php?repname=joram&amp;path=%2Ftrunk%2Fjoram%2F&amp;isdir=1&amp;">SVN history</a>.</p>
+      </s2>
 
 	<s2 name="November 13, 2015: JORAM 5.11.0 release is available.">
 		<p>This release introduces improvements and bug fixes, essentially:</p>

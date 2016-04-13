@@ -218,6 +218,17 @@
 				</p>
 				
 				<p>
+				<strong>Administration and JMX monitoring Rest API</strong><br></br>
+				The Joram Administration Rest API allows you to use several administration features of Joram over a simple
+				Rest/HTTP interface. For example this allows any web capable device to create User or Destination using a regular
+				HTTP Post or Get request.
+				<br></br>
+				The Joram generic JMX Rest API allows you to expose the JMX Mbeans of the Joram server over a simple Rest/HTTP
+				interface. For example this allows any web capable device to get and show Mbean's attributes using a regular HTTP
+				request.
+				</p>
+				
+				<p>
 				<strong>Programmatic creation of connection factories and JMS destinations.</strong><br></br>
 				Connection factories, JMS queues and topics can be created programmatically on client side.
 				<br></br>
@@ -329,7 +340,14 @@
 				JORAM supports the AMQP v0.9.1 specification, later releases of JORAM will provide full AMQP v1 support
 				allowing access natively by clients written in many different languages.
 				</p>
-
+				
+				<p>
+				<strong>JMS 2.0 Rest API plugins</strong><br></br>
+				The Joram JMS 2.0 generic Rest API allows you to leverage the features of Joram/JMS over a simple
+				Rest/HTTP interface. Messages are produced and consumed through simple HTTP messages, this allows any
+				web capable device to publish or consume messages using a regular HTTP Post or Get request.
+				</p>
+				
 				<p>
 				<strong>JMS bridge and others.</strong><br></br>
 				This allows you to bridge between JORAM and any other JMS 1.1 compliant provider.

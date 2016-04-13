@@ -78,6 +78,13 @@
           initiates a new set of  management facilities in JORAM.</li>
         </ul>
         
+        <p>JORAM now includes Rest API:</p>
+        <ul>
+          <li>A generic JMS 2.0 Rest API plugin.</li>
+          <li>An administration Rest API plugin.</li>
+          <li>A generic JMX monitoring Rest API plugin.</li>
+        </ul>
+        
         <p>For a complete list please refer to <a href="features.html">the features description</a> or
         documentation.</p>
         

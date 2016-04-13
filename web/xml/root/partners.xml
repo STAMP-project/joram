@@ -63,6 +63,21 @@
     <table>
     <tr>
       <td align="center" valign="middle">
+      <a href="http://www.efluid.fr/">
+      <img src="images/partners/logo_efluid.gif" alt="efluid logo" border="0" height="55" width="158"/></a>
+      </td>
+      <td>
+      <p><a href="http://www.efluid.fr/">efluid SAS</a> is the main sponsor of the REST API plugins in Joram:</p>
+        <ul>
+        	<li>JMS 2.0 generic Rest API plugin.</li>
+        	<li>Joram administration Rest API plugin.</li>
+        	<li>JMX monitoring Rest API plugin.</li>
+        </ul>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="center" valign="middle">
       <a href="http://www.rd.francetelecom.com/">
       <img src="images/partners/logo-ftrd.gif" alt="France Telecom RD logo" border="0" height="33" width="140"/></a>
       </td>
@@ -162,7 +177,8 @@
 		<tr>
       <td align="center" valign="middle">
       <a href="http://www.bull.com/">
-      <img src="images/partners/bull.jpg" alt="Bull logo" border="0" height="67" width="210"/></a>
+      <img src="images/partners/logobull.gif" alt="Bull logo" border="0" height="61" width="140"/></a>
+
       </td>
       <td>
       <p><a href="http://www.bull.com">Bull</a> was one of the initial contributors of the JORAM open source

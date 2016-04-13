@@ -11,6 +11,19 @@
   </properties>
 
 	<body>
+	 <s1 name="April 13, 2016: JORAM 5.12.0 release is available.">
+        <p>Joram 5.12.0 is available in the SVN repository with tag JORAM_5_12_0.</p>
+        <s2 name="New features and improvements">
+        <ul>
+        	<li>JMS 2.0 generic Rest API plugin.</li>
+        	<li>Joram administration Rest API plugin.</li>
+        	<li>JMX monitoring Rest API plugin.</li>
+        </ul>
+        </s2>
+        <p>The complete list of changes can be viewed in
+        <a href="http://websvn.ow2.org/log.php?repname=joram&amp;path=%2Ftrunk%2Fjoram%2F&amp;isdir=1&amp;">SVN history</a>.</p>
+     </s1>
+
 	 <s1 name="November 13, 2015: JORAM 5.11.0 release is available.">
         <p>Joram 5.11.0 is available in the SVN repository with tag JORAM_5_11_0.</p>
         <s2 name="New features and improvements">
