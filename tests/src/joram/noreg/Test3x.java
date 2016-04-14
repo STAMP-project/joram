@@ -87,7 +87,7 @@ public class Test3x extends BaseTest {
       dest.setFreeWriting();
       org.objectweb.joram.client.jms.admin.AdminModule.disconnect();
 
-      MsgListener listener = new MsgListener(cf, dest);
+      Test3xMsgListener listener = new Test3xMsgListener(cf, dest);
       
       Connection cnx = cf.createConnection();
       Session sess = cnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -133,10 +133,10 @@ public class Test3x extends BaseTest {
   }
 }
 
-class MsgListener implements MessageListener {
+class Test3xMsgListener implements MessageListener {
   long latency = 0;
   
-  public MsgListener(ConnectionFactory cf, Destination dest) throws JMSException {
+  public Test3xMsgListener(ConnectionFactory cf, Destination dest) throws JMSException {
     Connection cnx = cf.createConnection();
     Session sess = cnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
     MessageConsumer cons = sess.createConsumer(dest);

@@ -102,8 +102,8 @@ public class Test61 extends TestCase {
         producer.send(msg);
       }
 
-      MsgListener msgListener1 = new MsgListener("sleep: Listener Session1 on " + queue);
-      MsgListener msgListener2 = new MsgListener("Listener Session2 on " + queue);
+      Test61MsgListener msgListener1 = new Test61MsgListener("sleep: Listener Session1 on " + queue);
+      Test61MsgListener msgListener2 = new Test61MsgListener("Listener Session2 on " + queue);
       consumer1.setMessageListener(msgListener1);
       consumer2.setMessageListener(msgListener2);
 
@@ -137,8 +137,8 @@ public class Test61 extends TestCase {
         producer.send(msg);
       }
 
-      MsgListener msgListener3 = new MsgListener("sleep: Listener Session3 on " + queue);
-      MsgListener msgListener4 = new MsgListener("Listener Session4 on " + queue);
+      Test61MsgListener msgListener3 = new Test61MsgListener("sleep: Listener Session3 on " + queue);
+      Test61MsgListener msgListener4 = new Test61MsgListener("Listener Session4 on " + queue);
       consumer3.setMessageListener(msgListener3);
       consumer4.setMessageListener(msgListener4);
 
@@ -161,13 +161,13 @@ public class Test61 extends TestCase {
   }
 }
 
-class MsgListener  implements MessageListener {
+class Test61MsgListener  implements MessageListener {
   String ident = null;
   int nbRec = 0;
 
-  public MsgListener() {}
+  public Test61MsgListener() {}
 
-  public MsgListener(String ident) {
+  public Test61MsgListener(String ident) {
     this.ident = ident;
   }
 
