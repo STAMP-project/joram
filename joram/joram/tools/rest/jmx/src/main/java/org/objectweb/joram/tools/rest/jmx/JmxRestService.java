@@ -633,8 +633,14 @@ public class JmxRestService implements ContainerRequestFilter {
     // decode username and password
     String usernameAndPassword = new String(DatatypeConverter.parseBase64Binary(encodedUserPassword));
     final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
-    final String username = tokenizer.nextToken();
-    final String password = tokenizer.nextToken();
+    String username = null;
+    String password = null;
+    if (tokenizer.hasMoreTokens()) {
+      username = tokenizer.nextToken();
+    }
+    if (tokenizer.hasMoreTokens()) {
+      password = tokenizer.nextToken();
+    }
 
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "username = " + username);
