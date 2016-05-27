@@ -168,9 +168,12 @@ public final class AgentServer {
    * Set default configuration for the specified server.
    */
   public static void setDefaultConfig(int sid) {
-    setDefaultConfig(sid, null, null, null, -1, -1);
+    setDefaultConfig(sid, null, null, null, 0, 0);
   }
-  
+
+  /**
+   * Set default configuration for the specified server.
+   */
   public static void setDefaultConfig(int sid, String host, String adminuid, String adminpwd, int joram, int jndi) {
     setDefaultConfig(sid, host, adminuid, adminpwd, joram, jndi, null);
   }
@@ -202,8 +205,8 @@ public final class AgentServer {
   
   /**
    *  Name of property allowing to configure the listening port of the JMS server when
-   * using the default server configuration, by default 16010. This Configuration is
-   * automatically generated at first starting if no XML configuration file is found.
+   * using the default server configuration, by default CFG_JMS_PORT_DFLT. This Configuration
+   * is automatically generated at first starting if no XML configuration file is found.
    * <p>
    *  Be careful, this configuration is normally used only for the initial starting of the
    * server, the configuration is then atomically maintained in the persistence directory.
@@ -211,11 +214,16 @@ public final class AgentServer {
    *  This property can only be fixed from <code>java</code> launching command.
    */
   public final static String CFG_JMS_PORT_PROPERTY = "fr.dyade.aaa.agent.A3CONF_JMS_PORT";
-  
+
+  /**
+   * Default value for JMS listening port: 16010.
+   */
+  public final static int CFG_JMS_PORT_DFLT = 16010;
+
   /**
    *  Name of property allowing to configure the listening port of the JNDI server when
-   * using the default server configuration, by default 16400. This Configuration is
-   * automatically generated at first starting if no XML configuration file is found.
+   * using the default server configuration, by default CFG_JNDI_PORT_PROPERTY. This Configuration
+   * is automatically generated at first starting if no XML configuration file is found.
    * <p>
    *  Be careful, this configuration is normally used only for the initial starting of the
    * server, the configuration is then atomically maintained in the persistence directory.
@@ -224,6 +232,26 @@ public final class AgentServer {
    */
   public final static String CFG_JNDI_PORT_PROPERTY = "fr.dyade.aaa.agent.A3CONF_JNDI_PORT";
 
+  /**
+   * Default value for JNDI listening port: 16400.
+   */
+  public final static int CFG_JNDI_PORT_DFLT = 16400;
+   
+  /**
+   * Set default configuration for the specified server.
+   * 
+   * @param sid       Unique identifier of the server.
+   * @param host      Host name or IP address of the physical machine.
+   * @param adminuid  User name of the administrator.
+   * @param adminpwd  Password of the administrator.
+   * @param joram     Listen port for JMS connector. If set to 0 the listen port is first searched
+   *                  through the CFG_JMS_PORT_PROPERTY property, then set to default value if not
+   *                  defined. If less than 0 the Joram/JMS connector is not defined.
+   * @param jndi      Listen port for JNDI connector. If set to 0 the listen port is first searched
+   *                  through the CFG_NDI_PORT_PROPERTY property, then set to default value if not
+   *                  defined. If less than 0 the Joram/JNDI service is not started.
+   * @param props     Set of properties to define in the built configuration.
+   */
   public static void setDefaultConfig(int sid,
                                       String host,
                                       String adminuid, String adminpwd,
@@ -243,11 +271,11 @@ public final class AgentServer {
     if (adminpwd == null) {
       adminpwd = System.getProperty(AgentServer.CFG_ADMINPWD_PROPERTY, adminuid);
     }
-    if (joram <= 0) {
-      joram = Integer.getInteger(AgentServer.CFG_JMS_PORT_PROPERTY, 16010);
+    if (joram == 0) {
+      joram = Integer.getInteger(AgentServer.CFG_JMS_PORT_PROPERTY, CFG_JMS_PORT_DFLT);
     }
-    if (jndi <= 0) {
-      jndi = Integer.getInteger(AgentServer.CFG_JNDI_PORT_PROPERTY, 16400);
+    if (jndi == 0) {
+      jndi = Integer.getInteger(AgentServer.CFG_JNDI_PORT_PROPERTY, CFG_JNDI_PORT_DFLT);
     }
 
     strbuf.append(
@@ -260,10 +288,17 @@ public final class AgentServer {
     }
     strbuf.append(
         "<property name=\"Transaction\" value=\"fr.dyade.aaa.ext.NGTransaction\"/>\n" +
-        "<server id=\"").append(sid).append("\" name=\"S").append(sid).append("\" hostname=\"").append(host).append("\">\n" +
-        "<service class=\"org.objectweb.joram.mom.proxies.ConnectionManager\" args=\"").append(adminuid).append(' ').append(adminpwd).append("\"/>\n" +
-        "<service class=\"org.objectweb.joram.mom.proxies.tcp.TcpProxyService\" args=\"").append(joram).append("\"/>\n" +
-        "<service class=\"fr.dyade.aaa.jndi2.server.JndiServer\" args=\"").append(jndi).append("\"/>\n" +
+        "<server id=\"").append(sid).append("\" name=\"S").append(sid).append("\" hostname=\"").append(host).append("\">\n");
+    if (joram > 0) {
+      strbuf.append(
+          "<service class=\"org.objectweb.joram.mom.proxies.ConnectionManager\" args=\"").append(adminuid).append(' ').append(adminpwd).append("\"/>\n" +
+          "<service class=\"org.objectweb.joram.mom.proxies.tcp.TcpProxyService\" args=\"").append(joram).append("\"/>\n");
+    }
+    if (jndi > 0) {
+      strbuf.append(
+          "<service class=\"fr.dyade.aaa.jndi2.server.JndiServer\" args=\"").append(jndi).append("\"/>\n");
+    }
+    strbuf.append(
         "</server>\n" +
         "</config>\n");
     
