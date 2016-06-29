@@ -140,6 +140,9 @@ public class ManagedConnectionFactoryImpl extends ManagedConnectionFactoryConfig
   	  factory = XATcpConnectionFactory.create(hostName, serverPort);
   	}
 
+  	if (ra == null) {
+  	  setResourceAdapter(new JoramAdapter());
+  	}
   	((AbstractConnectionFactory) factory).setCnxJMXBeanBaseName(ra.jmxRootName+"#"+ra.getName());
 
   	return factory;
@@ -222,6 +225,10 @@ public class ManagedConnectionFactoryImpl extends ManagedConnectionFactoryConfig
     
     XAConnection cnx = createXAConnection(factory, userName, password);
 
+    if (ra == null) {
+      setResourceAdapter(new JoramAdapter());
+    }
+    
     ManagedConnectionImpl managedCx = new ManagedConnectionImpl(ra,
     		                                                        this,
                                                                 cnx,
@@ -353,7 +360,7 @@ public class ManagedConnectionFactoryImpl extends ManagedConnectionFactoryConfig
 
     boolean res =
     	getHostName().equals(other.getHostName())
-      && getServerPort() == other.getServerPort()
+      && getServerPort().equals(other.getServerPort())
       && getUserName().equals(other.getUserName());
 
     if (logger.isLoggable(BasicLevel.DEBUG))
