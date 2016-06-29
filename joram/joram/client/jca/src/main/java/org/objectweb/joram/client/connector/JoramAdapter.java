@@ -82,6 +82,8 @@ public final class JoramAdapter extends JoramResourceAdapter implements JoramAda
   private ServerDesc serverDesc = null;
   private ServiceRegistration registration;
   
+  private Connection cnx = null;
+  
   // ------------------------------------------
   // --- JavaBean setter and getter methods ---
   // ------------------------------------------
@@ -493,7 +495,7 @@ public final class JoramAdapter extends JoramResourceAdapter implements JoramAda
 
       cf.setIdentityClassName(identityClass);
       cf.setCnxJMXBeanBaseName(jmxRootName+"#"+getName());
-      Connection cnx = cf.createConnection(rootName, rootPasswd);
+      cnx = cf.createConnection(rootName, rootPasswd);
       cnx.start();
       wrapper = new JoramAdmin(cnx);
       if (logger.isLoggable(BasicLevel.DEBUG))
@@ -568,6 +570,18 @@ public final class JoramAdapter extends JoramResourceAdapter implements JoramAda
     if (isActive)
     	adminDurationState = System.currentTimeMillis();
     isActive = false;
+    
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, "adminDisconnect: cnx = " + cnx);
+    if (cnx != null) {
+      try {
+        cnx.close();
+        cnx = null;
+      } catch (JMSException e) {
+        if (logger.isLoggable(BasicLevel.DEBUG))
+          logger.log(BasicLevel.DEBUG, "adminDisconnect: " + getMBeanName(), e);
+      }
+    }
   }
   
   /**
@@ -578,13 +592,25 @@ public final class JoramAdapter extends JoramResourceAdapter implements JoramAda
   	if (logger.isLoggable(BasicLevel.INFO))
   		logger.log(BasicLevel.INFO, "JORAM adapter stopping...");
 
-  	if (getStatus() != Status.STARTED || getStatus() == Status.STOPPED || 
-  			AgentServer.getStatus() != AgentServer.Status.STARTED ||
-  			AgentServer.getStatus() != AgentServer.Status.STARTING) {
-  	  status.value = Status.STOPPED;
-  	  if (logger.isLoggable(BasicLevel.INFO))
-        logger.log(BasicLevel.INFO, "JORAM adapter successfully stopped.");
-  		return;
+  	if (logger.isLoggable(BasicLevel.DEBUG))
+  	  logger.log(BasicLevel.DEBUG, "stop: AgentServer.status = " + AgentServer.getStatusInfo() + ", status = " + getStatusInfo());
+
+  	if (getStatus() != Status.STARTED || getStatus() == Status.STOPPED) {
+      status.value = Status.STOPPED;
+      if (logger.isLoggable(BasicLevel.INFO))
+        logger.log(BasicLevel.INFO, "JORAM adapter stopped.");
+      return;
+    }
+  	
+  	if (collocated) { 
+  	  if (AgentServer.getStatus() != AgentServer.Status.STARTED) {
+  	    if (AgentServer.getStatus() != AgentServer.Status.STARTING) {
+  	      status.value = Status.STOPPED;
+  	      if (logger.isLoggable(BasicLevel.INFO))
+  	        logger.log(BasicLevel.INFO, "JORAM adapter successfully stopped.");
+  	      return;
+  	    }
+  	  }
   	}
 
   	super.stop();
@@ -603,7 +629,7 @@ public final class JoramAdapter extends JoramResourceAdapter implements JoramAda
   		// If JORAM server is collocated, stopping it.
   		if (collocated) {
   			try {
-  				AgentServer.stop();
+  				AgentServer.stop(true, 0, true);
   			} catch (Exception exc) {
   				if (logger.isLoggable(BasicLevel.WARN))
   					logger.log(BasicLevel.WARN, "Error during AgentServer stopping", exc);
