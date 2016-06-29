@@ -478,6 +478,13 @@ public class ManagedConnectionImpl
       handle = (OutboundConnection) it.next();
       handle.cleanup();
     }
+    try {
+      if (session != null)
+        session.close();
+    } catch (JMSException e) {
+      if (logger.isLoggable(BasicLevel.WARN))
+        logger.log(BasicLevel.WARN, e);
+    }
     session = null;
     try {
       // Clear the handles. 

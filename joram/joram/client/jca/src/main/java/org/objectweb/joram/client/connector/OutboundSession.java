@@ -423,8 +423,11 @@ public class OutboundSession implements javax.jms.Session {
     cnx.sessions.remove(this);
     started = false;
     
-    // close the joram session, need by spring
-    ((org.objectweb.joram.client.jms.Session)sess).close();
+    /*
+     * This session is shared by all the outbound sessions.
+     * This session will be closed on outboud connection close. 
+     */
+    sess = null;
   }
 
   /**
