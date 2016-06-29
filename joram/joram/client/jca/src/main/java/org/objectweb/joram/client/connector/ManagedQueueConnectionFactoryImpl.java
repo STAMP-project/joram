@@ -134,6 +134,9 @@ public class ManagedQueueConnectionFactoryImpl extends ManagedConnectionFactoryI
   	  }
   	}
   	
+  	if (ra == null) {
+      setResourceAdapter(new JoramAdapter());
+    }
   	((AbstractConnectionFactory) factory).setCnxJMXBeanBaseName(ra.jmxRootName+"#"+ra.getName());
 
   	if (logger.isLoggable(BasicLevel.DEBUG))
