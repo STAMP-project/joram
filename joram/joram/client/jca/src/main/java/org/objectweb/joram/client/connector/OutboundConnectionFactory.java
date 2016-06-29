@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2004 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2016 ScalAgent Distributed Technologies
  * Copyright (C) 2004 Bull SA
  *
  * This library is free software; you can redistribute it and/or
@@ -157,7 +157,7 @@ public class OutboundConnectionFactory implements javax.jms.ConnectionFactory,
 
   public javax.jms.JMSContext createContext() {
     try {
-      return new JMSContext((Connection) createConnection());
+      return new JMSContext(createConnection());
     } catch (JMSSecurityException e) {
       logger.log(BasicLevel.ERROR, "Unable to create JMSContext", e);
       throw new JMSSecurityRuntimeException("Unable to create JMSContext", e.getMessage(), e);
@@ -170,7 +170,7 @@ public class OutboundConnectionFactory implements javax.jms.ConnectionFactory,
 
   public javax.jms.JMSContext createContext(String userName, String password) {
     try {
-      return new JMSContext((Connection) createConnection(userName, password));
+      return new JMSContext(createConnection(userName, password));
     } catch (JMSSecurityException e) {
       logger.log(BasicLevel.ERROR, "Unable to create JMSContext", e);
       throw new JMSSecurityRuntimeException("Unable to create JMSContext", e.getMessage(), e);
@@ -182,7 +182,7 @@ public class OutboundConnectionFactory implements javax.jms.ConnectionFactory,
 
   public javax.jms.JMSContext createContext(String userName, String password, int sessionMode) {
     try {
-      return new JMSContext((Connection) createConnection(userName, password), sessionMode);
+      return new JMSContext(createConnection(userName, password), sessionMode);
     } catch (JMSSecurityException e) {
       logger.log(BasicLevel.ERROR, "Unable to create JMSContext", e);
       throw new JMSSecurityRuntimeException("Unable to create JMSContext", e.getMessage(), e);
@@ -194,7 +194,7 @@ public class OutboundConnectionFactory implements javax.jms.ConnectionFactory,
 
   public javax.jms.JMSContext createContext(int sessionMode) {
     try {
-      return new JMSContext((Connection) createConnection(), sessionMode);
+      return new JMSContext(createConnection(), sessionMode);
     } catch (JMSSecurityException e) {
       logger.log(BasicLevel.ERROR, "Unable to create JMSContext", e);
       throw new JMSSecurityRuntimeException("Unable to create JMSContext", e.getMessage(), e);
