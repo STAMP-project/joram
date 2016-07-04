@@ -17,6 +17,7 @@
     <module>jonas</module>
     <module>ra</module>
     <module>remote</module>
+    <module>ironjacamar</module>
   </modules>
 
 </project>
