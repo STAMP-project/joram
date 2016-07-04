@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ironjacamar>
+	<connection-definitions>		<connection-definition			class-name="org.objectweb.joram.client.connector.ManagedConnectionFactoryImpl"			connectable="false" enabled="true" enlistment="true"			jndi-name="java:jboss/eis/Connection" pool-name="Connection"			sharable="true" use-ccm="true" use-java-context="true">			<xa-pool>				<min-pool-size>0</min-pool-size>				<max-pool-size>10</max-pool-size>				<prefill>false</prefill>				<use-strict-min>false</use-strict-min>				<flush-strategy>FailingConnectionOnly</flush-strategy>				<pad-xid>false</pad-xid>				<wrap-xa-resource>true</wrap-xa-resource>			</xa-pool>			<recovery no-recovery="false" />		</connection-definition>		
+		<connection-definition
+			class-name="org.objectweb.joram.client.connector.ManagedQueueConnectionFactoryImpl"
+			connectable="false" enabled="true" enlistment="true"
+			jndi-name="java:jboss/eis/QueueConnection" pool-name="QueueConnection"
+			sharable="true" use-ccm="true" use-java-context="true">			<xa-pool>				<min-pool-size>0</min-pool-size>				<max-pool-size>10</max-pool-size>				<prefill>false</prefill>				<use-strict-min>false</use-strict-min>				<flush-strategy>FailingConnectionOnly</flush-strategy>				<pad-xid>false</pad-xid>				<wrap-xa-resource>true</wrap-xa-resource>			</xa-pool>			<recovery no-recovery="false" />		</connection-definition>		
+		<connection-definition
+			class-name="org.objectweb.joram.client.connector.ManagedTopicConnectionFactoryImpl"
+			connectable="false" enabled="true" enlistment="true"
+			jndi-name="java:jboss/eis/TopicConnection" pool-name="TopicConnection"
+			sharable="true" use-ccm="true" use-java-context="true">			<xa-pool>				<min-pool-size>0</min-pool-size>				<max-pool-size>10</max-pool-size>				<prefill>false</prefill>				<use-strict-min>false</use-strict-min>				<flush-strategy>FailingConnectionOnly</flush-strategy>				<pad-xid>false</pad-xid>				<wrap-xa-resource>true</wrap-xa-resource>			</xa-pool>			<recovery no-recovery="false" />		</connection-definition>			</connection-definitions>
+</ironjacamar>

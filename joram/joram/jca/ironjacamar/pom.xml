@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+  <artifactId>joram-jca-ironjacamar</artifactId>
+  <packaging>rar</packaging>
+  <name>JORAM :: joram :: jca :: ironjacamar</name>
+  <description>Builds the Joram jca ironjacamar project.</description>
+
+	<parent>
+		<groupId>org.ow2.joram</groupId>
+    <artifactId>joram-jca</artifactId>
+		<version>5.13.0-SNAPSHOT</version>
+  </parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.jboss.ironjacamar</groupId>
+				<artifactId>ironjacamar-validator-maven</artifactId>
+				<!-- The version of the plugin you want to use -->
+				<version>1.2.7.Final</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>validate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- output directory -->
+					<outputDir>${project.build.directory}</outputDir>
+					<!-- rar filename -->
+					<rarFile>${project.build.directory}/${project.artifactId}-${project.version}.rar</rarFile>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+      <groupId>org.ow2.joram</groupId>
+      <artifactId>joram-client-jca</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.joram</groupId>
+      <artifactId>jndi-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.jonas.osgi</groupId>
+      <artifactId>monolog</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+    </dependency>
+  </dependencies>
+</project>

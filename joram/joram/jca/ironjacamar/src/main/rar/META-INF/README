@@ -1,0 +1,89 @@
+Deploy joram-jca-ironjacamar-XXX.rar
+
+- Collocated Joram server (default):
+------------------------------------ 
+This resource adapter start a Joram server.
+
+You must add the a3servers.xml and a3debug.cfg files in the config directory (see ra.xml: PlatformConfigDir)
+
+a3servers.xml:
+<?xml version="1.0"?>
+<config>
+  <server id="0" name="S0" hostname="localhost">
+    <service class="org.objectweb.joram.mom.proxies.ConnectionManager"
+             args="root root"/>
+    <service class="org.objectweb.joram.mom.proxies.tcp.TcpProxyService" 
+             args="16010"/>
+  </server>
+</config>
+
+a3debug.cfg:
+monolog.classname org.objectweb.util.monolog.wrapper.javaLog.LoggerFactory
+# tty : console handler
+handler.tty.type Console
+handler.tty.output System.out
+handler.tty.pattern  %d : %O{1}.%M : %m%n
+# logf : rolling file handler
+handler.logf.type RollingFile
+handler.logf.output ../log/server.log
+handler.logf.pattern %h %l %d, %m%n
+handler.logf.fileNumber 2
+handler.logf.maxSize 1000000
+# logger definitions
+logger.root.handler.0 tty
+logger.root.handler.1 logf
+
+logger.root.level WARN
+#------
+# JORAM
+#-------
+logger.fr.dyade.aaa.level WARN
+
+#logger.fr.dyade.aaa.agent.Agent.level DEBUG
+#logger.fr.dyade.aaa.agent.Engine.level DEBUG
+#logger.fr.dyade.aaa.util.Transaction.level DEBUG
+#logger.fr.dyade.aaa.util.Network.level DEBUG
+#logger.fr.dyade.aaa.agent.Service.level DEBUG
+
+#logger.fr.dyade.aaa.jndi2.client.level DEBUG
+#logger.fr.dyade.aaa.jndi2.server.level DEBUG
+
+#logger.org.objectweb.joram.level DEBUG
+
+#logger.org.objectweb.joram.mom.level DEBUG
+#logger.org.objectweb.joram.client.jms.level DEBUG
+logger.org.objectweb.joram.client.connector.level INFO
+#logger.org.objectweb.joram.shared.level DEBUG
+
+
+ra.xml:
+    ...
+    <!-- start JoramServer -->
+    <config-property> 
+      <config-property-name>StartJoramServer</config-property-name> 
+      <config-property-type>java.lang.Boolean</config-property-type> 
+      <config-property-value>true</config-property-value> 
+    </config-property> 
+    <config-property> 
+      <config-property-name>PlatformConfigDir</config-property-name> 
+      <config-property-type>java.lang.String</config-property-type> 
+      <config-property-value>../config</config-property-value> 
+    </config-property> 
+    <config-property> 
+     <config-property-name>ServerId</config-property-name> 
+     <config-property-type>java.lang.Short</config-property-type> 
+     <config-property-value>0</config-property-value> 
+     </config-property> 
+     <config-property> 
+     <config-property-name>Storage</config-property-name> 
+     <config-property-type>java.lang.String</config-property-type> 
+     <config-property-value>../tmp/s0</config-property-value> 
+     </config-property>
+     ...
+
+- Remote Joram server:
+----------------------
+This resource adapter connect to a remote Joram server.
+
+Rename the ra-remote.xml to ra.xml and configure the host/port values, by default localhost/16010.
+Start the remote Joram server before deploying the resource adapter.
