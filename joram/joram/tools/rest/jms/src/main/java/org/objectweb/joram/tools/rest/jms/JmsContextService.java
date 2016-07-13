@@ -74,6 +74,7 @@ public class JmsContextService {
   public static final String CONTEXT_CONSUME = "receive-message";
   public static final String CONTEXT_CONSUME_NEXT = "receive-next-message";
   public static final String CONTEXT_COMMIT = "commit";
+  public static final String CONTEXT_ROLLBACK = "rollback";
   public static final String CONTEXT_ACK = "acknowledge";
   public static final String CONTEXT_ACK_MSG = "acknowledge-message";
 
@@ -111,10 +112,10 @@ public class JmsContextService {
     buff.append(uriInfo.getAbsolutePathBuilder() + "/{<b>name</b>}");
     buff.append("\n" + uriInfo.getAbsolutePathBuilder() + "/{<b>name</b>/{<b>id</b>}");
     buff.append("\n<b>options:</b>");
-    buff.append("\n  <b>delivery-mode:</b> Specifies the delivery mode of messages that are sent using this JMSProducer");
+    buff.append("\n  <b>persistent:</b> Specifies the delivery mode of messages that are sent using this JMSProducer");
     buff.append("\n  <b>correlation-id:</b> Specifies that messages sent using this JMSProducer will have their JMSCorrelationID header value set to the specified correlation ID");
     buff.append("\n  <b>priority:</b> Specifies the priority of messages that are sent using this JMSProducer");
-    buff.append("\n  <b>timeTo-live:</b> Specifies the time to live of messages that are sent using this JMSProducer");
+    buff.append("\n  <b>time-to-live:</b> Specifies the time to live of messages that are sent using this JMSProducer");
     buff.append("</pre>");
     
     buff.append("<h3>send a message JSON (POST)</h3>");
@@ -122,10 +123,10 @@ public class JmsContextService {
     buff.append(uriInfo.getAbsolutePathBuilder() + "/{<b>name</b>}");
     buff.append("\n" + uriInfo.getAbsolutePathBuilder() + "/{<b>name</b>/{<b>id</b>}");
     buff.append("\n<b>options:</b>");
-    buff.append("\n  <b>delivery-mode:</b> Specifies the delivery mode of messages that are sent using this JMSProducer");
+    buff.append("\n  <b>persistent:</b> Specifies the delivery mode of messages that are sent using this JMSProducer");
     buff.append("\n  <b>correlation-id:</b> Specifies that messages sent using this JMSProducer will have their JMSCorrelationID header value set to the specified correlation ID");
     buff.append("\n  <b>priority:</b> Specifies the priority of messages that are sent using this JMSProducer");
-    buff.append("\n  <b>timeTo-live:</b> Specifies the time to live of messages that are sent using this JMSProducer");
+    buff.append("\n  <b>time-to-live:</b> Specifies the time to live of messages that are sent using this JMSProducer");
     buff.append("\n  <b>type:</b> The JMS message type BytesMessage, MapMessage, ObjectMessage, StreamMessage or TextMessage (default: TextMessage)");
     buff.append("\n<b>post:</b>");
     buff.append("\n  <b>json:</b> JSon maps contains the " + JMS_BODY + ", the " + JMS_PROPERTIES + " and the " + JMS_HEADER);
@@ -159,6 +160,11 @@ public class JmsContextService {
     buff.append(uriInfo.getAbsolutePathBuilder() + "/{<b>name</b>}/" + CONTEXT_COMMIT);
     buff.append("</pre>");
     
+    buff.append("<h3>rollback the producer or consumer messages (HEAD)</h3>");
+    buff.append("<pre>");
+    buff.append(uriInfo.getAbsolutePathBuilder() + "/{<b>name</b>}/" + CONTEXT_ROLLBACK);
+    buff.append("</pre>");
+    
     buff.append("<h3>acknowledge the producer or consumer (DELETE)</h3>");
     buff.append("<pre>");
     buff.append(uriInfo.getAbsolutePathBuilder() + "/{<b>name</b>}");
@@ -177,10 +183,10 @@ public class JmsContextService {
   public Response sendMsg(
       @Context HttpHeaders headers,
       @PathParam("name") String prodName,
-      @DefaultValue("-1")@QueryParam("delivery-mode") int deliveryMode,
+      @DefaultValue("-1")@QueryParam("persistent") int deliveryMode,
       @DefaultValue("-1")@QueryParam("delivery-time") long deliveryTime,
       @DefaultValue("-1")@QueryParam("priority") int priority,
-      @DefaultValue("-1")@QueryParam("timeTo-live") long timeToLive,
+      @DefaultValue("-1")@QueryParam("time-to-live") long timeToLive,
       @QueryParam("correlation-id") String correlationID,
       @Context UriInfo uriInfo,
       String body) {
@@ -234,6 +240,10 @@ public class JmsContextService {
           // link commit message
           nextBuilder = uriInfo.getAbsolutePathBuilder().path(CONTEXT_COMMIT);
           builder.link(nextBuilder.build(), CONTEXT_COMMIT);
+          
+          // link rollback message
+          nextBuilder = uriInfo.getAbsolutePathBuilder().path(CONTEXT_ROLLBACK);
+          builder.link(nextBuilder.build(), CONTEXT_ROLLBACK);
         }
       } catch (Exception e) {
         if (logger.isLoggable(BasicLevel.WARN))
@@ -254,10 +264,10 @@ public class JmsContextService {
   public Response sendMsgJson(
       @Context HttpHeaders headers,
       @PathParam("name") String prodName,
-      @DefaultValue("-1")@QueryParam("delivery-mode") int deliveryMode,
+      @DefaultValue("-1")@QueryParam("persistent") int deliveryMode,
       @DefaultValue("-1")@QueryParam("delivery-time") long deliveryTime,
       @DefaultValue("-1")@QueryParam("priority") int priority,
-      @DefaultValue("-1")@QueryParam("timeTo-live") long timeToLive,
+      @DefaultValue("-1")@QueryParam("time-to-live") long timeToLive,
       @QueryParam("correlation-id") String correlationID,
       @Context UriInfo uriInfo,
       String json) {
@@ -343,6 +353,10 @@ public class JmsContextService {
           // link commit message
           nextBuilder = uriInfo.getAbsolutePathBuilder().path(CONTEXT_COMMIT);
           builder.link(nextBuilder.build(), CONTEXT_COMMIT);
+          
+          // link rollback message
+          nextBuilder = uriInfo.getAbsolutePathBuilder().path(CONTEXT_ROLLBACK);
+          builder.link(nextBuilder.build(), CONTEXT_ROLLBACK);
         }
       } catch (Exception e) {
         if (logger.isLoggable(BasicLevel.WARN))
@@ -364,10 +378,10 @@ public class JmsContextService {
       @Context HttpHeaders headers,
       @PathParam("name") String prodName,
       @PathParam("id") long id,
-      @DefaultValue("-1")@QueryParam("delivery-mode") int deliveryMode,
+      @DefaultValue("-1")@QueryParam("persistent") int deliveryMode,
       @DefaultValue("-1")@QueryParam("delivery-time") long deliveryTime,
       @DefaultValue("-1")@QueryParam("priority") int priority,
-      @DefaultValue("-1")@QueryParam("timeTo-live") long timeToLive,
+      @DefaultValue("-1")@QueryParam("time-to-live") long timeToLive,
       @QueryParam("correlation-id") String correlationID,
       @Context UriInfo uriInfo,
       String body) {
@@ -435,6 +449,10 @@ public class JmsContextService {
           // link commit message
           nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(prodName).path(CONTEXT_COMMIT);
           builder.link(nextBuilder.build(), CONTEXT_COMMIT);
+
+          // link rollback message
+          nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(prodName).path(CONTEXT_ROLLBACK);
+          builder.link(nextBuilder.build(), CONTEXT_ROLLBACK);
         }
       } catch (Exception e) {
         if (logger.isLoggable(BasicLevel.WARN))
@@ -456,10 +474,10 @@ public class JmsContextService {
       @Context HttpHeaders headers,
       @PathParam("name") String prodName,
       @PathParam("id") long id,
-      @DefaultValue("-1")@QueryParam("delivery-mode") int deliveryMode,
+      @DefaultValue("-1")@QueryParam("persistent") int deliveryMode,
       @DefaultValue("-1")@QueryParam("delivery-time") long deliveryTime,
       @DefaultValue("-1")@QueryParam("priority") int priority,
-      @DefaultValue("-1")@QueryParam("timeTo-live") long timeToLive,
+      @DefaultValue("-1")@QueryParam("time-to-live") long timeToLive,
       @QueryParam("correlation-id") String correlationID,
       @Context UriInfo uriInfo,
       String json) {
@@ -558,6 +576,10 @@ public class JmsContextService {
           // link commit message
           nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(prodName).path(CONTEXT_COMMIT);
           builder.link(nextBuilder.build(), CONTEXT_COMMIT);
+          
+          // link rollback message
+          nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(prodName).path(CONTEXT_ROLLBACK);
+          builder.link(nextBuilder.build(), CONTEXT_ROLLBACK);
         }
       } catch (Exception e) {
         if (logger.isLoggable(BasicLevel.WARN))
@@ -696,6 +718,10 @@ public class JmsContextService {
           // link commit consumer message
           UriBuilder nextBuilder = uriInfo.getAbsolutePathBuilder().path(CONTEXT_COMMIT);
           builder.link(nextBuilder.build(), CONTEXT_COMMIT);
+          
+          // link rollback consumer message
+          nextBuilder = uriInfo.getAbsolutePathBuilder().path(CONTEXT_ROLLBACK);
+          builder.link(nextBuilder.build(), CONTEXT_ROLLBACK);
         }
       } catch (Exception e) {
         if (logger.isLoggable(BasicLevel.WARN))
@@ -866,6 +892,10 @@ public class JmsContextService {
           // link commit consumer message
           UriBuilder nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(consName).path(CONTEXT_COMMIT);
           builder.link(nextBuilder.build(), CONTEXT_COMMIT);
+          
+          // link rollback consumer message
+          nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(consName).path(CONTEXT_ROLLBACK);
+          builder.link(nextBuilder.build(), CONTEXT_ROLLBACK);
         }
       } catch (Exception e) {
         if (logger.isLoggable(BasicLevel.WARN))
@@ -1014,6 +1044,85 @@ public class JmsContextService {
       try {
         // commit
         helper.commit(ctxName);
+      } catch (Exception e) {
+        if (logger.isLoggable(BasicLevel.WARN))
+          logger.log(BasicLevel.WARN, "", e);
+        builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString());
+        return builder.build();
+      }
+
+      builder = Response.status(Response.Status.OK);
+
+      if (ctx instanceof ProducerContext) {
+        // link send message
+        UriBuilder nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(ctxName);
+        builder.link(nextBuilder.build(), CONTEXT_SEND);
+
+        // link send next message
+        nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(ctxName).path(""+(ctx.getLastId()+1));
+        builder.link(nextBuilder.build(), CONTEXT_SEND_NEXT);
+      } 
+
+      if (ctx instanceof ConsumerContext) {
+        // link consume message
+        UriBuilder nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(ctxName);
+        builder.link(nextBuilder.build(), CONTEXT_CONSUME);
+
+        // link consume next message
+        nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(CONTEXT).path(ctxName).path("" + (ctx.getLastId()+1));
+        builder.link(nextBuilder.build(), CONTEXT_CONSUME_NEXT);
+      }
+
+      return builder.build();
+    } finally {
+      logLinks(builder);
+    }
+  }
+  
+  @HEAD
+  @Path("/{name}/" + CONTEXT_ROLLBACK)
+  @Produces(MediaType.TEXT_PLAIN)
+  @Consumes(MediaType.TEXT_PLAIN)
+  public Response rollback(
+      @Context HttpHeaders headers,
+      @PathParam("name") String ctxName,
+      @Context UriInfo uriInfo) {
+
+    if (logger.isLoggable(BasicLevel.INFO))
+      logger.log(BasicLevel.INFO, "HEAD: " + uriInfo.getAbsolutePathBuilder());
+
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, "rollback(" + headers + ", " + ctxName + ", " + uriInfo);
+    
+    Response.ResponseBuilder builder = null;
+    try {
+
+      if (ctxName == null) {
+        builder = Response.status(Response.Status.EXPECTATION_FAILED).entity("The producer/consumer name is null.");
+        return builder.build();
+      }
+
+      SessionContext ctx = helper.getSessionCtx(ctxName);
+      if (ctx == null) {
+        ctx = helper.getSessionCtx(ctxName);
+      }
+
+      try {
+        if (! ctx.getJmsContext().getTransacted()) {
+          builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).
+              entity("The jmsContext for " + ctxName + " is not transacted.");
+          return builder.build();
+        }
+      } catch (Exception e) {
+        if (logger.isLoggable(BasicLevel.WARN))
+          logger.log(BasicLevel.WARN, "", e);
+        builder = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.toString());
+        return builder.build();
+      }
+
+      try {
+        // rollback
+        helper.rollback(ctxName);
       } catch (Exception e) {
         if (logger.isLoggable(BasicLevel.WARN))
           logger.log(BasicLevel.WARN, "", e);
