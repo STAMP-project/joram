@@ -65,18 +65,18 @@ public class ClientRESTTopic extends TestCase {
       WebTarget target = client.target(Helper.getBaseJmsURI());
 
       Builder builder = target.path("jndi").path("topic").request();
-      Response response = builder.accept(MediaType.TEXT_PLAIN).get();
+      Response response = builder.accept(MediaType.TEXT_PLAIN).head();
       assertEquals("jndi-topic", 201, response.getStatus());
 
       URI uriCreateProd = response.getLink("create-producer").getUri();
       URI uriCreateCons = response.getLink("create-consumer").getUri();
 
-      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).head();
+      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
       assertEquals("create-consumer", 201, response.getStatus());
       URI uriCloseCons = response.getLink("close-context").getUri();
       URI uriConsume = response.getLink("receive-message").getUri();
 
-      response = client.target(uriCreateProd).request().accept(MediaType.TEXT_PLAIN).head();
+      response = client.target(uriCreateProd).request().accept(MediaType.TEXT_PLAIN).post(null);
       assertEquals("create-producer", 201, response.getStatus());
 
       URI uriCloseProd = response.getLink("close-context").getUri();

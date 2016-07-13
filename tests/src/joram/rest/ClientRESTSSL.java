@@ -76,14 +76,17 @@ public class ClientRESTSSL extends TestCase {
       // lookup the destination
       Builder builder = target.path("jndi").path("queue").request();
 
-      Response response = builder.accept(MediaType.TEXT_PLAIN).get();
+      Response response = builder.accept(MediaType.TEXT_PLAIN).head();
       assertEquals("jndi-queue", 201, response.getStatus());
 
       URI uriCreateProd = response.getLink("create-producer").getUri();
       URI uriCreateCons = response.getLink("create-consumer").getUri();
 
       // Create the producer
-      response = client.target(uriCreateProd).queryParam("user", "anonymous").queryParam("password", "anonymous").request().accept(MediaType.TEXT_PLAIN).head();
+      response = client.target(uriCreateProd)
+          .queryParam("user", "anonymous")
+          .queryParam("password", "anonymous")
+          .request().accept(MediaType.TEXT_PLAIN).post(null);
       assertEquals("create-producer", 201, response.getStatus());
 
       URI uriCloseProd = response.getLink("close-context").getUri();
@@ -96,7 +99,7 @@ public class ClientRESTSSL extends TestCase {
       assertEquals("send-next-message", 200, response.getStatus());
 
       // Create the consumer
-      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).head();
+      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
       assertEquals("create-consumer", 201, response.getStatus());
 
       URI uriCloseCons = response.getLink("close-context").getUri();

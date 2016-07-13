@@ -71,7 +71,7 @@ public class ClientRESTMapMessage extends TestCase {
           .getUri();
 
       // Create the producer
-      Response response = client.target(uriCreateProd).request().accept(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON).head();
+      Response response = client.target(uriCreateProd).request().accept(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON).post(null);
       assertEquals("create-producer jms (myQueue1)", 201, response.getStatus());
 
       URI uriCloseProd = response.getLink("close-context").getUri();
@@ -102,7 +102,7 @@ public class ClientRESTMapMessage extends TestCase {
       assertEquals("send-next-message", 200, response.getStatus());
 
       // Create the consumer
-      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).head();
+      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
       assertEquals("create-consumer jms (myQueue1)", 201, response.getStatus());
 
       URI uriCloseCons = response.getLink("close-context").getUri();

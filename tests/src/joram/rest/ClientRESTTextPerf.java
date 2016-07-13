@@ -190,7 +190,7 @@ public class ClientRESTTextPerf extends TestCase {
   
   public void test1(int nbMsg, int modulo, String queueName, String prodName, String consName, String clientId) throws Exception {
     Builder builder = target.path("jndi").path(queueName).request();
-    Response response = builder.accept(MediaType.TEXT_PLAIN).get();
+    Response response = builder.accept(MediaType.TEXT_PLAIN).head();
     if (response.getStatus() != Response.Status.CREATED.getStatusCode())
       throw new Exception("lookup \"" + queueName + "\" = " + response.getStatus());
    
@@ -283,7 +283,7 @@ public class ClientRESTTextPerf extends TestCase {
       target = target.queryParam("client-id", clientId);
     if (name != null)
       target = target.queryParam("name", name);
-    Response response = target.request().accept(MediaType.TEXT_PLAIN).head();
+    Response response = target.request().accept(MediaType.TEXT_PLAIN).post(null);
     if (response.getStatus() != Response.Status.CREATED.getStatusCode())
       throw new Exception("createConsumer = " + response.getStatus() + ", target = " + target);
     return response;
@@ -295,7 +295,7 @@ public class ClientRESTTextPerf extends TestCase {
       target = target.queryParam("client-id", clientId);
     if (name != null)
       target = target.queryParam("name", name);
-    Response response = target.request().accept(MediaType.TEXT_PLAIN).head();
+    Response response = target.request().accept(MediaType.TEXT_PLAIN).post(null);
     if (response.getStatus() != Response.Status.CREATED.getStatusCode())
       throw new Exception("createProducer = " + response.getStatus() + ", " + target);
     return response;

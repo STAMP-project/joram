@@ -65,12 +65,12 @@ public class ClientRESTTextMessage extends TestCase {
       WebTarget target = client.target(Helper.getBaseJmsURI());
 
       Builder builder = target.path("jndi").path("queue").request();
-      Response response = builder.accept(MediaType.TEXT_PLAIN).get();
+      Response response = builder.accept(MediaType.TEXT_PLAIN).head();
       assertEquals("jndi-queue", 201, response.getStatus());
 
       URI uriCreateCons = response.getLink("create-consumer").getUri();
 
-      response = client.target(response.getLink("create-producer").getUri()).request().accept(MediaType.TEXT_PLAIN).head();
+      response = client.target(response.getLink("create-producer").getUri()).request().accept(MediaType.TEXT_PLAIN).post(null);
       assertEquals("create-producer", 201, response.getStatus());
 
       URI uriCloseProd = response.getLink("close-context").getUri();
@@ -86,7 +86,7 @@ public class ClientRESTTextMessage extends TestCase {
           accept(MediaType.TEXT_PLAIN).post(Entity.entity(messageNext, MediaType.TEXT_PLAIN));
       assertEquals("send-next-message", 200, response.getStatus());
 
-      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).head();
+      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
       assertEquals("create-consumer", 201, response.getStatus());
 
       URI uriCloseCons = response.getLink("close-context").getUri();
