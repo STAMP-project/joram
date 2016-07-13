@@ -61,7 +61,7 @@ public class Helper {
   public static final String BUNDLE_CLEANER_PERIOD_PROP = "rest.cleaner.period";
   
   public static Logger logger = Debug.getLogger(Helper.class.getName());
-  private static final AtomicLong counter = new AtomicLong(100);
+  private static final AtomicLong counter = new AtomicLong(1);
   private static Helper helper = null;
   private InitialContext ictx;
   private HashMap<String, RestClientContext> restClientCtxs;
@@ -248,6 +248,11 @@ public class Helper {
     if (prodId == null) {
       // create the new producer Id
       prodId = createProducerId();
+      while (sessionCtxs != null && sessionCtxs.get(prodId) != null) {
+        prodId = createProducerId();
+      }
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "Helper.createProducer: create the new producer Id " + prodId);
     }
     
     // Get the rest client context
@@ -324,6 +329,11 @@ public class Helper {
     if (consId == null) {
       // create the new consumer Id
       consId = createConsumerId();
+      while (sessionCtxs != null && sessionCtxs.get(consId) != null) {
+        consId = createConsumerId();
+      }
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "Helper.createConsumer: create the new consumer Id " + consId);
     }
     
     // Get the rest client context
@@ -740,11 +750,16 @@ public class Helper {
   }
   
   public RestClientContext getClientContext(String id) {
-    RestClientContext ret =  restClientCtxs.get(id);
+    RestClientContext ret = restClientCtxs.get(id);
     if (ret == null) {
       String clientID = id;
       if (clientID == null) {
         clientID = createClientId();
+        while (restClientCtxs.get(clientID) != null) {
+          clientID = createClientId();
+        }
+        if (logger.isLoggable(BasicLevel.DEBUG))
+          logger.log(BasicLevel.DEBUG, "Helper.getClientContext: create the new client Id " + clientID);
       }
       ret = new RestClientContext(clientID);
       restClientCtxs.put(clientID, ret);
@@ -760,6 +775,16 @@ public class Helper {
       throw new Exception(name + " not found.");
     if (ctx.getJmsContext().getTransacted())
       ctx.getJmsContext().commit();
+  }
+  
+  public void rollback(String name) throws Exception {
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, "Helper.rollback " + name);
+    SessionContext ctx = sessionCtxs.get(name);
+    if (ctx == null)
+      throw new Exception(name + " not found.");
+    if (ctx.getJmsContext().getTransacted())
+      ctx.getJmsContext().rollback();
   }
   
   public void acknowledgeAllMsg(String consName) throws Exception {
