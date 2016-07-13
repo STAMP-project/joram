@@ -34,6 +34,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -65,36 +66,36 @@ public class JndiService {
     buff.append("<html>");
     buff.append("<body>");
     
-    buff.append("<h3>lookup (GET)</h3>");
+    buff.append("<h3>lookup (HEAD)</h3>");
     buff.append("<pre>");
     buff.append("set a destination-name: " + uriInfo.getAbsolutePathBuilder() + "/{<b>destination-name</b>}");
     buff.append("</pre>");
     
-    buff.append("<h3>create a producer (HEAD)</h3>");
+    buff.append("<h3>create a producer (POST)</h3>");
     buff.append("<pre>");
     buff.append(uriInfo.getAbsolutePathBuilder() + "/{<b>destination-name</b>}/"+JmsService.JMS_CREATE_PROD);
     buff.append("\n<b>options:</b>");
     buff.append("\n  <b>client-id:</b> The client identifier for the JMSContext's connection");
     buff.append("\n  <b>name:</b> The producer name for the producer JMSContext");
     buff.append("\n  <b>session-mode:</b> AUTO_ACKNOWLEDGE, CLIENT_ACKNOWLEDGE,  DUPS_OK_ACKNOWLEDGE or SESSION_TRANSACTED");
-    buff.append("\n  <b>delivery-mode:</b> Specifies the delivery mode of messages that are sent using this JMSProducer");
+    buff.append("\n  <b>persistent:</b> Specifies the delivery mode of messages that are sent using this JMSProducer");
     buff.append("\n  <b>delivery-delay:</b> Sets the minimum length of time in milliseconds that must elapse after a message is sent before the JMS provider may deliver the message to a consumer");
     buff.append("\n  <b>correlation-id:</b> Specifies that messages sent using this JMSProducer will have their JMSCorrelationID header value set to the specified correlation ID");
     buff.append("\n  <b>priority:</b> Specifies the priority of messages that are sent using this JMSProducer");
-    buff.append("\n  <b>timeTo-live:</b> Specifies the time to live of messages that are sent using this JMSProducer");
+    buff.append("\n  <b>time-to-live:</b> Specifies the time to live of messages that are sent using this JMSProducer");
     buff.append("\n  <b>idle-timeout:</b> Allows to set the idle time in milliseconds in which the producer context will be closed if idle");
     buff.append("\n  <b>user:</b> Specifies the userName for the JMS connection");
     buff.append("\n  <b>password:</b> Specifies the password for the JMS connection");
     buff.append("</pre>");
     
-    buff.append("<h3>create a consumer (HEAD)</h3>");
+    buff.append("<h3>create a consumer (POST)</h3>");
     buff.append("<pre>");
     buff.append(uriInfo.getAbsolutePathBuilder() + "/{<b>destination-name</b>}/"+JmsService.JMS_CREATE_CONS);
     buff.append("\n<b>options:</b>");
     buff.append("\n  <b>client-id:</b> The client identifier for the JMSContext's connection");
     buff.append("\n  <b>name:</b> The producer name for the producer JMSContext");
     buff.append("\n  <b>session-mode:</b> AUTO_ACKNOWLEDGE, CLIENT_ACKNOWLEDGE,  DUPS_OK_ACKNOWLEDGE or SESSION_TRANSACTED");
-    buff.append("\n  <b>message-selector:</b> Only messages with properties matching the message selector expression are delivered");
+    buff.append("\n  <b>selector:</b> Only messages with properties matching the message selector expression are delivered");
     //TODO: buff.append("\n  no-local:</b> if true then any messages published to the topic using this session's connection");
     buff.append("\n  <b>durable:</b> true to creates an durable subscription on the specified topic");
     buff.append("\n  <b>shared:</b> true for shared");
@@ -113,7 +114,7 @@ public class JndiService {
     return buff.toString();
   }
   
-  @GET
+  @HEAD
   @Path("/{destName}")
   @Produces(MediaType.TEXT_PLAIN)
   public Response lookupDestination(
@@ -122,10 +123,10 @@ public class JndiService {
       @Context UriInfo uriInfo) {
 
     if (logger.isLoggable(BasicLevel.INFO))
-      logger.log(BasicLevel.INFO, "GET: " + uriInfo.getAbsolutePathBuilder());
+      logger.log(BasicLevel.INFO, "HEAD: " + uriInfo.getAbsolutePathBuilder());
     
     if (logger.isLoggable(BasicLevel.DEBUG))
-      logger.log(BasicLevel.DEBUG, "getDestination(" + headers + ", " + destName + ", " + uriInfo + ")");
+      logger.log(BasicLevel.DEBUG, "lookupDestination(" + headers + ", " + destName + ", " + uriInfo + ")");
 
     Response.ResponseBuilder builder = null;
     try {
@@ -185,7 +186,7 @@ public class JndiService {
     }
   }
   
-  @HEAD
+  @POST
   @Path("/{destName}/"+ JmsService.JMS_CREATE_PROD)
   @Produces(MediaType.TEXT_PLAIN)
   @Consumes(MediaType.TEXT_PLAIN)
@@ -195,18 +196,18 @@ public class JndiService {
       @QueryParam("client-id") String clientID,
       @QueryParam("name") String prodName,
       @DefaultValue(""+JMSContext.AUTO_ACKNOWLEDGE)@QueryParam("session-mode") int sessionMode,
-      @DefaultValue(""+Message.DEFAULT_DELIVERY_MODE)@QueryParam("delivery-mode") int deliveryMode,
+      @DefaultValue(""+Message.DEFAULT_DELIVERY_MODE)@QueryParam("persistent") int deliveryMode,
       @DefaultValue(""+Message.DEFAULT_DELIVERY_DELAY)@QueryParam("delivery-delay") long deliveryDelay,
       @QueryParam("correlation-id") String correlationID,
       @DefaultValue(""+Message.DEFAULT_PRIORITY)@QueryParam("priority") int priority,
-      @DefaultValue(""+Message.DEFAULT_TIME_TO_LIVE)@QueryParam("timeTo-live")long timeToLive,
+      @DefaultValue(""+Message.DEFAULT_TIME_TO_LIVE)@QueryParam("time-to-live")long timeToLive,
       @DefaultValue("0")@QueryParam("idle-timeout") long idleTimeout,
       @QueryParam("user") String userName,
       @QueryParam("password")String password,
       @Context UriInfo uriInfo) {
 
     if (logger.isLoggable(BasicLevel.INFO))
-      logger.log(BasicLevel.INFO, "HEAD: " + uriInfo.getAbsolutePathBuilder());
+      logger.log(BasicLevel.INFO, "POST: " + uriInfo.getAbsolutePathBuilder());
     
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "createProducer(" + headers + ", " + destName + ", " + clientID + ", " + prodName + ", " + 
@@ -255,7 +256,7 @@ public class JndiService {
     }
   }
 
-  @HEAD
+  @POST
   @Path("/{destName}/"+ JmsService.JMS_CREATE_CONS)
   @Produces(MediaType.TEXT_PLAIN)
   public Response createConsumer(
@@ -264,7 +265,7 @@ public class JndiService {
       @QueryParam("client-id") String clientID,
       @QueryParam("name") String consName,
       @DefaultValue(""+JMSContext.AUTO_ACKNOWLEDGE)@QueryParam("session-mode") int sessionMode,
-      @QueryParam("message-selector") String messageSelector,
+      @QueryParam("selector") String messageSelector,
       @DefaultValue("false")@QueryParam("no-local") boolean noLocal,
       @DefaultValue("false")@QueryParam("durable") boolean durable,
       @DefaultValue("false")@QueryParam("shared") boolean shared,
@@ -275,7 +276,7 @@ public class JndiService {
       @Context UriInfo uriInfo) {
 
     if (logger.isLoggable(BasicLevel.INFO))
-      logger.log(BasicLevel.INFO, "HEAD: " + uriInfo.getAbsolutePathBuilder());
+      logger.log(BasicLevel.INFO, "POST: " + uriInfo.getAbsolutePathBuilder());
     
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "createConsumer(" + headers + ", " + destName + ", " + clientID + ", " + consName + ", " + 
