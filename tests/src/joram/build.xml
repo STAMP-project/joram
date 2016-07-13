@@ -7015,6 +7015,8 @@
     <antcall target="rest.client6"/>
     <antcall target="rest.client7"/>
     <antcall target="rest.client8"/>
+    <!-- perfs <antcall target="rest.client9"/> -->
+    <antcall target="rest.client10"/>
   </target>
   
   <target name="init.rest" depends="init.a3props,compile"
@@ -7140,6 +7142,18 @@
       <param name="jndiconf" value="jndi.properties"/>
       <param name="a3conf" value="a3servers.xml"/>
       <param name="args" value="100 1000 100 false"/>
+    </antcall>
+  </target>
+  
+  <target name="rest.client10" depends="init.rest"
+            description=" --> REST test transacted">
+    <antcall target="test.start" inheritAll="true">
+      <param name="testid" value="rest.client10"/>
+      <param name="className" value="joram.rest.ClientRESTTransacted"/>
+      <param name="SCAdminClass" value="framework.SCAdminOSGi"/>
+      <param name="isOSGi" value="true"/>
+      <param name="jndiconf" value="jndi.properties"/>
+      <param name="a3conf" value="a3servers.xml"/>
     </antcall>
   </target>
 </project>
