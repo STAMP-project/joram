@@ -40,10 +40,12 @@ public class RootService {
   public String info(@Context UriInfo uriInfo) {
     URI jndiURI = uriInfo.getBaseUriBuilder().path("jndi").build();
     URI jmsURI = uriInfo.getBaseUriBuilder().path("jms").build();
+    URI adminURI = uriInfo.getBaseUriBuilder().path("admin").build();
     URI contextURI = uriInfo.getBaseUriBuilder().path("context").build();
     return "<html><body>" +
         "<br><a href=\""+jndiURI+"\">"+jndiURI+"</a>"+
         "<br><a href=\""+jmsURI+"\">"+jmsURI+"</a>"+
+        "<br><a href=\""+adminURI+"\">"+adminURI+"</a>"+
         "<br><a href=\""+contextURI+"\">"+contextURI+"</a>"+
         "</body></html>";
   }
