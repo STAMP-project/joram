@@ -242,7 +242,8 @@ public class JndiService {
       builder.link(nextBuilder.build(), JmsContextService.CONTEXT_SEND);
 
       // link send next message
-      long id = helper.getSessionCtx(prodId).getLastId() + 1;
+      SessionContext prodCtx = helper.getSessionCtx(prodId);
+      long id = prodCtx.getLastId() + 1;
       nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JmsContextService.CONTEXT).path(prodId).path(""+id);
       builder.link(nextBuilder.build(), JmsContextService.CONTEXT_SEND_NEXT);
 
@@ -250,6 +251,16 @@ public class JndiService {
       nextBuilder = UriBuilder.fromPath(uriInfo.getBaseUri().toString()).path(JmsService.JMS).path(prodId);
       builder.link(nextBuilder.build(), "close-" + JmsContextService.CONTEXT);
 
+      if (prodCtx.getJmsContext().getTransacted()) {
+        // link commit message
+        nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JmsContextService.CONTEXT).path(prodId).path(JmsContextService.CONTEXT_COMMIT);
+        builder.link(nextBuilder.build(), JmsContextService.CONTEXT_COMMIT);
+
+        // link rollback message
+        nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JmsContextService.CONTEXT).path(prodId).path(JmsContextService.CONTEXT_ROLLBACK);
+        builder.link(nextBuilder.build(), JmsContextService.CONTEXT_ROLLBACK);
+      }
+      
       return builder.build();
     } finally {
       JmsContextService.logLinks(builder);
@@ -311,13 +322,24 @@ public class JndiService {
       builder.link(nextBuilder.build(), JmsContextService.CONTEXT_CONSUME);
 
       // link consume next message
-      long id = helper.getSessionCtx(consId).getLastId() + 1;
+      SessionContext consCtx = helper.getSessionCtx(consId);
+      long id = consCtx.getLastId() + 1;
       nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JmsContextService.CONTEXT).path(consId).path(""+id);
       builder.link(nextBuilder.build(), JmsContextService.CONTEXT_CONSUME_NEXT);
 
       // link delete consumer
       nextBuilder = UriBuilder.fromPath(uriInfo.getBaseUri().toString()).path(JmsService.JMS).path(consId);
       builder.link(nextBuilder.build(), "close-" + JmsContextService.CONTEXT);
+
+      if (consCtx.getJmsContext().getTransacted()) {
+        // link commit consumer message
+        nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JmsContextService.CONTEXT).path(consId).path(JmsContextService.CONTEXT_COMMIT);
+        builder.link(nextBuilder.build(), JmsContextService.CONTEXT_COMMIT);
+
+        // link rollback consumer message
+        nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JmsContextService.CONTEXT).path(consId).path(JmsContextService.CONTEXT_ROLLBACK);
+        builder.link(nextBuilder.build(), JmsContextService.CONTEXT_ROLLBACK);
+      }
 
       return builder.build();
     } finally {
