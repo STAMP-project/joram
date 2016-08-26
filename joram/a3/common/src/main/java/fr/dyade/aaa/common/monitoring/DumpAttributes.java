@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 - 2012 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,10 +22,9 @@
  */
 package fr.dyade.aaa.common.monitoring;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.objectweb.util.monolog.api.BasicLevel;
@@ -55,51 +54,92 @@ public class DumpAttributes {
     Strings.toString(strbuf, value);
     strbuf.append('\n');
   }
+  
+  /**
+   * Adds a complete Thread dump to the StringBuilder given in parameter.
+   * 
+   * @param dump  The StringBuilder to append.
+   * @return      The StringBuilder given in parameter.
+   */  
+  public static StringBuffer dumpAllStackTraces(StringBuffer dump) {
+    Map<Thread, StackTraceElement[]> stacktraces = Thread.getAllStackTraces();
 
-  public static void dumpAttributes(String name, String path) {
-    FileWriter writer = null;
-    try {
-      Set<String> mBeans = null;
-      try {
-        mBeans = MXWrapper.queryNames(name);
-      } catch (Exception exc) {
-        logger.log(BasicLevel.ERROR, "DumpAttributes.dumpAttributes, bad name: " + name, exc);
-        return;
+    for (Thread thread : stacktraces.keySet()) {
+      Thread.State state = thread.getState();
+      dump.append(String.format("\"%s\" %s prio=%d tid=%d nid=1 %s\njava.lang.Thread.State: %s",
+          thread.getName(),
+          (thread.isDaemon() ? "daemon" : ""),
+          thread.getPriority(),
+          thread.getId(),
+          Thread.State.WAITING.equals(state) ? "in Object.wait()" : state.name().toLowerCase(),
+              (state.equals(Thread.State.WAITING) ? "WAITING (on object monitor)" : state)));
+      final StackTraceElement[] stacktrace = stacktraces.get(thread);
+      for (final StackTraceElement stackTraceElement : stacktrace) {
+        dump.append("\n\tat ").append(stackTraceElement);
       }
-      
-      if (mBeans != null) {
-        writer = new FileWriter(path, true);
-        StringBuffer strbuf = new StringBuffer();
+      dump.append("\n---\n");
+    }
+    return dump;
+  }
+  
+//public static StringBuilder dumpAllStackTraces(StringBuilder dump) {
+//final ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+//final ThreadInfo[] threadInfos = threadMXBean.getThreadInfo(threadMXBean.getAllThreadIds(), 100);
+//
+//for (ThreadInfo threadInfo : threadInfos) {
+//  dump.append('"');
+//  dump.append(threadInfo.getThreadName());
+//  dump.append("\" ");
+//  final Thread.State state = threadInfo.getThreadState();
+//  dump.append("\n   java.lang.Thread.State: ");
+//  dump.append(state);
+//
+//  final StackTraceElement[] stacktrace = threadInfo.getStackTrace();
+//  for (final StackTraceElement stackTraceElement : stacktrace) {
+//    dump.append("\n        at ").append(stackTraceElement);
+//  }
+//  dump.append("\n\n");
+//}
+//
+//return dump;
+//}
 
-        for (Iterator<String> iterator = mBeans.iterator(); iterator.hasNext();) {
-          String mBean = iterator.next();
+  public static StringBuffer dumpAttributes(String name, StringBuffer strbuf) {
+    Set<String> mBeans = null;
+    try {
+      mBeans = MXWrapper.queryNames(name);
+    } catch (Exception exc) {
+      logger.log(BasicLevel.ERROR, "DumpAttributes.dumpAttributes, bad name: " + name, exc);
+      return strbuf;
+    }
 
-          // Get all mbean's attributes
-          try {
-            List<String> attributes = MXWrapper.getAttributeNames(mBean);
-            if (attributes != null) {
-              for (int i = 0; i < attributes.size(); i++) {
-                String attname = (String) attributes.get(i);
-                try {
-                  addRecord(strbuf, mBean, attname, MXWrapper.getAttribute(mBean, attname));
-                } catch (Exception exc) {
-                  logger.log(BasicLevel.ERROR,
+    if (mBeans != null) {
+      for (Iterator<String> iterator = mBeans.iterator(); iterator.hasNext();) {
+        String mBean = iterator.next();
+
+        // Get all mbean's attributes
+        try {
+          List<String> attributes = MXWrapper.getAttributeNames(mBean);
+          if (attributes != null) {
+            for (int i = 0; i < attributes.size(); i++) {
+              String attname = (String) attributes.get(i);
+              try {
+                addRecord(strbuf, mBean, attname, MXWrapper.getAttribute(mBean, attname));
+              } catch (Exception exc) {
+                if (logger.isLoggable(BasicLevel.DEBUG))
+                  logger.log(BasicLevel.DEBUG,
                              "DumpAttributes.dumpAttributes, bad attribute : " + mBean + ":" + attname, exc);
-                }
+                else
+                  logger.log(BasicLevel.WARN,
+                             "DumpAttributes.dumpAttributes, bad attribute : " + mBean + ":" + attname);
               }
             }
-            writer.write(strbuf.toString());
-            strbuf.setLength(0);
-          } catch (Exception exc) {
-            logger.log(BasicLevel.ERROR, "DumpAttributes.dumpAttributes", exc);
           }
+        } catch (Exception exc) {
+          logger.log(BasicLevel.ERROR, "DumpAttributes.dumpAttributes", exc);
         }
-        
-        writer.close();
       }
-    } catch (IOException exc) {
-      logger.log(BasicLevel.ERROR,
-                 "FileMonitoringTimerTask.<init>, cannot open file \"" + path + "\"", exc);
     }
+    return strbuf;
   }
 }
