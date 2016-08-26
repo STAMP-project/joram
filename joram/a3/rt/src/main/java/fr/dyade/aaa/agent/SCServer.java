@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 - 2012 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,11 +21,19 @@
  */
 package fr.dyade.aaa.agent;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Enumeration;
 
+import org.objectweb.util.monolog.api.BasicLevel;
+import org.objectweb.util.monolog.api.Logger;
+
+import fr.dyade.aaa.common.Debug;
 import fr.dyade.aaa.common.monitoring.DumpAttributes;
 
 public class SCServer implements SCServerMBean {
+  public static Logger logger = Debug.getLogger(SCServer.class.getName());
+  
   public SCServer() {
   }
 
@@ -78,7 +86,20 @@ public class SCServer implements SCServerMBean {
     return servers;
   }
   
-  public void dumpAttributes(String name, String path) {
-    DumpAttributes.dumpAttributes(name, path);
+  public void dumpAttributes(String name, String path, boolean threaddump) {
+    FileWriter writer = null;
+    try {
+      writer = new FileWriter(path, true);
+      StringBuffer strbuf = new StringBuffer();
+
+      DumpAttributes.dumpAttributes(name, strbuf);
+      if (threaddump)
+        DumpAttributes.dumpAllStackTraces(strbuf);
+      writer.close();
+    } catch (IOException exc) {
+      logger.log(BasicLevel.ERROR,
+                 "SCServer.dumpAttributes, cannot open dump file \"" + path + "\"", exc);
+    }
+
   }
 }
