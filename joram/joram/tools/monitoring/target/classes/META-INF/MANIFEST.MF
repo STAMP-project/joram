@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1472211710276
+Build-Jdk: 1.8.0_65
+Built-By: freyssin
+Bundle-Activator: org.ow2.joram.monitoring.Activator
+Bundle-Description: Builds the Joram Monitoring service bundle.
+Bundle-DocURL: http://joram.ow2.org/
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: JORAM :: joram :: tools :: monitoring
+Bundle-SymbolicName: joram-tools-monitoring
+Bundle-Vendor: ScalAgent D.T.
+Bundle-Version: 5.13.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.ow2.joram.monitoring;uses:="org.osgi.framework,org.o
+ bjectweb.util.monolog.api,fr.dyade.aaa.common,fr.dyade.aaa.util.managem
+ ent,fr.dyade.aaa.common.monitoring,fr.dyade.aaa.agent";version="5.13.0.
+ SNAPSHOT"
+Import-Package: fr.dyade.aaa.agent;version="[5.13,6)",fr.dyade.aaa.commo
+ n;version="[5.13,6)",fr.dyade.aaa.common.monitoring;version="[5.13,6)",
+ fr.dyade.aaa.util.management;version="[5.13,6)",org.objectweb.util.mono
+ log,org.objectweb.util.monolog.api,org.osgi.framework;version="[1.8,2)"
+Tool: Bnd-1.50.0

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>joram-tools-monitoring</artifactId>
+	<packaging>bundle</packaging>
+	<name>JORAM :: joram :: tools :: monitoring</name>
+	<description>Builds the Joram Monitoring service bundle.</description>
+
+	<parent>
+		<groupId>org.ow2.joram</groupId>
+		<artifactId>joram-tools</artifactId>
+		<version>5.13.0-SNAPSHOT</version>
+	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven.bundle.plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Activator>org.ow2.joram.monitoring.Activator</Bundle-Activator>
+            <Export-Package>org.ow2.joram.monitoring</Export-Package>
+						<Import-Package>
+              fr.dyade.aaa.common,
+              fr.dyade.aaa.common.monitoring,
+              fr.dyade.aaa.agent,
+              fr.dyade.aaa.util.management,
+              org.osgi.framework,
+              org.objectweb.util.monolog,
+              org.objectweb.util.monolog.api
+						</Import-Package>
+						<!-- <DynamicImport-Package>*</DynamicImport-Package> -->
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.ow2.joram</groupId>
+			<artifactId>joram-client-jms</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	<modules>
+	</modules>
+</project>
