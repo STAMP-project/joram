@@ -16,6 +16,7 @@
   
   <modules>
   	<module>jasp</module>
-  	<module>rest</module>
+    <module>rest</module>
+    <module>monitoring</module>
   </modules>
 </project>
