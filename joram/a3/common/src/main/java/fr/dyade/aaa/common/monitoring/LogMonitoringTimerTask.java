@@ -44,7 +44,7 @@ public class LogMonitoringTimerTask extends MonitoringTimerTask {
    * 
    * @see fr.dyade.aaa.common.monitoring.LogMonitoringTimerTask
    */
-  public final static String MONITORING_CONFIG_PERIOD_PROPERTY = "LOG_MONITORING_CONFIG_PERIOD";
+  public final static String MONITORING_CONFIG_PERIOD_PROPERTY = "org.ow2.joram.monitoring.LOG_CONFIG_PERIOD";
   /**
    *  Default value for the scanning period for the  log monitoring task in the
    * server, value is <code>60000L</code> (60 seconds).
@@ -62,7 +62,7 @@ public class LogMonitoringTimerTask extends MonitoringTimerTask {
    * 
    * @see fr.dyade.aaa.common.monitoring.LogMonitoringTimerTask
    */
-  public final static String MONITORING_CONFIG_PATH_PROPERTY = "LOG_MONITORING_CONFIG_PATH";
+  public final static String MONITORING_CONFIG_PATH_PROPERTY = "org.ow2.joram.monitoring.LOG_CONFIG_PATH";
   /**
    *  Default value for the pathname of a configuration file for a log monitoring
    * task in the server, value is <code>logMonitoring.props</code>.
@@ -82,7 +82,7 @@ public class LogMonitoringTimerTask extends MonitoringTimerTask {
    * 
    * @see fr.dyade.aaa.common.monitoring.LogMonitoringTimerTask
    */
-  public final static String MONITORING_RESULT_LOGGER_PROPERTY = "LOG_MONITORING_RESULT_LOGGER";
+  public final static String MONITORING_RESULT_LOGGER_PROPERTY = "org.ow2.joram.monitoring.LOG_RESULT_LOGGER";
   /**
    *  Default value for the logger name of the results for the log monitoring task
    * in the server, value is <code>fr.dyade.aaa.agent.Monitoring</code>.
@@ -100,7 +100,7 @@ public class LogMonitoringTimerTask extends MonitoringTimerTask {
    * 
    * @see fr.dyade.aaa.common.monitoring.LogMonitoringTimerTask
    */
-  public final static String MONITORING_RESULT_LEVEL_PROPERTY = "LOG_MONITORING_RESULT_LEVEL";
+  public final static String MONITORING_RESULT_LEVEL_PROPERTY = "org.ow2.joram.monitoring.LOG_RESULT_LEVEL";
   /**
    *  Default value for the logging level of the results for the log monitoring task
    * in the server, value is <code>WARN</code>.
@@ -118,7 +118,7 @@ public class LogMonitoringTimerTask extends MonitoringTimerTask {
    * 
    * @see fr.dyade.aaa.common.monitoring.LogMonitoringTimerTask
    */
-  public final static String MONITORING_RESULT_MESSAGE_PROPERTY = "LOG_MONITORING_RESULT_MESSAGE";
+  public final static String MONITORING_RESULT_MESSAGE_PROPERTY = "org.ow2.joram.monitoring.LOG_RESULT_MESSAGE";
   /**
    *  Default value for the logging message of the results for the log monitoring task
    * in the server, value is <code>"JMX Monitoring "</code>.
@@ -172,9 +172,9 @@ public class LogMonitoringTimerTask extends MonitoringTimerTask {
   	super.period = period;
   	super.attlist = (Properties)attlist.clone();
   	
-  	this.monitoringLogger = Debug.getLogger(taskProps.getProperty("logname"));
-    this.msg = taskProps.getProperty("msg");
-    this.level = getLevel(taskProps.getProperty("level"));
+  	this.monitoringLogger = Debug.getLogger(taskProps.getProperty("result.logger"));
+    this.msg = taskProps.getProperty("log.message");
+    this.level = getLevel(taskProps.getProperty("log.level"));
     
     strbuf = new StringBuffer();
 
@@ -227,7 +227,8 @@ public class LogMonitoringTimerTask extends MonitoringTimerTask {
 		int level = DEFAULT_MONITORING_RESULT_LEVEL;
 
 		try {
-			level = Integer.parseInt(levelName);
+		  if (levelName != null)
+		    level = Integer.parseInt(levelName);
 		} catch (Exception e) {
 			if (levelName.equals("BasicLevel.DEBUG"))
 				level = BasicLevel.DEBUG;

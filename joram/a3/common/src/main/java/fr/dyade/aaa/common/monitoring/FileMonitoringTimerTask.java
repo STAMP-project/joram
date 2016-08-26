@@ -44,7 +44,7 @@ public class FileMonitoringTimerTask extends MonitoringTimerTask {
    * 
    * @see fr.dyade.aaa.common.monitoring.FileMonitoringTimerTask
    */
-  public final static String MONITORING_CONFIG_PERIOD_PROPERTY = "FILE_MONITORING_CONFIG_PERIOD";
+  public final static String MONITORING_CONFIG_PERIOD_PROPERTY = "org.ow2.joram.monitoring.FILE_CONFIG_PERIOD";
   /**
    *  Default value for the scanning period for the  csv file monitoring task in the
    * server, value is <code>60000L</code> (60 seconds).
@@ -62,7 +62,7 @@ public class FileMonitoringTimerTask extends MonitoringTimerTask {
    * 
    * @see fr.dyade.aaa.common.monitoring.FileMonitoringTimerTask
    */
-  public final static String MONITORING_CONFIG_PATH_PROPERTY = "FILE_MONITORING_CONFIG_PATH";
+  public final static String MONITORING_CONFIG_PATH_PROPERTY = "org.ow2.joram.monitoring.FILE_CONFIG_PATH";
   /**
    *  Default value for the pathname of a configuration file for a csv file monitoring
    * task in the server, value is <code>fileMonitoring.props</code>.
@@ -82,7 +82,7 @@ public class FileMonitoringTimerTask extends MonitoringTimerTask {
    * 
    * @see fr.dyade.aaa.common.monitoring.FileMonitoringTimerTask
    */
-  public final static String MONITORING_RESULT_PATH_PROPERTY = "FILE_MONITORING_RESULT_PATH";
+  public final static String MONITORING_RESULT_PATH_PROPERTY = "org.ow2.joram.monitoring.FILE_RESULT_PATH";
   /**
    *  Default value for the pathname of the results file for the monitoring task
    * in the server, value is <code>monitoringStats.csv</code>.
@@ -136,7 +136,7 @@ public class FileMonitoringTimerTask extends MonitoringTimerTask {
   	super.period = period;
   	super.attlist = (Properties) attlist.clone();
 
-    path = taskProps.getProperty("resultPath");
+    path = taskProps.getProperty("result.path");
     
     try {
         writer = new FileWriter(path, true);

@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Timer;
 import java.lang.Math;
+
 import javax.swing.*;
 
 /**
@@ -39,11 +40,55 @@ import javax.swing.*;
  * JMX attributes and send the corresponding values to the outpuStrean.
  */
 public class WindowMonitoringTimerTask extends MonitoringTimerTask {
+  /**
+   *  Name of property allowing to fix the scanning period for the monitoring
+   * task in the server.
+   * <p>
+   *  This property can be fixed either from <code>java</code> launching command,
+   * or in <code>a3servers.xml</code> configuration file.
+   */
+  public final static String MONITORING_CONFIG_PERIOD_PROPERTY = "WINDOW_MONITORING_CONFIG_PERIOD";
+  /**
+   *  Default value for the scanning period for the monitoring task in the
+   * server, value is <code>60000L</code> (60 seconds).
+   */
+  public final static long DEFAULT_MONITORING_CONFIG_PERIOD = 15000L;
 
-	StringBuffer strbuf = null;
+  /**
+   *  Name of property allowing to fix the pathname of a configuration file for the
+   * monitoring task in the server.
+   * <p>
+   *  This property can be fixed either from <code>java</code> launching command,
+   * or in <code>a3servers.xml</code> configuration file.
+   */
+  public final static String MONITORING_CONFIG_PATH_PROPERTY = "FILE_MONITORING_CONFIG_PATH";
+  /**
+   *  Default value for the pathname of a configuration file for the monitoring task
+   * in the server, value is <code>windowMonitoring.props</code>.
+   * <p>
+   *  If the file does not exist the timer task is not launched.
+   */
+  public final static String DEFAULT_MONITORING_CONFIG_PATH = "windowMonitoring.props";
+
+	StringBuffer strbuf = new StringBuffer();
 	JTextArea textArea;
 	JTextField attField, addMbeanField, delMbeanField;
 	Graphics graph;
+	
+  /**
+   * Initializes the <code>FileMonitoringTimerTask</code> component.
+   * 
+   * @param timer   Timer to use to schedule the resulting task.
+   * @param period  Period value of the resulting task
+   * @param attlist List of JMX attributes to periodically watch.
+   */
+  public WindowMonitoringTimerTask(Timer timer, long period, Properties attlist) {
+    super(period, attlist);
+
+    GUI("Monitoring", 100, 100);
+
+    start(timer);
+  }
 
 	/**
 	 * Instantiates the <code>WindowMonitoringTimerTask</code> component.
@@ -58,8 +103,6 @@ public class WindowMonitoringTimerTask extends MonitoringTimerTask {
 	public void init(Timer timer, long period, Properties attlist, Properties taskProps){
   	super.period = period;
   	super.attlist = (Properties)attlist.clone();
-  	
-  	strbuf = new StringBuffer();
 
 		GUI(taskProps.getProperty("name"), 100, 100);
 
