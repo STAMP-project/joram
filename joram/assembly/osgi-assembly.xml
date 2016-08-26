@@ -40,6 +40,7 @@
         <include>org.ow2.joram:joram-tools-rest-admin</include>
         <include>org.ow2.joram:joram-tools-rest-jms</include>
         <include>org.ow2.joram:joram-tools-rest-jmx</include>
+        <include>org.ow2.joram:joram-tools-monitoring</include>
         <include>org.apache.felix:org.apache.felix.shell</include>
         <include>org.apache.felix:org.apache.felix.shell.remote</include>
         <include>org.apache.felix:org.apache.felix.shell.tui</include>
