@@ -11,7 +11,7 @@ import javax.jms.JMSProducer;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
-public class Producer implements CompletionListener{
+public class Producer implements CompletionListener {
   static Context ictx = null; 
 
   public static void main(String[] args) throws Exception {
