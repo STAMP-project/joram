@@ -71,6 +71,9 @@
     <copy file="${a3.conf}" tofile="${run.dir}/server${sid}/a3servers.xml"/>
     <copy file="${osgi.conf}" tofile="${run.dir}/server${sid}/config.properties"/>
     <!--copy file="${monit.conf}" tofile="${run.dir}/server${sid}/MonitoringConfig.xml"/-->
+  	<!-- copy file="${conf.dir}/fileMonitoring.props" tofile="${run.dir}/server${sid}/fileMonitoring.props"/ -->
+    <!-- copy file="${conf.dir}/fileMonitoring.props" tofile="${run.dir}/server${sid}/logMonitoring.props"/ -->
+    <!-- copy file="${conf.dir}/fileMonitoring.props" tofile="${run.dir}/server${sid}/windowMonitoring.props"/ -->
   </target>
 
   <target name="simple_init" depends="init">
@@ -83,6 +86,7 @@
           failonerror="no" fork="yes"
           dir="${run.dir}/server${sid}">
       <classpath path="${felix.class.path}"/>
+      <!-- jvmarg line="-Dfelix.config.properties=file:config.properties -Dfr.dyade.aaa.agent.AgentServer.id=${sid} -Dcom.sun.management.jmxremote.port=9191 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -DTransaction.SyncOnWrite=false"/ -->
       <jvmarg line="-server -Xmx2G -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,address=5000,suspend=n -Dfelix.config.properties=file:config.properties -Dfr.dyade.aaa.agent.AgentServer.id=${sid} -Dcom.sun.management.jmxremote -DTransaction.SyncOnWrite=false"/>
       <!-- jvmarg line="-server -Xmx1500m -Xincgc -Dfelix.config.properties=file:config.properties -Dfr.dyade.aaa.agent.AgentServer.id=${sid} -Dcom.sun.management.jmxremote"/ -->
       <!-- jvmarg line="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y"/ -->
@@ -244,6 +248,19 @@
   <!-- **************************************************
        * Classic Sample
        ************************************************** -->
+
+  <!-- Runs the JoramAdmin class -->
+  <target name="joram_admin" depends="simple_init"
+          description="--> Runs the JoramAdmin with shutdown command">
+    <java classname="classic.JoramAdmin"
+      failonerror="no" fork="yes"
+      dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <arg value="localhost"/>
+      <arg value="6666"/>
+      <arg value="shutdown"/>
+    </java>
+  </target>
 
   <!-- Setup the classic configuration -->
   <target name="classic_admin" depends="simple_init"
