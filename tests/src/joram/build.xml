@@ -6794,6 +6794,7 @@
     <antcall target="jms2.test12"/>
   	<antcall target="jms2.sharedTest1"/>
   	<antcall target="jms2.sharedTest2"/>
+    <antcall target="jms2.redeliveryDelay"/>
   </target>
 
   <target name="jms2.test1" depends="init.a3props,compile"
@@ -6977,6 +6978,94 @@
       <param name="args" value=""/>
     </antcall>
   </target>
+  
+  <target name="jms2.redeliveryDelay"
+          description=" --> launch all jms2.redeliveryDelay tests">
+    <antcall target="jms2.redeliveryDelay_T_T"/>
+    <antcall target="jms2.redeliveryDelay_T_C"/>
+    <antcall target="jms2.redeliveryDelay_T_A"/>
+    <antcall target="jms2.redeliveryDelay_Q_T"/>
+    <antcall target="jms2.redeliveryDelay_Q_C"/>
+    <antcall target="jms2.redeliveryDelay_Q_A"/>
+  </target>
+  
+  <target name="jms2.redeliveryDelay_T_T" depends="init.a3props,compile"
+            description=" --> Test re-delivery delay topic transacted">
+      <antcall target="test.run" inheritAll="true">
+        <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+        <param name="testid" value="jms2.redeliveryDelay_T"/>
+        <param name="className" value="joram.jms2.RedeliveryDelay_T"/>
+        <param name="jndiconf" value="jms2/jndi.properties"/>
+        <param name="a3conf" value="jms2/a3servers1.xml"/>
+        <param name="jvmargs" value=""/>
+        <param name="args" value="0"/><!-- 0 = transacted -->
+      </antcall>
+    </target>
+  
+  <target name="jms2.redeliveryDelay_Q_T" depends="init.a3props,compile"
+            description=" --> Test re-delivery delay queue transacted">
+      <antcall target="test.run" inheritAll="true">
+        <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+        <param name="testid" value="jms2.redeliveryDelay_Q"/>
+        <param name="className" value="joram.jms2.RedeliveryDelay_Q"/>
+        <param name="jndiconf" value="jms2/jndi.properties"/>
+        <param name="a3conf" value="jms2/a3servers1.xml"/>
+        <param name="jvmargs" value=""/>
+        <param name="args" value="0"/><!-- 0 = transacted -->
+      </antcall>
+    </target>
+  
+  <target name="jms2.redeliveryDelay_T_A" depends="init.a3props,compile"
+            description=" --> Test re-delivery delay topic transacted">
+      <antcall target="test.run" inheritAll="true">
+        <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+        <param name="testid" value="jms2.redeliveryDelay_T"/>
+        <param name="className" value="joram.jms2.RedeliveryDelay_T"/>
+        <param name="jndiconf" value="jms2/jndi.properties"/>
+        <param name="a3conf" value="jms2/a3servers1.xml"/>
+        <param name="jvmargs" value=""/>
+        <param name="args" value="1"/><!-- 1 = autoACK -->
+      </antcall>
+    </target>
+  
+  <target name="jms2.redeliveryDelay_Q_A" depends="init.a3props,compile"
+            description=" --> Test re-delivery delay queue transacted">
+      <antcall target="test.run" inheritAll="true">
+        <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+        <param name="testid" value="jms2.redeliveryDelay_Q"/>
+        <param name="className" value="joram.jms2.RedeliveryDelay_Q"/>
+        <param name="jndiconf" value="jms2/jndi.properties"/>
+        <param name="a3conf" value="jms2/a3servers1.xml"/>
+        <param name="jvmargs" value=""/>
+        <param name="args" value="1"/><!-- 1 = autoACK -->
+      </antcall>
+    </target>
+  
+  <target name="jms2.redeliveryDelay_T_C" depends="init.a3props,compile"
+            description=" --> Test re-delivery delay topic clientACK">
+      <antcall target="test.run" inheritAll="true">
+        <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+        <param name="testid" value="jms2.redeliveryDelay_T"/>
+        <param name="className" value="joram.jms2.RedeliveryDelay_T"/>
+        <param name="jndiconf" value="jms2/jndi.properties"/>
+        <param name="a3conf" value="jms2/a3servers.xml"/>
+        <param name="jvmargs" value=""/>
+        <param name="args" value="2"/><!-- 2 = clientACK -->
+      </antcall>
+    </target>
+  
+  <target name="jms2.redeliveryDelay_Q_C" depends="init.a3props,compile"
+            description=" --> Test re-delivery delay queue clientACK">
+      <antcall target="test.run" inheritAll="true">
+        <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+        <param name="testid" value="jms2.redeliveryDelay_Q"/>
+        <param name="className" value="joram.jms2.RedeliveryDelay_Q"/>
+        <param name="jndiconf" value="jms2/jndi.properties"/>
+        <param name="a3conf" value="jms2/a3servers.xml"/>
+        <param name="jvmargs" value=""/>
+        <param name="args" value="2"/><!-- 2 = clientACK -->
+      </antcall>
+    </target>
 	
   <target name="medical.test1" depends="compile"
           description=" --> Medical use-case">
