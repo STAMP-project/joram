@@ -149,23 +149,24 @@ public class Monitoring {
    */
   public static void stop() throws Exception {
     try {
-      if (fileMonitoringTimerTask != null)
+      if (fileMonitoringTimerTask != null) {
+        MXWrapper.unregisterMBean("MonitoringService", fileMonitoringTimerTask.MBean_name);
         fileMonitoringTimerTask.cancel();
+      }
       fileMonitoringTimerTask = null;
 
-      MXWrapper.unregisterMBean("MonitoringService", fileMonitoringTimerTask.MBean_name);
 
-      if (logMonitoringTimerTask != null)
+      if (logMonitoringTimerTask != null) {
+        MXWrapper.unregisterMBean("MonitoringService", logMonitoringTimerTask.MBean_name);
         logMonitoringTimerTask.cancel();
+      }
       logMonitoringTimerTask = null;
 
-      MXWrapper.unregisterMBean("MonitoringService", logMonitoringTimerTask.MBean_name);
-
-      if (windowMonitoringTimerTask != null)
+      if (windowMonitoringTimerTask != null) {
+        MXWrapper.unregisterMBean("MonitoringService", windowMonitoringTimerTask.MBean_name);        
         windowMonitoringTimerTask.cancel();
+      }
       windowMonitoringTimerTask = null;
-
-      MXWrapper.unregisterMBean("MonitoringService", windowMonitoringTimerTask.MBean_name);
 
       if (timer != null)
         timer.cancel();
