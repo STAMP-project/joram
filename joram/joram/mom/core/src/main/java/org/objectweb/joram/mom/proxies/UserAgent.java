@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2016 ScalAgent Distributed Technologies
  * Copyright (C) 2004 France Telecom R&D
  * Copyright (C) 2003 - 2004 Bull SA
  * Copyright (C) 1996 - 2000 Dyade
@@ -63,11 +63,11 @@ import org.objectweb.joram.mom.notifications.AdminReplyNot;
 import org.objectweb.joram.mom.notifications.BrowseReply;
 import org.objectweb.joram.mom.notifications.BrowseRequest;
 import org.objectweb.joram.mom.notifications.ClientMessages;
+import org.objectweb.joram.mom.notifications.ClientSubscriptionNot;
 import org.objectweb.joram.mom.notifications.DenyRequest;
 import org.objectweb.joram.mom.notifications.ExceptionReply;
 import org.objectweb.joram.mom.notifications.FwdAdminRequestNot;
 import org.objectweb.joram.mom.notifications.GetClientSubscriptions;
-import org.objectweb.joram.mom.notifications.ClientSubscriptionNot;
 import org.objectweb.joram.mom.notifications.QueueMsgReply;
 import org.objectweb.joram.mom.notifications.ReceiveRequest;
 import org.objectweb.joram.mom.notifications.ReconnectSubscribersNot;
@@ -165,7 +165,6 @@ import fr.dyade.aaa.agent.AgentId;
 import fr.dyade.aaa.agent.AgentServer;
 import fr.dyade.aaa.agent.CallbackNotification;
 import fr.dyade.aaa.agent.Channel;
-import fr.dyade.aaa.agent.CountDownCallback;
 import fr.dyade.aaa.agent.DeleteNot;
 import fr.dyade.aaa.agent.Notification;
 import fr.dyade.aaa.agent.UnknownAgent;
@@ -202,7 +201,7 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
   
   /** Map contains the clientID */
   private transient Map<Integer, String> clientIDs = new HashMap<Integer, String>();
-
+ 
   /** period to run the cleaning task, by default 60s. */
   private long period = 60000L;
 
@@ -242,6 +241,27 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
       Channel.sendTo(getId(), not);
       this.period = period;
     }
+  }
+  
+  /** 
+   * The re-delivery delay use to wait before re-delivering 
+   * messages after a deny.
+   */
+  private int reDeliveryDelay = 0;
+ 
+  /**
+   * @return the reDeliveryDelay
+   */
+  public int getReDeliveryDelay() {
+    return reDeliveryDelay/1000;
+  }
+
+  /**
+   * @param reDeliveryDelay the reDeliveryDelay to set
+   */
+  public void setReDeliveryDelay(int reDeliveryDelay) {
+    logger.log(BasicLevel.ERROR, this + " === setReDeliveryDelay " + reDeliveryDelay);//NTA tmp
+    this.reDeliveryDelay = reDeliveryDelay*1000;
   }
 
   /**
@@ -1115,6 +1135,9 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
     } else {
       arrivalState = UserAgentArrivalState.load(ARRIVAL_STATE_PREFIX + getId().toString());
     }
+    
+    if (reDeliveryDelay == 0)
+      reDeliveryDelay = AgentServer.getInteger(AdminCommandConstant.RE_DELIVERY_DELAY, 0) * 1000;
     
     MessageTableFactory messageTableFactory = MessageTableFactory.newFactory();
     messagesTable = messageTableFactory.createMessageTable(MESSAGE_TABLE_PREFIX + getId().toString());
@@ -2128,6 +2151,25 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
       if (sub == null)
         return;
 
+      long currentTime = System.currentTimeMillis();
+      Iterator<String> denies = new Vector<String>(req.getIds()).iterator();
+      while (denies.hasNext()) {
+        String msgId = (String) denies.next();
+        Message msg = sub.getSubMessage(msgId);
+
+        if (msg != null && reDeliveryDelay > 0 && req.isRedelivered()) {
+          msg.setDeliveryTime(currentTime + reDeliveryDelay);
+          msg.setRedelivered();
+          //TODO: msg.setDeliveryCount(deliveryCount);
+          List<String> ids = new ArrayList<>();
+          ids.add(req.getTarget());
+          scheduleDeliveryTimeMessage(sub.getTopicId(), msg.getMsg(), ids);
+          if (logger.isLoggable(BasicLevel.DEBUG))
+            logger.log(BasicLevel.DEBUG, "UserAgent.doReact SessDenyRequest: scheduleDeliveryTimeMessage " + msg.getId() + ", reDeliveryDelay = " + reDeliveryDelay);
+          req.getIds().remove(msgId);
+        }
+      }
+      
       sub.deny(req.getIds().iterator(), req.isRedelivered());
 
       // Launching a delivery sequence:
@@ -2190,9 +2232,28 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
       if (sub == null)
         return;
 
+      String msgId = req.getId();
       Vector<String> ids = new Vector<String>();
-      ids.add(req.getId());
-      sub.deny(ids.iterator(), req.isRedelivered());
+      ids.add(msgId);
+
+      if (reDeliveryDelay > 0 && req.isRedelivered()) {
+        Message msg = sub.getSubMessage(msgId);
+        if (msg != null) {
+          List<String> traget = new ArrayList<>();
+          traget.add(req.getTarget());
+        long currentTime = System.currentTimeMillis();
+        msg.setDeliveryTime(currentTime + reDeliveryDelay);
+        msg.setRedelivered();
+        //TODO: msg.setDeliveryCount(deliveryCount);
+        scheduleDeliveryTimeMessage(sub.getTopicId(), msg.getMsg(), traget);
+        if (logger.isLoggable(BasicLevel.DEBUG))
+          logger.log(BasicLevel.DEBUG, "UserAgent.doReact ConsumerDenyRequest: scheduleDeliveryTimeMessage " + msg.getId() + ", reDeliveryDelay = " + reDeliveryDelay);
+        } else {
+          sub.deny(ids.iterator(), req.isRedelivered());
+        }
+      } else {
+        sub.deny(ids.iterator(), req.isRedelivered());
+      }
 
       // Launching a delivery sequence:
       ConsumerMessages consM = sub.deliver();

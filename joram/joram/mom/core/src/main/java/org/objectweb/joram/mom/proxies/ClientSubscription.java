@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2003 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2003 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@
  */
 package org.objectweb.joram.mom.proxies;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,6 +44,7 @@ import org.objectweb.joram.mom.util.MessageIdList;
 import org.objectweb.joram.mom.util.MessageIdListFactory;
 import org.objectweb.joram.mom.util.MessageTable;
 import org.objectweb.joram.shared.MessageErrorConstants;
+import org.objectweb.joram.shared.admin.AdminCommandConstant;
 import org.objectweb.joram.shared.client.ConsumerMessages;
 import org.objectweb.joram.shared.excepts.RequestException;
 import org.objectweb.joram.shared.selectors.Selector;
@@ -134,7 +134,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
   public void setNbMaxMsg(int nbMaxMsg) {
     this.nbMaxMsg = nbMaxMsg;
   }
-
+  
   /** Vector of identifiers of the messages to deliver. */
   private transient MessageIdList messageIds;
   /** Table of delivered messages identifiers. */
@@ -609,8 +609,10 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
     if (requestId == -1)
       return null;
 
+    long currentTime = System.currentTimeMillis();
+    
      // Returning null if a "receive" request has expired:
-    if (!toListener && requestExpTime > 0 && System.currentTimeMillis() >= requestExpTime) {
+    if (!toListener && requestExpTime > 0 && currentTime >= requestExpTime) {
       if (logger.isLoggable(BasicLevel.DEBUG))
         logger.log(BasicLevel.DEBUG, this + ": receive request " + requestId + " expired.");
       requestId = -1;
@@ -650,7 +652,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
 
         if (message != null) {
           // Message still exists.
-          if (message.isValid(System.currentTimeMillis())) {
+          if (message.isValid(currentTime)) {
             // Delivering it if valid.
             deliveredIds.put(id, id);
 
@@ -662,7 +664,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
               message.setDeliveryCount(deliveryAttempts.intValue() +1);
               message.setRedelivered();
             }
-
+            
             // Inserting it according to its priority.
             if (lastPrior == -1 || message.getPriority() == lastPrior)
               insertionIndex++;
@@ -782,6 +784,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
           keptMsg.setDeliveryCount(deliveryAttempts.intValue() +1);
           keptMsg.setRedelivered();
         }
+        
         deliverables.add(keptMsg.getFullMessage().clone());
 
         if (logger.isLoggable(BasicLevel.DEBUG))
@@ -860,7 +863,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
    */
   private void deny(Iterator<String> denies, boolean remove, boolean redelivered) {
     if (logger.isLoggable(BasicLevel.DEBUG))
-      logger.log(BasicLevel.DEBUG, this + ".deny(" + denies + ')');
+      logger.log(BasicLevel.DEBUG, this + ".deny(" + denies + ')');    
     String id;
     Message message;
     int deliveryAttempts = 1;
@@ -916,7 +919,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
         while (i < messageIds.size()) {
           currentId = (String) messageIds.get(i);
           Message currentMessage = (Message) messagesTable.get(currentId);
-            
+
           // Message may be null if it is not valid anymore
           if (currentMessage != null) {
             currentO = currentMessage.order;
@@ -991,6 +994,12 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
       
       return null;
     }
+    return (Message) messagesTable.get(msgId);
+  }
+  
+  Message getSubMessage(String msgId) {
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, "ClientSubscription.getSubMessage(" + msgId + ')');
     return (Message) messagesTable.get(msgId);
   }
   

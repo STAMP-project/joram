@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2016 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -96,8 +96,10 @@ import org.objectweb.joram.shared.admin.SetThresholdRequest;
 import org.objectweb.joram.shared.admin.StopServerRequest;
 import org.objectweb.joram.shared.admin.UpdateUser;
 import org.objectweb.joram.shared.admin.UserAdminRequest;
+import org.objectweb.joram.shared.excepts.MessageValueException;
 import org.objectweb.joram.shared.excepts.MomException;
 import org.objectweb.joram.shared.excepts.RequestException;
+import org.objectweb.joram.shared.messages.ConversionHelper;
 import org.objectweb.joram.shared.messages.Message;
 import org.objectweb.joram.shared.messages.MessageHelper;
 import org.objectweb.joram.shared.security.Identity;
@@ -877,10 +879,23 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
         UserAgent proxy = new UserAgent();
         proxy.setName(name);
         proxId = proxy.getId();
+        Properties props = request.getProperties();
         
         try {
           // set interceptors.
-          proxy.setInterceptors(request.getProperties());
+          proxy.setInterceptors(props);
+          
+          // set reDeliverDelay
+          if (props != null && props.containsKey(AdminCommandConstant.RE_DELIVERY_DELAY)) {
+            int reDeliveryDelay;
+            try {
+              reDeliveryDelay = ConversionHelper.toInt(props.get(AdminCommandConstant.RE_DELIVERY_DELAY));
+              proxy.setReDeliveryDelay(reDeliveryDelay);
+            } catch (MessageValueException e) {
+              if (logger.isLoggable(BasicLevel.WARN))
+                logger.log(BasicLevel.WARN, "EXCEPTION:: createUser [" + name + "] set the redelivery delay", e);
+            }
+          }
 
         	// deploy UserAgent
           proxy.deploy();
@@ -901,7 +916,7 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
           throw new RequestException("User proxy not deployed: " + exc);
         }
       }
-
+      
       if (logger.isLoggable(BasicLevel.DEBUG))
         logger.log(BasicLevel.DEBUG, info);
 

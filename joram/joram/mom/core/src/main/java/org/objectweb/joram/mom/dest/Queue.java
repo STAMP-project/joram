@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2016 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -56,6 +56,7 @@ import org.objectweb.joram.mom.util.JoramHelper;
 import org.objectweb.joram.mom.util.QueueDeliveryTimeTask;
 import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.MessageErrorConstants;
+import org.objectweb.joram.shared.admin.AdminCommandConstant;
 import org.objectweb.joram.shared.admin.AdminReply;
 import org.objectweb.joram.shared.admin.AdminRequest;
 import org.objectweb.joram.shared.admin.ClearQueue;
@@ -113,6 +114,26 @@ public class Queue extends Destination implements QueueMBean {
 
   /** Static value holding the default DMQ identifier for a server. */
   static AgentId defaultDMQId = null;
+
+  /** 
+   * The re-delivery delay use to wait before re-delivering 
+   * messages after a deny. 
+   */
+  private int reDeliveryDelay = 0;
+  
+  /**
+   * @return the reDeliveryDelay
+   */
+  public int getReDeliveryDelay() {
+    return reDeliveryDelay/1000;
+  }
+
+  /**
+   * @param reDeliveryDelay the reDeliveryDelay to set
+   */
+  public void setReDeliveryDelay(int reDeliveryDelay) {
+    this.reDeliveryDelay = reDeliveryDelay*1000;
+  }
 
   /**
    * Threshold above which messages are considered as undeliverable because
@@ -446,6 +467,9 @@ public class Queue extends Destination implements QueueMBean {
   protected void initialize(boolean firstTime) throws Exception {
     cleanWaitingRequest(System.currentTimeMillis());
 
+    if (reDeliveryDelay == 0)
+      reDeliveryDelay = AgentServer.getInteger(AdminCommandConstant.RE_DELIVERY_DELAY, 0) * 1000;
+    
     receiving = false;
     messages = new Vector();
     
@@ -712,7 +736,7 @@ public class Queue extends Destination implements QueueMBean {
   protected void denyRequest(AgentId from, DenyRequest not) {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "Queue.DenyRequest(" + from + ',' + not + ')');
-
+    
     Enumeration ids = not.getIds();
 
     String msgId;
@@ -752,6 +776,12 @@ public class Queue extends Destination implements QueueMBean {
             message.setRedelivered();
           else
             message.setDeliveryCount(message.getDeliveryCount()-1);
+          
+          if (reDeliveryDelay > 0 && (message.isRedelivered() || message.getDeliveryCount() > 0)) {
+            message.setDeliveryTime(System.currentTimeMillis() + reDeliveryDelay);
+            if (logger.isLoggable(BasicLevel.DEBUG))
+              logger.log(BasicLevel.DEBUG, "Queue.DenyRequest: setDeliveryTime " + message.getDeliveryTime());
+          }
 
           // If message considered as undeliverable, adding
           // it to the list of dead messages:
@@ -802,7 +832,12 @@ public class Queue extends Destination implements QueueMBean {
         message.setRedelivered();
       else
         message.setDeliveryCount(message.getDeliveryCount()-1);
-
+      
+      if (reDeliveryDelay > 0 && (message.isRedelivered() || message.getDeliveryCount() > 0)) {
+        message.setDeliveryTime(System.currentTimeMillis() + reDeliveryDelay);
+        if (logger.isLoggable(BasicLevel.DEBUG))
+          logger.log(BasicLevel.DEBUG, "Queue.DenyRequest: setDeliveryTime " + message.getDeliveryTime());
+      }
 
       if (logger.isLoggable(BasicLevel.DEBUG))
         logger.log(BasicLevel.DEBUG, " -> deny " + msgId);
@@ -822,8 +857,15 @@ public class Queue extends Destination implements QueueMBean {
         dmqManager.addDeadMessage(message.getFullMessage(), MessageErrorConstants.UNDELIVERABLE);
       } else {
         try {
-          // Else, putting the message back into the deliverables list:
-          storeMessageHeader(message, false);
+          if (message.getDeliveryTime() > 0) {
+            if (logger.isLoggable(BasicLevel.DEBUG))
+              logger.log(BasicLevel.DEBUG, "Queue.DenyRequest: scheduleDeliveryTimeMessage " + message.getId() + ", reDeliveryDelay = " + reDeliveryDelay);
+            scheduleDeliveryTimeMessage(message.getMsg(), false);
+            deliveryTable.remove(message.getId());
+          } else {
+            // Else, putting the message back into the deliverables list:
+            storeMessageHeader(message, false);
+          }
         } catch (AccessException e) {/* never happens */}
       }
 
@@ -1109,6 +1151,8 @@ public class Queue extends Destination implements QueueMBean {
         msg = new Message(sharedMsg);
 
         if (sharedMsg.deliveryTime > currentTime) {
+          if (logger.isLoggable(BasicLevel.DEBUG))
+            logger.log(BasicLevel.DEBUG, "Queue.doClientMessages: scheduleDeliveryTimeMessage " + sharedMsg.id + ", reDeliveryDelay = " + reDeliveryDelay);
           scheduleDeliveryTimeMessage(sharedMsg, throwsExceptionOnFullDest);
         } else {
           msg.order = arrivalState.getAndIncrementArrivalCount(msg.isPersistent());

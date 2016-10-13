@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2014 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2016 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -53,6 +53,7 @@ import org.objectweb.joram.mom.proxies.SendReplyNot;
 import org.objectweb.joram.mom.util.DMQManager;
 import org.objectweb.joram.mom.util.InterceptorsHelper;
 import org.objectweb.joram.mom.util.MessageInterceptor;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.MessageErrorConstants;
 import org.objectweb.joram.shared.admin.AdminCommandConstant;
 import org.objectweb.joram.shared.admin.AdminCommandReply;
@@ -395,6 +396,14 @@ public abstract class Destination extends Agent implements DestinationMBean {
       } else {
         interceptors = null;
       }
+    }
+    
+    // reDeliveryDelay
+    if (prop != null 
+        && prop.containsKey(AdminCommandConstant.RE_DELIVERY_DELAY) 
+        && getType() == DestinationConstants.QUEUE_TYPE) {
+      int reDeliveryDelay = ConversionHelper.toInt(prop.get(AdminCommandConstant.RE_DELIVERY_DELAY));
+      ((Queue) this).setReDeliveryDelay(reDeliveryDelay);
     }
   }
 

@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2004 - 2010 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -114,5 +114,15 @@ public interface UserAgentMBean extends AgentMBean {
    * Returns the amount of memory consumed by the message table.
    */
   int getMessageTableConsumedMemory();
+  
+  /**
+   * Return the reDeliveryDelay (unit: second)
+   */
+  int getReDeliveryDelay();
+
+  /**
+   * @param reDeliveryDelay the reDeliveryDelay to set(unit: second)
+   */
+  void setReDeliveryDelay(int reDeliveryDelay);
   
 }

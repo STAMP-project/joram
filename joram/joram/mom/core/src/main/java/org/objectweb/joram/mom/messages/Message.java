@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2006 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2006 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -276,6 +276,16 @@ public final class Message implements Serializable, MessageView, Encodable {
     msg.redelivered = true;
   }
   
+  /** Sets the message delivery time */
+  public void setDeliveryTime(long deliveryTime) {
+    msg.deliveryTime = deliveryTime;
+  }
+  
+  /** Returns the message delivery time*/
+  public long getDeliveryTime() {
+    return msg.deliveryTime;
+  }
+  
   public long getOrder() {
     return order;
   }
@@ -299,7 +309,7 @@ public final class Message implements Serializable, MessageView, Encodable {
   public void incDurableAcksCounter() {
     this.durableAcksCounter++;
   }
-
+ 
   public org.objectweb.joram.shared.messages.Message getMsg() {
     return msg;
   }
