@@ -2469,8 +2469,10 @@ public class Session implements javax.jms.Session, SessionMBean {
       if (logger.isLoggable(BasicLevel.DEBUG))
         logger.log(BasicLevel.DEBUG, "", exc);
 
-      if (autoAck || mcl.isClosed()) {
+      if (mcl.isClosed()) {
         denyMessage(mcl.getTargetName(), msgId, mcl.getQueueMode(), false);
+      } else if (autoAck) {
+        denyMessage(mcl.getTargetName(), msgId, mcl.getQueueMode(), true);
       }
       return;
     }
