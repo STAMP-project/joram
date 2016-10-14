@@ -109,18 +109,18 @@ public class JMSDistribution implements DistributionHandler {
       }
       List<JMSModule> connections = JMSConnectionService.getInstance().getConnections();
       if (logger.isLoggable(BasicLevel.DEBUG)) {
-        logger.log(BasicLevel.DEBUG, "JMSDistribution.distribute: connections = " + connections);
+        logger.log(BasicLevel.DEBUG, "JMSDistribution.distribute: connections=" + connections.size());
       }
             
       for (final JMSModule connection : connections) {
-        SessionAndProducer sap = sessions.get(connection.getCnxFactName());
+        SessionAndProducer sap = sessions.get(connection.getName());
         if (sap != null) {
           // Verify that the connection still valid
           if (sap.connection != connection.getCnx())  {
             if (logger.isLoggable(BasicLevel.DEBUG))
               logger.log(BasicLevel.DEBUG,
-                         "JMSDistribution.distribute: remove outdated connection " + connection.getCnxFactName());
-            sessions.remove(connection.getCnxFactName());
+                         "JMSDistribution.distribute: remove outdated connection " + connection.getName());
+            sessions.remove(connection.getName());
             sap = null;
           }
         }
@@ -128,12 +128,15 @@ public class JMSDistribution implements DistributionHandler {
         if (sap == null) { // !sessions.containsKey(connection.getCnxFactName()))
           if (logger.isLoggable(BasicLevel.DEBUG))
             logger.log(BasicLevel.DEBUG,
-                       connection.getCnxFactName() + ": New connection factory available for distribution.");
+                       "JMSDistribution.distribute: Creates new connection for distribution, cf = " + connection.getName());
           try {
             Session session = connection.getCnx().createSession(false, Session.AUTO_ACKNOWLEDGE);
             Destination dest = (Destination) connection.retrieveJndiObject(destName);
             MessageProducer producer = session.createProducer(dest);
-            sessions.put(connection.getCnxFactName(), new SessionAndProducer(connection.getCnx(), session, producer));
+            sessions.put(connection.getName(), new SessionAndProducer(connection.getCnx(), session, producer));
+            if (logger.isLoggable(BasicLevel.DEBUG))
+              logger.log(BasicLevel.DEBUG,
+                         "JMSDistribution.distribute: New connection available.");
           } catch (Exception exc) {
             if (logger.isLoggable(BasicLevel.DEBUG)) {
               logger.log(BasicLevel.DEBUG, "Connection is not usable.", exc);
@@ -146,11 +149,15 @@ public class JMSDistribution implements DistributionHandler {
 
     // Send the message
     Iterator<Map.Entry<String, SessionAndProducer>> iter = sessions.entrySet().iterator();
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, "Try to send message, sessions available: " + sessions.size());
     while (iter.hasNext()) {
       Map.Entry<String, SessionAndProducer> entry = iter.next();
       try {
         SessionAndProducer session = entry.getValue();
         String cnxName = entry.getKey();
+        if (logger.isLoggable(BasicLevel.DEBUG))
+          logger.log(BasicLevel.DEBUG, "Try session: " + cnxName);
         if (connectionNames != null && !connectionNames.contains(cnxName)) {
           continue;
         }

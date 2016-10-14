@@ -164,11 +164,11 @@ public class JMSAcquisition implements AcquisitionDaemon {
     List<JMSModule> connections = JMSConnectionService.getInstance().getConnections();
 
     for (JMSModule connection : connections) {
-      if (!listeners.containsKey(connection.getCnxFactName())) {
-        if (connectionNames == null || connectionNames.contains(connection.getCnxFactName())) {
+      if (!listeners.containsKey(connection.getName())) {
+        if (connectionNames == null || connectionNames.contains(connection.getName())) {
           if (logger.isLoggable(BasicLevel.DEBUG)) {
             logger.log(BasicLevel.DEBUG,
-                       "Creating a new consumer for connection: " + connection.getCnxFactName(), new Exception());
+                       "Creating a new consumer for connection: " + connection.getName(), new Exception());
           }
           try {
             dest = (Destination) connection.retrieveJndiObject(destName);
@@ -192,7 +192,7 @@ public class JMSAcquisition implements AcquisitionDaemon {
             consumer.setMessageListener(listener);
             connection.getCnx().start();
             connection.addExceptionListener(listener);
-            listeners.put(connection.getCnxFactName(), listener);
+            listeners.put(connection.getName(), listener);
           } catch (Exception e) {
             logger.log(BasicLevel.ERROR,
                 "Error while starting consumer on connection: " + connection.getCnxFactName(), e);
@@ -217,7 +217,7 @@ public class JMSAcquisition implements AcquisitionDaemon {
      */
     public void onMessage(javax.jms.Message jmsMessage) {
       if (logger.isLoggable(BasicLevel.DEBUG))
-        logger.log(BasicLevel.DEBUG, connection.getCnxFactName() + ".onMessage(" + jmsMessage + ')');
+        logger.log(BasicLevel.DEBUG, connection.getName() + ".onMessage(" + jmsMessage + ')');
 
       try {
         org.objectweb.joram.client.jms.Message clientMessage = null;
@@ -228,7 +228,7 @@ public class JMSAcquisition implements AcquisitionDaemon {
           // Conversion error: denying the message.
           if (logger.isLoggable(BasicLevel.WARN))
             logger.log(BasicLevel.WARN,
-                       connection.getCnxFactName() + ".onMessage: rollback, can not convert message.",
+                       connection.getName() + ".onMessage: rollback, can not convert message.",
                        conversionExc);
 
           session.rollback();
@@ -237,25 +237,25 @@ public class JMSAcquisition implements AcquisitionDaemon {
         transmitter.transmit(clientMessage.getMomMsg(), jmsMessage.getJMSMessageID());
 
         if (logger.isLoggable(BasicLevel.DEBUG))
-          logger.log(BasicLevel.DEBUG, connection.getCnxFactName() + ".onMessage: Try to commit.");
+          logger.log(BasicLevel.DEBUG, connection.getName() + ".onMessage: Try to commit.");
 
         session.commit();
       } catch (JMSException exc) {
         // Commit or rollback failed: nothing to do.
         logger.log(BasicLevel.ERROR,
-                   connection.getCnxFactName() + ".onMessage(" + jmsMessage + ')', exc);
+                   connection.getName() + ".onMessage(" + jmsMessage + ')', exc);
       } catch (Throwable t) {
         logger.log(BasicLevel.ERROR,
-                   connection.getCnxFactName() + ".onMessage(" + jmsMessage + ')', t);
+                   connection.getName() + ".onMessage(" + jmsMessage + ')', t);
       }
     }
 
     public void onException(JMSException exception) {
       if (logger.isLoggable(BasicLevel.DEBUG)) {
-        logger.log(BasicLevel.DEBUG, connection.getCnxFactName() + ": Consumer error for session " + session);
+        logger.log(BasicLevel.DEBUG, connection.getName() + ": Consumer error for session " + session);
       }
       if (!closing) {
-        listeners.remove(connection.getCnxFactName());
+        listeners.remove(connection.getName());
       }
     }
 
