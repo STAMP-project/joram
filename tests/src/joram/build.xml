@@ -375,6 +375,7 @@
   <target name="tests.noreg"
           description=" --> launch all noreg tests">
     <antcall target="noreg.test3"/>
+  	<antcall target="noreg.test3x"/>
     <antcall target="noreg.test4"/>
     <antcall target="noreg.test7.1"/>
     <antcall target="noreg.test7.2"/>
@@ -506,6 +507,7 @@
     <antcall target="bridge.jms.test17x"/>
     <antcall target="bridge.jms.test18x"/>
     <antcall target="bridge.jms.test19x"/>
+    <antcall target="bridge.jms.test20x"/>
   </target>
 	
   <target name="tests.schedqueue"
@@ -730,7 +732,7 @@
 
   <target name="test.start">
     <!-- Launch test without initialization -->
-    <java classname="${className}" failonerror="no" fork="yes" maxmemory="256m" dir="${test.dir}">
+    <java classname="${className}" failonerror="no" fork="yes" dir="${test.dir}">
       <classpath path="${project.class.path}"/>
       <jvmarg line="-DSCAdminClass=${SCAdminClass} -Dfelix.dir=${felix.dir} -Dfelix.config.properties=file:config.properties -Dcom.sun.management.jmxremote -Dframework.TestCase.TestId=${testid} -Dframework.TestCase.OutFile=${report.file} ${jvmargs}"/>
       <!-- jvmarg line="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y"/ -->
@@ -2155,7 +2157,20 @@
       <param name="className" value="joram.client.ClientTest29"/>
       <param name="jndiconf" value="client/jndi.properties"/>
       <param name="a3conf" value="client/a3servers.xml"/>
-      <param name="jvmargs" value=""/>
+      <param name="jvmargs" value="-DNbRound=10"/>
+      <param name="testid" value="client.ClientTest29"/>
+      <param name="args" value=""/>
+    </antcall>
+  </target>
+
+  <target name="client.ClientTest29.Full" depends="init.a3props,compile"
+          description=" --> Test memory leak with subscription and connection closes.">
+    <antcall target="test.run" inheritAll="true">
+      <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+      <param name="className" value="joram.client.ClientTest29"/>
+      <param name="jndiconf" value="client/jndi.properties"/>
+      <param name="a3conf" value="client/a3servers.xml"/>
+      <param name="jvmargs" value="-DNbRound=100"/>
       <param name="testid" value="client.ClientTest29"/>
       <param name="args" value=""/>
     </antcall>
@@ -3727,7 +3742,7 @@
       <param name="testid" value="noreg.test3-1"/>
       <param name="jndiconf" value="noreg/jndi.properties"/>
       <param name="a3conf" value="noreg/a3servers1.xml"/>
-      <param name="jvmargs" value="-DDestination=org.objectweb.joram.client.jms.Queue -DMsgSize=256 -DMsgPerCommit=1 -DNbMsg=10"/>
+      <param name="jvmargs" value="-DDestination=org.objectweb.joram.client.jms.Queue -DMsgSize=2048 -DMsgPerCommit=1 -DNbMsg=10"/>
     </antcall>
   </target>
 
@@ -3738,7 +3753,54 @@
       <param name="testid" value="noreg.test3-2"/>
       <param name="jndiconf" value="noreg/jndi.properties"/>
       <param name="a3conf" value="noreg/a3servers1.xml"/>
-      <param name="jvmargs" value="-DDestination=org.objectweb.joram.client.jms.Topic -DMsgSize=512 -DMsgPerCommit=1 -DNbMsg=100"/>
+      <param name="jvmargs" value="-DDestination=org.objectweb.joram.client.jms.Topic -DMsgSize=1024 -DMsgPerCommit=1 -DNbMsg=100"/>
+    </antcall>
+  </target>
+
+  <target name="noreg.test3x" depends="noreg.test3x-1a,noreg.test3x-2a"/>
+  <target name="noreg.test3x-all" depends="noreg.test3x-1a,noreg.test3x-2a,noreg.test3x-1b,noreg.test3x-2b"/>
+
+  <target name="noreg.test3x-1a" depends="init.a3props,compile"
+          description=" --> Test Queue with big messages (1, 2, 3 .. 10Mb).">
+    <antcall target="test.run" inheritAll="true">
+      <param name="className" value="joram.noreg.Test3x"/>
+      <param name="testid" value="noreg.test3x-1a"/>
+      <param name="jndiconf" value="noreg/jndi.properties"/>
+      <param name="a3conf" value="noreg/a3servers1.xml"/>
+      <param name="jvmargs" value="-DDestination=org.objectweb.joram.client.jms.Queue -DMsgSize=1024 -DNbRound=10-DMsgPerCommit=1 -DNbMsg=100"/>
+    </antcall>
+  </target>
+
+  <target name="noreg.test3x-2a" depends="init.a3props,compile"
+          description=" --> Test Topic with big messages (1, 2, 3 .. 10Mb).">
+    <antcall target="test.run" inheritAll="true">
+      <param name="className" value="joram.noreg.Test3x"/>
+      <param name="testid" value="noreg.test3x-2a"/>
+      <param name="jndiconf" value="noreg/jndi.properties"/>
+      <param name="a3conf" value="noreg/a3servers1.xml"/>
+      <param name="jvmargs" value="-DDestination=org.objectweb.joram.client.jms.Topic -DMsgSize=1024 -DNbRound=10 -DMsgPerCommit=1 -DNbMsg=100"/>
+    </antcall>
+  </target>
+
+  <target name="noreg.test3x-1b" depends="init.a3props,compile"
+          description=" --> Test Queue with big messages (10, 20 .. 50Mb)">
+    <antcall target="test.run" inheritAll="true">
+      <param name="className" value="joram.noreg.Test3x"/>
+      <param name="testid" value="noreg.test3x-1b"/>
+      <param name="jndiconf" value="noreg/jndi.properties"/>
+      <param name="a3conf" value="noreg/a3servers1.xml"/>
+      <param name="jvmargs" value="-DDestination=org.objectweb.joram.client.jms.Queue -DMsgSize=10240 -DNbRound=5 -DMsgPerCommit=1 -DNbMsg=100"/>
+    </antcall>
+  </target>
+
+  <target name="noreg.test3x-2b" depends="init.a3props,compile"
+          description=" --> Test Topic with big messages (10, 20 .. 50Mb)">
+    <antcall target="test.run" inheritAll="true">
+      <param name="className" value="joram.noreg.Test3x"/>
+      <param name="testid" value="noreg.test3x-2b"/>
+      <param name="jndiconf" value="noreg/jndi.properties"/>
+      <param name="a3conf" value="noreg/a3servers1.xml"/>
+      <param name="jvmargs" value="-DDestination=org.objectweb.joram.client.jms.Topic -DMsgSize=10240 -DNbRound=5 -DMsgPerCommit=1 -DNbMsg=100"/>
     </antcall>
   </target>
 
@@ -5137,6 +5199,16 @@
       <param name="className" value="joram.bridgejms.BridgeTest19x"/>
       <param name="jndiconf" value="bridgejms/jndi.properties"/>
       <param name="a3conf" value="bridgejms/a3servers.xml"/>
+    </antcall>
+  </target>
+
+  <target name="bridge.jms.test20x" depends="init.a3props,compile"
+          description=" --> Test the bridge with specific architecture using 2 JMSModule, 2 JNDI server and BridgeConnection filtering">
+    <antcall target="test.run" inheritAll="true">
+      <param name="testid" value="bridge.jms.test20x"/>
+      <param name="className" value="joram.bridgejms.BridgeTest20x"/>
+      <param name="jndiconf" value="bridgejms/jndi20.properties"/>
+      <param name="a3conf" value="bridgejms/a3servers20.xml"/>
     </antcall>
   </target>
 
@@ -6780,6 +6852,7 @@
 	
 	<!-- Test the JMS2 compliance -->
   <target name="tests.jms2" description=" --> JMS2 compliance">
+    <antcall target="jms2.test0"/>
     <antcall target="jms2.test1"/>
     <antcall target="jms2.test2"/>
     <antcall target="jms2.test3"/>
@@ -6797,6 +6870,19 @@
     <antcall target="jms2.redeliveryDelay"/>
   </target>
 
+  <target name="jms2.test0" depends="init.a3props,compile"
+          description=" --> Test JMSContext creation and termination">
+    <antcall target="test.run" inheritAll="true">
+      <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+      <param name="testid" value="jms2.test0"/>
+      <param name="className" value="joram.jms2.Test0"/>
+      <param name="jndiconf" value="jms2/jndi.properties"/>
+      <param name="a3conf" value="jms2/a3servers.xml"/>
+      <param name="jvmargs" value=""/>
+      <param name="args" value=""/>
+    </antcall>
+  </target>
+	
   <target name="jms2.test1" depends="init.a3props,compile"
           description=" --> Test JMSContext creation and configuration">
     <antcall target="test.run" inheritAll="true">
