@@ -128,7 +128,7 @@ public class BridgeTest7 extends TestCase {
       msg = joramSess.createTextMessage();
       for (int i = 1; i < 11; i++) {
         msg.setText("Joram message number " + i);
-        msg.setStringProperty("jms.Routing", "cfS2");
+        msg.setStringProperty("jms.Routing", "cnx2");
         System.out.println("send msg = " + msg.getText());
         joramSender.send(msg);
       }
@@ -139,7 +139,7 @@ public class BridgeTest7 extends TestCase {
       for (int i = 1; i < 11; i++) {
         msg = (TextMessage) foreignCons2.receive(5000);
         assertNotNull(msg);
-        System.out.println("Consumer 2: receive msg = " + msg.getText());
+        System.out.println("Consumer 2: receive msg = " + ((msg==null)?"null":msg.getText()));
       }
 
       foreignCnx1.close();

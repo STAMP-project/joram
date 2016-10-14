@@ -115,7 +115,7 @@ public class BridgeTest12x extends TestCase {
           System.out.println("Receive message: " + msgIn.getText());
 
         msgOut = joramSess.createTextMessage("Coucou from addedForeignCF");
-        msgOut.setStringProperty("jms.Routing", "addedForeignCF");
+        msgOut.setStringProperty("jms.Routing", "cnx1");
         joramProd.send(msgOut);
         System.out.println("send a message = " + msgOut.getText());
         
