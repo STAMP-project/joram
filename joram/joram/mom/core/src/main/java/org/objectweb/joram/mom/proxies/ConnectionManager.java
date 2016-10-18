@@ -39,6 +39,7 @@ import org.objectweb.joram.mom.notifications.TopicForwardNot;
 import org.objectweb.joram.mom.util.JoramHelper;
 import org.objectweb.joram.mom.util.MessageIdListFactory;
 import org.objectweb.joram.mom.util.MessageIdListImpl;
+import org.objectweb.joram.shared.admin.AdminCommandConstant;
 import org.objectweb.joram.shared.client.AbstractJmsRequest;
 import org.objectweb.joram.shared.client.JmsRequestGroup;
 import org.objectweb.joram.shared.client.CommitRequest;
@@ -309,11 +310,20 @@ public class ConnectionManager implements ConnectionManagerMBean {
    * @exception Exception  Thrown when processing the String argument
    *   or in case of a problem when deploying the ConnectionFactory.
    */
-  public static void init(String args, boolean firstTime) 
-    throws Exception {
+  public static void init(String args, boolean firstTime) throws Exception {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG,
                  "ConnectionManager.init(" + args + ',' + firstTime + ')');
+    
+    // TODO (AF): Be careful, this default value is saved and retrieved by 
+    // AdminTopic agent.
+    Integer delay = AgentServer.getInteger(AdminCommandConstant.REDELIVERY_DELAY);
+    if (delay != null) {
+      logger.log(BasicLevel.FATAL,
+                 "ConnectionManager.setDefaultRedeliveryDelay: " + AdminCommandConstant.REDELIVERY_DELAY + "=" + delay);
+      Queue.setDefaultRedeliveryDelay(delay);
+    }
+
     if (! firstTime) return;
 
     AdminTopic adminTopic = new AdminTopic();
