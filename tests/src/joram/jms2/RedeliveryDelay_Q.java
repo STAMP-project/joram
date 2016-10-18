@@ -37,9 +37,7 @@ import org.objectweb.joram.client.jms.Queue;
 import org.objectweb.joram.client.jms.admin.AdminModule;
 import org.objectweb.joram.client.jms.admin.User;
 import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
-import org.objectweb.joram.shared.admin.AdminCommandConstant;
 
-import fr.dyade.aaa.agent.AgentServer;
 import framework.TestCase;
 
 /**
@@ -50,63 +48,28 @@ import framework.TestCase;
 public class RedeliveryDelay_Q extends TestCase implements javax.jms.MessageListener {
 
   public static void main(String[] args) {
-    new RedeliveryDelay_Q().run(Integer.parseInt(args[0]));
+    new RedeliveryDelay_Q().run(Integer.parseInt(args[0]), (args.length > 1));
   }
-  
+
   JMSContext context;
   JMSConsumer consumer;
-  
-  public void run(int sessionMode) {
+
+  public void run(int sessionMode, boolean useDefault) {
     try {
       startAgentServer((short) 0);
       Thread.sleep(1000);
 
-      ConnectionFactory cf = TcpConnectionFactory.create("localhost", 2560);
-      AdminModule.connect(cf, "root", "root");   
-      User.create("anonymous", "anonymous", 0);
-      Queue dest;
-      if (AgentServer.getProperty(AdminCommandConstant.RE_DELIVERY_DELAY) != null) {
-        dest = Queue.create("queue");
-      }
-      else {
-        Properties prop = new Properties();
-        prop.setProperty(AdminCommandConstant.RE_DELIVERY_DELAY, "3");
-        prop.setProperty("name", "queue");
-        dest = Queue.create(0, prop);
-      }
-      dest.setFreeReading();
-      dest.setFreeWriting();
-      AdminModule.disconnect();
+      admin(useDefault);
+      test(sessionMode);
 
-      switch (sessionMode) {
-      case JMSContext.SESSION_TRANSACTED:
-        context = cf.createContext(JMSContext.SESSION_TRANSACTED);
-        break;
-      case JMSContext.CLIENT_ACKNOWLEDGE:
-        context = cf.createContext(JMSContext.CLIENT_ACKNOWLEDGE);
-        break;
-      default:
-        context = cf.createContext(JMSContext.AUTO_ACKNOWLEDGE);
-        break;
-      }
-      
-      consumer = context.createConsumer(dest);
-      consumer.setMessageListener(this);
-      context.start();
+      Thread.sleep(5000);
+      stopAgentServer((short) 0);
+      Thread.sleep(1000);
+      startAgentServer((short) 0);
+      Thread.sleep(1000);
 
-      JMSContext prodCtx = cf.createContext();
-      JMSProducer producer = prodCtx.createProducer();
-      producer.setDeliveryMode(DeliveryMode.PERSISTENT);
-      TextMessage msg = prodCtx.createTextMessage("test redeliveryTime");
-      producer.send(dest, msg);
-
-      // Wait to receive the message.
-      Thread.sleep(6000);
-      
-      assertTrue("The rollback or recover message not received after the redelivery delay", time < 6000);
-
-      context.close();
-      prodCtx.close();
+      System.out.println("Server restarted.");
+      test(sessionMode);
     } catch (Throwable exc) {
       exc.printStackTrace();
       error(exc);
@@ -116,19 +79,80 @@ public class RedeliveryDelay_Q extends TestCase implements javax.jms.MessageList
     }
   }
 
+  ConnectionFactory cf = null;
+  Queue dest = null;
+
+  void admin(boolean useDefault) throws Exception {
+    cf = TcpConnectionFactory.create("localhost", 2560);
+    AdminModule.connect(cf, "root", "root");   
+    User.create("anonymous", "anonymous", 0);
+    if (useDefault) {
+      System.out.println("Default redelivery delay set.");
+      dest = Queue.create("queue");
+    } else {
+      System.out.println("Configure Queue redelivery delay.");
+      Properties prop = new Properties();
+      prop.setProperty(Queue.REDELIVERY_DELAY, "5");
+      prop.setProperty("name", "queue");
+      dest = Queue.create(0, prop);
+    }
+    dest.setFreeReading();
+    dest.setFreeWriting();
+    AdminModule.disconnect();
+  }
+
+  void test(int sessionMode) throws InterruptedException {
+    reset();
+    switch (sessionMode) {
+    case JMSContext.SESSION_TRANSACTED:
+      context = cf.createContext(JMSContext.SESSION_TRANSACTED);
+      break;
+    case JMSContext.CLIENT_ACKNOWLEDGE:
+      context = cf.createContext(JMSContext.CLIENT_ACKNOWLEDGE);
+      break;
+    default:
+      context = cf.createContext(JMSContext.AUTO_ACKNOWLEDGE);
+      break;
+    }
+
+    consumer = context.createConsumer(dest);
+    consumer.setMessageListener(this);
+    context.start();
+
+    JMSContext prodCtx = cf.createContext();
+    JMSProducer producer = prodCtx.createProducer();
+    producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+    TextMessage msg = prodCtx.createTextMessage("test redeliveryTime");
+    producer.send(dest, msg);
+
+    // Wait to receive the message.
+    Thread.sleep(10000L);
+
+    assertTrue("The rollback or recover message not received after the redelivery delay", time > 5000);
+
+    context.close();
+    prodCtx.close();
+  }
+
+  public void reset() {
+    first = true;
+    time = 0;
+  }
+
   private boolean first = true;
   private long time = 0;
-  
+
   public void onMessage(Message message) {
     try {
+      System.out.println(message.getJMSMessageID() + ", JMSRedelivered = " + message.getJMSRedelivered());
       System.out.println(System.currentTimeMillis() + ": message received deliveryTime = " + message.getJMSDeliveryTime());
-      System.out.println("JMSRedelivered = " + message.getJMSRedelivered());
     } catch (JMSException e) {
       e.printStackTrace();
     }
-    
+
     time = System.currentTimeMillis() - time;
-    
+    System.out.println("Waiting (" + first + ") " + time);
+
     if (first) {
       first = false;
       switch (context.getSessionMode()) {
@@ -141,9 +165,22 @@ public class RedeliveryDelay_Q extends TestCase implements javax.jms.MessageList
         context.recover();
         break;
       default:
-      System.out.println("throw RuntimeException");
+        System.out.println("throw RuntimeException");
         throw new RuntimeException("Test redeliveryTime");
       }
+    } else {
+      switch (context.getSessionMode()) {
+      case JMSContext.SESSION_TRANSACTED:
+        System.out.println("commit");
+        context.commit();
+        break;
+      case JMSContext.CLIENT_ACKNOWLEDGE:
+        System.out.println("acknowledge");
+        context.acknowledge();
+        break;
+      default:
+        System.out.println("nothing");
+      }      
     }
   }
 
