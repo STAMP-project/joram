@@ -24,7 +24,6 @@
 package org.objectweb.joram.client.jms.admin;
 
 import java.net.ConnectException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -94,6 +93,8 @@ public class User extends AdministeredObject implements UserMBean {
   /** define serialVersionUID for interoperability */
   private static final long serialVersionUID = 1L;
   
+  public static final String REDELIVERY_DELAY = "redeliveryDelay";
+
   public static Logger logger = Debug.getLogger(User.class.getName());
 
   /** The name of the user. */

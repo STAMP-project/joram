@@ -26,7 +26,6 @@
 package org.objectweb.joram.client.jms;
 
 import java.net.ConnectException;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
@@ -71,6 +70,8 @@ import org.objectweb.joram.shared.admin.SetThresholdRequest;
 public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
 	/** define serialVersionUID for interoperability */
 	private static final long serialVersionUID = 1L;
+	
+  public static final String REDELIVERY_DELAY = "redeliveryDelay";
 
 	public Queue() {
 		super(QUEUE_TYPE);
