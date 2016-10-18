@@ -118,11 +118,11 @@ public interface UserAgentMBean extends AgentMBean {
   /**
    * Return the reDeliveryDelay (unit: second)
    */
-  int getReDeliveryDelay();
+  int getRedeliveryDelay();
 
   /**
    * @param reDeliveryDelay the reDeliveryDelay to set(unit: second)
    */
-  void setReDeliveryDelay(int reDeliveryDelay);
+  void setRedeliveryDelay(int redeliveryDelay);
   
 }

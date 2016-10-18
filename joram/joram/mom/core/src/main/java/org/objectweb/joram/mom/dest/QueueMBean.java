@@ -158,10 +158,10 @@ public interface QueueMBean extends DestinationMBean {
   /**
    * Return the reDeliveryDelay (unit: second)
    */
-  int getReDeliveryDelay();
+  int getRedeliveryDelay();
 
   /**
    * @param reDeliveryDelay the reDeliveryDelay to set(unit: second)
    */
-  void setReDeliveryDelay(int reDeliveryDelay);
+  void setRedeliveryDelay(int reDeliveryDelay);
 }
