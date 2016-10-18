@@ -223,8 +223,8 @@ public class ConnectorTest1 extends TestCase {
       assertTrue("counter2=" + counter2 + " should be 101", counter2 == 101);
       assertTrue("counter3=" + counter3 + " should be 101", counter3 == 101);
       
-      ja.stop();
       AdminModule.disconnect();
+      ja.stop();
     } catch(Throwable exc) {
       exc.printStackTrace();
       error(exc);
