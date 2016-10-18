@@ -81,5 +81,5 @@ public class AdminCommandConstant {
   /** Used by AdminTopic to invoke a static method */
   public static final String INVOKE_METHOD_RESULT = "jms_joram_invoke_result";
   
-  public static final String RE_DELIVERY_DELAY = "jms_joram_re_delivery_delay";
+  public static final String REDELIVERY_DELAY = "joram.jms.redeliveryDelay";
 }
