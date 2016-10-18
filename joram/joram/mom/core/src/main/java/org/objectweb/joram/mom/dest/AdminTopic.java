@@ -886,11 +886,11 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
           proxy.setInterceptors(props);
           
           // set reDeliverDelay
-          if (props != null && props.containsKey(AdminCommandConstant.RE_DELIVERY_DELAY)) {
+          if (props != null && props.containsKey(UserAgent.REDELIVERY_DELAY)) {
             int reDeliveryDelay;
             try {
-              reDeliveryDelay = ConversionHelper.toInt(props.get(AdminCommandConstant.RE_DELIVERY_DELAY));
-              proxy.setReDeliveryDelay(reDeliveryDelay);
+              reDeliveryDelay = ConversionHelper.toInt(props.get(UserAgent.REDELIVERY_DELAY));
+              proxy.setRedeliveryDelay(reDeliveryDelay);
             } catch (MessageValueException e) {
               if (logger.isLoggable(BasicLevel.WARN))
                 logger.log(BasicLevel.WARN, "EXCEPTION:: createUser [" + name + "] set the redelivery delay", e);
@@ -1839,6 +1839,7 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
     // Saves DMQ defaults.
     out.writeObject(Queue.defaultDMQId);
     out.writeInt(Queue.defaultThreshold);
+    out.writeInt(Queue.defaultRedeliveryDelay);
 
     out.defaultWriteObject();
   }
@@ -1848,6 +1849,8 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
   throws java.io.IOException, ClassNotFoundException {
     Queue.defaultDMQId = (AgentId) in.readObject();
     Queue.defaultThreshold = in.readInt();
+    Queue.defaultRedeliveryDelay = in.readInt();
+    
     in.defaultReadObject();
     ref = this;
   }
