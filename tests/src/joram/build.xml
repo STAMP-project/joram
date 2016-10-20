@@ -6868,6 +6868,7 @@
   	<antcall target="jms2.sharedTest1"/>
   	<antcall target="jms2.sharedTest2"/>
     <antcall target="jms2.deliveryDelay_Q"/>
+    <antcall target="jms2.deliveryDelay_Q2"/>
     <antcall target="jms2.deliveryDelay_T"/>
     <antcall target="jms2.deliveryDelay_T2"/>
     <antcall target="jms2.deliveryDelay_T3"/>
