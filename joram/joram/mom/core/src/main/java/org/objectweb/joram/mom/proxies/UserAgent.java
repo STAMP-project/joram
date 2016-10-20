@@ -2932,9 +2932,7 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
           subName = (String) subNames.next();
           sub = (ClientSubscription) subsTable.get(subName);
           isDurable |= sub.getDurable();
-          if (isDurable) {
-            sub.scheduleDeliveryTimeMessage(message);
-          }
+          sub.scheduleDeliveryTimeMessage(message);
         }
         // Setting the arrival order of the messages
         // message.order = arrivalState.getAndIncrementArrivalCount();
