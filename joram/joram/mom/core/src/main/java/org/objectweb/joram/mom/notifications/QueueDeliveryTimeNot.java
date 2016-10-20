@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2013 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@
  */
 package org.objectweb.joram.mom.notifications;
 
-import org.objectweb.joram.shared.messages.Message;
+import org.objectweb.joram.mom.messages.Message;
 
 import fr.dyade.aaa.agent.Notification;
 
@@ -33,7 +33,7 @@ public class QueueDeliveryTimeNot extends Notification {
   private static final long serialVersionUID = 1L;
   
   public Message msg;
-  public boolean throwsExceptionOnFullDest;
+  public boolean throwsExceptionOnFullDest = false;
   
   public QueueDeliveryTimeNot(Message msg, boolean throwsExceptionOnFullDest) {
     this.msg  = msg;

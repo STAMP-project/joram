@@ -29,8 +29,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.management.openmbean.CompositeData;
@@ -83,9 +83,6 @@ import org.objectweb.joram.shared.selectors.Selector;
 import org.objectweb.util.monolog.api.BasicLevel;
 import org.objectweb.util.monolog.api.Logger;
 
-import com.scalagent.scheduler.ScheduleEvent;
-import com.scalagent.scheduler.Scheduler;
-
 import fr.dyade.aaa.agent.AgentId;
 import fr.dyade.aaa.agent.AgentServer;
 import fr.dyade.aaa.agent.Channel;
@@ -111,6 +108,7 @@ public class Queue extends Destination implements QueueMBean {
   public static Logger logmsg = Debug.getLogger(Queue.class.getName() + ".Message");
   
   public static final String DELIVERY_TABLE_PREFIX = "DT_";
+  public static final String DELIVERY_TIME_TABLE_PREFIX = "DTT_";
   public static final String ARRIVAL_STATE_PREFIX = "AS_";
 
   /** Static value holding the default DMQ identifier for a server. */
@@ -203,7 +201,8 @@ public class Queue extends Destination implements QueueMBean {
   /** List holding the requests before reply or expiry. */
   protected List<ReceiveRequest> requests = new Vector();
   
-  protected transient Scheduler deliveryScheduler = null;
+  /** Table keeping the message deliveries */
+  protected transient QueueDeliveryTable deliveryTimeTable;
   
   public Queue() {
     super();
@@ -259,7 +258,7 @@ public class Queue extends Destination implements QueueMBean {
       else if (not instanceof ExpiredNot)
         handleExpiredNot(from, (ExpiredNot) not);
       else if (not instanceof QueueDeliveryTimeNot)
-        doStoreMessageAfterDeliveryTime(from, (QueueDeliveryTimeNot) not);
+        processDeliveryTime(from, (QueueDeliveryTimeNot) not);
       else
         super.react(from, not);
 
@@ -279,6 +278,7 @@ public class Queue extends Destination implements QueueMBean {
     super.agentSave();
     arrivalState.save();
     deliveryTable.save();
+    deliveryTimeTable.save();
   }
 
   /**
@@ -447,6 +447,18 @@ public class Queue extends Destination implements QueueMBean {
     return 0;
   }
   
+  /**
+   * Returns the number of messages delivery time.
+   *
+   * @return The number of messages delivery time.
+   */
+  public final int getDeliveryTimeMessageCount() {
+    if (deliveryTimeTable != null) {
+      return deliveryTimeTable.size();
+    }
+    return 0;
+  }
+  
   protected long nbMsgsDeniedSinceCreation = 0;
   
   /**
@@ -507,13 +519,16 @@ public class Queue extends Destination implements QueueMBean {
 
     String arrivalStateTxName = ARRIVAL_STATE_PREFIX + getId().toString();
     String deliveryTableTxName = DELIVERY_TABLE_PREFIX + getId().toString();
+    String deliveryTimeTableTxName = DELIVERY_TIME_TABLE_PREFIX + getId().toString();
     if (firstTime) {
       arrivalState = new QueueArrivalState(arrivalStateTxName);
       deliveryTable = new QueueDeliveryTable(deliveryTableTxName);
+      deliveryTimeTable = new QueueDeliveryTable(deliveryTimeTableTxName);
       return;
     } else {
       arrivalState = QueueArrivalState.load(arrivalStateTxName);
       deliveryTable = QueueDeliveryTable.load(deliveryTableTxName);
+      deliveryTimeTable = new QueueDeliveryTable(deliveryTimeTableTxName);
     }
 
     // Retrieving the persisted messages, if any.
@@ -530,6 +545,25 @@ public class Queue extends Destination implements QueueMBean {
         if (logmsg.isLoggable(BasicLevel.INFO))
           logmsg.log(BasicLevel.INFO, getName() + ": retrieves message " + persistedMsg.getId());
 
+        QueueDelivery queueDeliveryTime = deliveryTimeTable.get(persistedMsg.getId());
+        if (queueDelivery == null && queueDeliveryTime != null) {
+          if (persistedMsg.getDeliveryTime() > System.currentTimeMillis()) {
+            if (logger.isLoggable(BasicLevel.DEBUG))
+              logger.log(BasicLevel.DEBUG, getName() + ": schedule " + persistedMsg.getClientID());
+            AgentServer.getTimer().schedule(new QueueDeliveryTimeTask(getId(), persistedMsg, false), 
+                new Date(persistedMsg.getDeliveryTime()));
+          } else {
+            if (logger.isLoggable(BasicLevel.DEBUG))
+              logger.log(BasicLevel.DEBUG, getName() + ": delay expire, Adds a message " + 
+            persistedMsg.getClientID() + " in the list of messages to deliver.");
+            // Adds a message in the list of messages to deliver.
+            addMessage(persistedMsg, false);
+            //TODO: delete persistedMsg if the queue is full ?
+            //persistedMsg.order = arrivalState.getAndIncrementArrivalCount(msg.isPersistent());
+          }
+          continue;
+        }
+        
         try {
           if (queueDelivery == null) {
             if (!addMessage(persistedMsg, false)) {
@@ -539,8 +573,7 @@ public class Queue extends Destination implements QueueMBean {
             queueDelivery.setMessage(persistedMsg);
             if (isLocal(queueDelivery.getConsumerId())) {
               if (logger.isLoggable(BasicLevel.DEBUG))
-                logger
-                    .log(BasicLevel.DEBUG, " -> deny " + persistedMsg.getId());
+                logger.log(BasicLevel.DEBUG, " -> deny " + persistedMsg.getId());
               deliveryTable.remove(persistedMsg.getId());
               if (!addMessage(persistedMsg, false)) {
                 persistedMsg.delete();
@@ -890,8 +923,7 @@ public class Queue extends Destination implements QueueMBean {
           if (message.getDeliveryTime() > 0) {
             if (logger.isLoggable(BasicLevel.DEBUG))
               logger.log(BasicLevel.DEBUG, "Queue.DenyRequest: scheduleDeliveryTimeMessage " + message.getId() + ", reDeliveryDelay = " + getRedeliveryDelay());
-            scheduleDeliveryTimeMessage(message.getMsg(), false);
-            deliveryTable.remove(message.getId());
+            addDeliveryTimeMessage(message, not.getClientContext(), false, true);
           } else {
             // Else, putting the message back into the deliverables list:
             storeMessageHeader(message, false);
@@ -1179,14 +1211,13 @@ public class Queue extends Destination implements QueueMBean {
 
         org.objectweb.joram.shared.messages.Message sharedMsg = (org.objectweb.joram.shared.messages.Message) msgs.next();
         msg = new Message(sharedMsg);
-
+        msg.order = arrivalState.getAndIncrementArrivalCount(msg.isPersistent());
+        
         if (sharedMsg.deliveryTime > currentTime) {
           if (logger.isLoggable(BasicLevel.DEBUG))
-            logger.log(BasicLevel.DEBUG,
-                       "Queue.doClientMessages: scheduleDeliveryTimeMessage " + sharedMsg.id + ", redeliveryDelay = " + getRedeliveryDelay());
-          scheduleDeliveryTimeMessage(sharedMsg, throwsExceptionOnFullDest);
+            logger.log(BasicLevel.DEBUG, "Queue.doClientMessages: deliveryTimeTable.put " + msg + ')');
+          addDeliveryTimeMessage(msg, not.getClientContext(), throwsExceptionOnFullDest, false);
         } else {
-          msg.order = arrivalState.getAndIncrementArrivalCount(msg.isPersistent());
           storeMessage(msg, throwsExceptionOnFullDest);
           
           // ArrivalState is saved outside the Queue agent
@@ -1204,46 +1235,59 @@ public class Queue extends Destination implements QueueMBean {
     receiving = false;
   }
 
-  void scheduleDeliveryTimeMessage(org.objectweb.joram.shared.messages.Message msg, boolean throwsExceptionOnFullDest) {
+  void addDeliveryTimeMessage(Message msg, int clientCtx, boolean throwsExceptionOnFullDest, boolean isHeader) throws AccessException {
     if (logger.isLoggable(BasicLevel.DEBUG))
-      logger.log(BasicLevel.DEBUG, "Queue.scheduleDeliveryTimeMessage(" + msg + ", " + throwsExceptionOnFullDest + ')');
-
-    if (deliveryScheduler == null) {
-      try {
-        deliveryScheduler = new Scheduler(AgentServer.getTimer());
-      } catch (Exception exc) {
-        if (logger.isLoggable(BasicLevel.ERROR))
-          logger.log(BasicLevel.ERROR, "Queue.scheduleDeliveryTimeMessage", exc);
+      logger.log(BasicLevel.DEBUG, "Queue.addDeliveryTimeMessage(" + msg + ", " + clientCtx + ')');
+    
+    // queue is full
+    if (nbMaxMsg > -1 && nbMaxMsg <= (messages.size() + deliveryTable.size() + deliveryTimeTable.size())) {
+      if (throwsExceptionOnFullDest && isSyncExceptionOnFullDest()) {
+        if (logger.isLoggable(BasicLevel.INFO))
+          logger.log(BasicLevel.INFO, "addDeliveryTimeMessage " + msg.getId() + " throws Exception: The queue \"" + getName() + "\" is full (syncExceptionOnFullDest).");
+        throw new AccessException("The queue \"" + getName() + "\" is full.");
+      }
+      DMQManager dmqManager = new DMQManager(dmqId, getId());
+      nbMsgsSentToDMQSinceCreation++;
+      dmqManager.addDeadMessage(msg.getFullMessage(), MessageErrorConstants.QUEUE_FULL);
+      dmqManager.sendToDMQ();
+      return;
+    }
+    // add to the delivery time table
+    deliveryTimeTable.put(msg.getId(), new QueueDelivery(getId(), clientCtx, msg));
+    if (isHeader) {
+      msg.saveHeader();
+      msg.releaseFullMessage();
+    } else {
+      if (msg.isPersistent()) {
+        // Persisting the message.
+        setMsgTxName(msg);
+        msg.save();
+        msg.releaseFullMessage();
       }
     }
-    // schedule a task
-    try {
-      deliveryScheduler.scheduleEvent(new ScheduleEvent(msg.id, new Date(msg.deliveryTime)), 
-                              new QueueDeliveryTimeTask(getId(), msg, throwsExceptionOnFullDest));
-    } catch (Exception e) {
-      if (logger.isLoggable(BasicLevel.ERROR))
-        logger.log(BasicLevel.ERROR, "Queue.scheduleDeliveryTimeMessage(" + msg + ')', e);
-    }
+    //schedule
+    AgentServer.getTimer().schedule(new QueueDeliveryTimeTask(getId(), msg, throwsExceptionOnFullDest),new Date(msg.getDeliveryTime()));
   }
   
-  void doStoreMessageAfterDeliveryTime(AgentId from, QueueDeliveryTimeNot not) throws AccessException {
+  void processDeliveryTime(AgentId from, QueueDeliveryTimeNot not) throws AccessException {
     if (logger.isLoggable(BasicLevel.DEBUG))
-      logger.log(BasicLevel.DEBUG, "Queue.doStoreMessageAfterDeliveryTime(" + from + ", " + not + ')');
+      logger.log(BasicLevel.DEBUG, "Queue.processDeliveryTime(" + from + ", " + not + ')');
 
     if (not.msg == null) return;
-    org.objectweb.joram.shared.messages.Message sharedMsg = not.msg;
-    Message msg = new Message(sharedMsg);
-    msg.order = arrivalState.getAndIncrementArrivalCount(msg.isPersistent());
-    storeMessage(msg, not.throwsExceptionOnFullDest);
     
-    // ArrivalState is saved outside the Queue agent
-    // if (msg.isPersistent()) setSave();
+    // Adds a message in the list of messages to deliver.
+    addMessage(not.msg, not.throwsExceptionOnFullDest);
+    //msg.order = arrivalState.getAndIncrementArrivalCount(msg.isPersistent());
     
+    // Remove msgId to the deliveryTimeTable
+    deliveryTimeTable.remove(not.msg.getId());
+
     // Launching a delivery sequence:
     deliverMessages(0);
 
     ClientMessages clientMsgs = new ClientMessages();
-    clientMsgs.addMessage(sharedMsg);
+    clientMsgs.addMessage(not.msg.getMsg());
+    
     if (clientMsgs != null)
       postProcess(clientMsgs);
   }
@@ -1446,7 +1490,7 @@ public class Queue extends Destination implements QueueMBean {
    */
   protected final boolean addMessage(Message message, boolean throwsExceptionOnFullDest) throws AccessException {
 
-    if (nbMaxMsg > -1 && nbMaxMsg <= (messages.size() + deliveryTable.size())) {
+    if (nbMaxMsg > -1 && nbMaxMsg <= (messages.size() + deliveryTable.size() + deliveryTimeTable.size())) {
       
       if (throwsExceptionOnFullDest && isSyncExceptionOnFullDest()) {
         if (logger.isLoggable(BasicLevel.INFO))

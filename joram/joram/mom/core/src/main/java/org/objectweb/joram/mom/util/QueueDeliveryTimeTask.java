@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2013 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,18 +22,18 @@
  */
 package org.objectweb.joram.mom.util;
 
-import org.objectweb.joram.mom.notifications.QueueDeliveryTimeNot;
-import org.objectweb.joram.shared.messages.Message;
+import java.util.TimerTask;
 
-import com.scalagent.scheduler.ScheduleTask;
+import org.objectweb.joram.mom.messages.Message;
+import org.objectweb.joram.mom.notifications.QueueDeliveryTimeNot;
 
 import fr.dyade.aaa.agent.AgentId;
 import fr.dyade.aaa.agent.Channel;
 
 /**
- * Task sending a QueueDeliveryTimeNot to a Queue destination.
+ * Timer Task sending a QueueDeliveryTimeNot to a Queue destination.
  */
-public class QueueDeliveryTimeTask implements ScheduleTask {
+public class QueueDeliveryTimeTask extends TimerTask {
   private static final long serialVersionUID = 1L;
   
   private AgentId destId = null;

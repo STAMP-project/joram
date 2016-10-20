@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2013 - 2016 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,12 +22,10 @@
  */
 package org.objectweb.joram.mom.util;
 
-import java.util.List;
+import java.util.TimerTask;
 
+import org.objectweb.joram.mom.messages.Message;
 import org.objectweb.joram.mom.notifications.TopicDeliveryTimeNot;
-import org.objectweb.joram.shared.messages.Message;
-
-import com.scalagent.scheduler.ScheduleTask;
 
 import fr.dyade.aaa.agent.AgentId;
 import fr.dyade.aaa.agent.Channel;
@@ -35,28 +33,26 @@ import fr.dyade.aaa.agent.Channel;
 /**
  * Task sending a TopicDeliveryTimeNot to a UserAgent.
  */
-public class TopicDeliveryTimeTask implements ScheduleTask {
+public class TopicDeliveryTimeTask extends TimerTask {
   private static final long serialVersionUID = 1L;
   
   private AgentId destId = null;
   private Message msg = null;
-  private List<String> subNames = null;
   private AgentId topic = null;
+  private String subName = null;
   
-  public TopicDeliveryTimeTask(AgentId destId, AgentId topic, Message msg, List<String> subNames) {
+  public TopicDeliveryTimeTask(AgentId destId, AgentId topic, String subName, Message msg) {
     this.destId = destId;
     this.msg = msg;
-    this.subNames = subNames;
     this.topic= topic;
+    this.subName = subName;
   }
   
   /**
    * Task to execute: send a TopicDeliveryTimeNot to the related UserAgent.
-   * 
-   * @see com.scalagent.scheduler.ScheduleTask#run()
    */
   public void run() {
-    Channel.sendTo(destId, new TopicDeliveryTimeNot(msg, subNames, topic));
+    Channel.sendTo(destId, new TopicDeliveryTimeNot(msg, topic, subName));
   }
 
 }

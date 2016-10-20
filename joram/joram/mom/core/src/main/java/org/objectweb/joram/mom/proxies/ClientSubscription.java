@@ -24,6 +24,7 @@ package org.objectweb.joram.mom.proxies;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -43,8 +44,8 @@ import org.objectweb.joram.mom.util.JoramHelper;
 import org.objectweb.joram.mom.util.MessageIdList;
 import org.objectweb.joram.mom.util.MessageIdListFactory;
 import org.objectweb.joram.mom.util.MessageTable;
+import org.objectweb.joram.mom.util.TopicDeliveryTimeTask;
 import org.objectweb.joram.shared.MessageErrorConstants;
-import org.objectweb.joram.shared.admin.AdminCommandConstant;
 import org.objectweb.joram.shared.client.ConsumerMessages;
 import org.objectweb.joram.shared.excepts.RequestException;
 import org.objectweb.joram.shared.selectors.Selector;
@@ -72,6 +73,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
   public static Logger logger = Debug.getLogger(ClientSubscription.class.getName());
   
   public static final String MESSAGE_ID_LIST_PREFIX = "MIL_";
+  public static final String MESSAGE_TIME_ID_LIST_PREFIX = "MTIL_";
   
   /** The proxy's agent identifier. */
   private AgentId proxyId;
@@ -135,8 +137,10 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
     this.nbMaxMsg = nbMaxMsg;
   }
   
-  /** Vector of identifiers of the messages to deliver. */
+  /** List of identifiers of the messages to deliver. */
   private transient MessageIdList messageIds;
+  /** List of identifiers of the messages delivery time. */
+  private transient MessageIdList messageTimeIds;
   /** Table of delivered messages identifiers. */
   private Map<String, String> deliveredIds;
   /** Table keeping the denied messages identifiers. */
@@ -240,6 +244,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
 
     // initialized in a separate method
     messageIds = null;
+    messageTimeIds = null;
     
     deliveredIds = new Hashtable<String, String>();
     deniedMsgs = new Hashtable();
@@ -344,6 +349,15 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
   }
   
   /**
+   * Returns the number of pending delivery time messages for the subscription.
+   *
+   * @return The number of pending delivery time message for the subscription.
+   */
+  public int getPendingDeliveryTimeMessageCount() {
+    return messageTimeIds.size();
+  }
+  
+  /**
    * Returns the number of messages delivered and waiting for acknowledge.
    *
    * @return The number of messages delivered and waiting for acknowledge.
@@ -379,7 +393,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
       logger.log(BasicLevel.DEBUG, "ClientSubscription[" + this + "].reinitialize()");
     
     this.messagesTable = messagesTable;
-
+    
     // Browsing the persisted messages.
     Message message;
     String msgId;
@@ -387,6 +401,18 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
       message = (Message) e.next();
       msgId = message.getId();
 
+      // delivery time message
+      if (messageTimeIds.contains(msgId)) {
+        if (message.getDeliveryTime() < System.currentTimeMillis()) {
+          // delivery time expire
+          messageIds.add(msgId, message.isPersistent());
+          messageTimeIds.remove(msgId);
+        } else {
+          // schedule a task
+          AgentServer.getTimer().schedule(new TopicDeliveryTimeTask(proxyId, topicId, name, message), new Date(message.getDeliveryTime()));
+        }
+      }
+      
       if (messageIds.contains(msgId) || deliveredIds.containsKey(msgId)) {
         if (logger.isLoggable(BasicLevel.DEBUG))
           logger.log(BasicLevel.DEBUG, " -> contains message " + msgId);
@@ -540,6 +566,37 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
   }
   
   /**
+   * schedule the delivery time message.
+   * 
+   * @param msgId the message Id
+   */
+  void scheduleDeliveryTimeMessage(Message message) {
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, this + ".scheduleDeliveryTimeMessage(" + message + ')');
+    messageTimeIds.add(message.getId(), true);
+    // schedule a task
+    AgentServer.getTimer().schedule(new TopicDeliveryTimeTask(proxyId, topicId, name, message), new Date(message.getDeliveryTime()));
+    try {
+      messageTimeIds.save();
+    } catch (Exception e) {
+      if (logger.isLoggable(BasicLevel.ERROR))
+        logger.log(BasicLevel.ERROR, "ERROR::scheduleDeliveryTimeMessage", e);
+    }
+  }
+  
+  void removeMessagesTimeIds(String msgId) {
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, this + ".removeMessagesTimeIds(" + msgId + ')');
+    messageTimeIds.remove(msgId);
+    try {
+      messageTimeIds.save();
+    } catch (Exception e) {
+      if (logger.isLoggable(BasicLevel.ERROR))
+        logger.log(BasicLevel.ERROR, "ERROR::removeMessagesTimeIds", e);
+    }
+  }
+  
+  /**
    * Browses messages and keeps those which will have to be delivered
    * to the subscriber.
    */
@@ -557,14 +614,14 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
       msgId = message.getId();
 
       // test nbMaxMsg
-      if (nbMaxMsg > 0 && nbMaxMsg <= messageIds.size()) {
+      if (nbMaxMsg > 0 && nbMaxMsg <= (messageIds.size() + messageTimeIds.size())) {
         if (dmqManager == null)
           dmqManager = new DMQManager(dmqId, null);
         nbMsgsSentToDMQSinceCreation++;
         dmqManager.addDeadMessage(message.getFullMessage(), MessageErrorConstants.QUEUE_FULL);
         continue;
       }
-
+      
       if (logger.isLoggable(BasicLevel.DEBUG))
         logger.log(BasicLevel.DEBUG, this + ".browseNewMessages message.getClientID() = " + message.getClientID() + ", clientID = " + clientID + ", noLocal = " + noLocal);
       
@@ -1236,6 +1293,7 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
       // it would encode the message id list several times.
       
       messageIds.save();
+      messageTimeIds.save();
     } catch (Exception exc) {
       logger.log(BasicLevel.ERROR, "ClientSubscription named [" + txName
           + "] could not be saved", exc);
@@ -1247,16 +1305,19 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
     
     AgentServer.getTransaction().delete(getTxName());
     messageIds.delete();
+    messageTimeIds.delete();
   }
   
   public void initMessageIds() throws Exception {
     MessageIdListFactory messageIdListFactory = MessageIdListFactory.newFactory();
     messageIds = messageIdListFactory.createMessageIdList(MESSAGE_ID_LIST_PREFIX + getTxName());
+    messageTimeIds = messageIdListFactory.createMessageIdList(MESSAGE_TIME_ID_LIST_PREFIX + getTxName());
   }
   
   public void loadMessageIds() throws Exception {
     MessageIdListFactory messageIdListFactory = MessageIdListFactory.newFactory();
     messageIds = messageIdListFactory.loadMessageIdList(MESSAGE_ID_LIST_PREFIX + getTxName());
+    messageTimeIds = messageIdListFactory.loadMessageIdList(MESSAGE_TIME_ID_LIST_PREFIX + getTxName());
   }
   
   private void setModified() {
