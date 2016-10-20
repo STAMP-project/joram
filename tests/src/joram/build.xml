@@ -6869,6 +6869,8 @@
   	<antcall target="jms2.sharedTest2"/>
     <antcall target="jms2.deliveryDelay_Q"/>
     <antcall target="jms2.deliveryDelay_T"/>
+    <antcall target="jms2.deliveryDelay_T2"/>
+    <antcall target="jms2.deliveryDelay_T3"/>
     <antcall target="jms2.redeliveryDelay"/>
   </target>
 
@@ -7104,8 +7106,34 @@
         <param name="jvmargs" value=""/>
         <param name="args" value=""/>
       </antcall>
-    </target>
+  </target>
 
+  <target name="jms2.deliveryDelay_T2" depends="init.a3props,compile"
+            description=" --> Test delivery delay with a topic after server restart">
+      <antcall target="test.run" inheritAll="true">
+        <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
+        <param name="testid" value="jms2.deliveryDelay_T2"/>
+        <param name="className" value="joram.jms2.DeliveryDelay_T2"/>
+        <param name="jndiconf" value="jms2/jndi.properties"/>
+        <param name="a3conf" value="jms2/a3servers.xml"/>
+        <param name="jvmargs" value=""/>
+        <param name="args" value=""/>
+      </antcall>
+  </target>
+  
+  <target name="jms2.deliveryDelay_T3" depends="init.a3props,compile"
+            description=" --> Test delivery delay and redeliver with a topic after server restart">
+      <antcall target="test.run" inheritAll="true">
+        <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
+        <param name="testid" value="jms2.deliveryDelay_T3"/>
+        <param name="className" value="joram.jms2.DeliveryDelay_T3"/>
+        <param name="jndiconf" value="jms2/jndi.properties"/>
+        <param name="a3conf" value="jms2/a3servers.xml"/>
+        <param name="jvmargs" value=""/>
+        <param name="args" value=""/>
+      </antcall>
+  </target>
+  
   <target name="jms2.redeliveryDelay"
           description=" --> launch all jms2.redeliveryDelay tests">
     <antcall target="jms2.redeliveryDelay_T_T"/>
