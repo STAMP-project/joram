@@ -21,8 +21,9 @@
       any comment or feedback that could help us improving this doc. Of course, 
       any contribution is welcome ;-).</p>
 
-			<p>The documentation of the last release is accessible <a href="Joram-en.pdf">here</a>,
-			additionnals document are available:</p>
+		<p>The documentation of the last release is accessible <a href="Joram-5.13-ug.pdf">here</a>,
+		additionnals document are available:</p>
+		
       <ul>
         <li>Guide of the <a href="../current/doc/Joram-5.4-JNDI-en.pdf">JNDI implementation</a>.</li>
         <li>Guide of the <a href="../current/doc/Joram-JBoss-en.pdf">Joram - JBoss integration</a>.</li>

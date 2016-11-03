@@ -12,6 +12,22 @@
 
   <body>
     <s1 name="JORAM History">
+      <s2 name="October 24 2016: JORAM 5.13.0 release is available.">
+      <p>This release introduces improvements and bug fixes, essentially:</p>
+      <ul>
+        <li>Performance improvements.</li>
+        <li>You can now delay the redelivery of messages when a temporary, external condition
+        prevents an application from properly handling a message.</li>
+        <li>Adds a specific JCA connector for IronJacamar.</li>
+        <li>Bug fixes and improvements: JORAM-249, JORAM-251, JORAM-252, JORAM-253, JORAM-254, JORAM-255,
+        JORAM-256, JORAM-257, JORAM-258, JORAM-260, JORAM-261, JORAM-262, JORAM-263.</li>
+      </ul>
+      <p>This version is available for <a href="http://joram.ow2.org/download/index.html">download</a>,
+      and in Maven repository.</p>
+      <p>It is tagged in SVN (JORAM_5_13_0), the complete list of changes can be viewed in
+       <a href="http://websvn.ow2.org/log.php?repname=joram&amp;path=%2Ftrunk%2Fjoram%2F&amp;isdir=1&amp;">SVN history</a>.</p>
+      </s2>
+
       <s2 name="April 13, 2016: JORAM 5.12.0 release is available.">
       <p>This release introduces improvements and bug fixes, essentially:</p>
       <ul>
