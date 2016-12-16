@@ -48,18 +48,18 @@ import framework.TestCase;
 public class RedeliveryDelay_Q extends TestCase implements javax.jms.MessageListener {
 
   public static void main(String[] args) {
-    new RedeliveryDelay_Q().run(Integer.parseInt(args[0]), (args.length > 1));
+    new RedeliveryDelay_Q().run(Integer.parseInt(args[0]), args[1]);
   }
 
   JMSContext context;
   JMSConsumer consumer;
 
-  public void run(int sessionMode, boolean useDefault) {
+  public void run(int sessionMode, String mode) {
     try {
       startAgentServer((short) 0);
       Thread.sleep(1000);
 
-      admin(useDefault);
+      admin(mode);
       test(sessionMode);
 
       Thread.sleep(5000);
@@ -82,14 +82,20 @@ public class RedeliveryDelay_Q extends TestCase implements javax.jms.MessageList
   ConnectionFactory cf = null;
   Queue dest = null;
 
-  void admin(boolean useDefault) throws Exception {
+  void admin(String mode) throws Exception {
     cf = TcpConnectionFactory.create("localhost", 2560);
     AdminModule.connect(cf, "root", "root");   
     User.create("anonymous", "anonymous", 0);
-    if (useDefault) {
+    if ("D".equals(mode)) { // "D" -> Default
       System.out.println("Default redelivery delay set.");
       dest = Queue.create("queue");
-    } else {
+    } else if ("P".equals(mode)) { // "P" -> Use setProperties
+      System.out.println("Configure Queue redelivery delay.");
+      dest = Queue.create(0, name);
+      Properties prop = new Properties();
+      prop.setProperty(Queue.REDELIVERY_DELAY, "5");
+      dest.setProperties(prop);
+    } else {  // "C" -> set at creation time
       System.out.println("Configure Queue redelivery delay.");
       Properties prop = new Properties();
       prop.setProperty(Queue.REDELIVERY_DELAY, "5");
@@ -99,6 +105,7 @@ public class RedeliveryDelay_Q extends TestCase implements javax.jms.MessageList
     dest.setFreeReading();
     dest.setFreeWriting();
     AdminModule.disconnect();
+    
   }
 
   void test(int sessionMode) throws InterruptedException {
