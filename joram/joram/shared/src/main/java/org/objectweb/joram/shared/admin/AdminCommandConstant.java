@@ -34,10 +34,11 @@ public class AdminCommandConstant {
   public static final int CMD_STOP_HANDLER = 7;
   public static final int CMD_INVOKE_STATIC = 8;
   public static final int CMD_ADD_CLIENTID = 9;
+  public static final int CMD_SET_REDELIVERY_DELAY = 10;
 
   public static final String[] commandNames = { "CMD_NO", "CMD_ADD_INTERCEPTORS", "CMD_REMOVE_INTERCEPTORS",
       "CMD_GET_INTERCEPTORS", "CMD_REPLACE_INTERCEPTORS", "CMD_SET_PROPERTIES", "CMD_START_HANDLER",
-      "CMD_STOP_HANDLER", "CMD_INVOKE_STATIC", "CMD_ADD_CLIENTID" };
+      "CMD_STOP_HANDLER", "CMD_INVOKE_STATIC", "CMD_ADD_CLIENTID", "CMD_SET_REDELIVERY_DELAY" };
 
   /** use by destination */
   public static final String INTERCEPTORS = "jms_joram_interceptors";
@@ -81,5 +82,6 @@ public class AdminCommandConstant {
   /** Used by AdminTopic to invoke a static method */
   public static final String INVOKE_METHOD_RESULT = "jms_joram_invoke_result";
   
+  /** Used by UserAgent and Destination to set the redeliveryDelay attribute */
   public static final String REDELIVERY_DELAY = "joram.jms.redeliveryDelay";
 }

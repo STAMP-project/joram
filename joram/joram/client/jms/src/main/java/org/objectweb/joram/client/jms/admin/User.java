@@ -889,6 +889,19 @@ public class User extends AdministeredObject implements UserMBean {
   }
   
   /**
+   * Set redeliveryDelay attribute.
+   * 
+   * @param redeliveryDelay The delay use to wait before re-delivering messages after a deny.
+   * @throws ConnectException
+   * @throws AdminException
+   */
+  public void setRedeliveryDelay(int redeliveryDelay) throws ConnectException, AdminException {
+    Properties properties = new Properties();
+    properties.put(AdminCommandConstant.REDELIVERY_DELAY, "" + redeliveryDelay);
+    getWrapper().processAdmin(getProxyId(), AdminCommandConstant.CMD_SET_REDELIVERY_DELAY, properties);
+  }
+
+  /**
    * @deprecated
    */
   public Message readMessage(String subName,

@@ -34,6 +34,7 @@ import javax.jms.JMSException;
 import org.objectweb.joram.client.jms.admin.AdminException;
 import org.objectweb.joram.client.jms.admin.AdminModule;
 import org.objectweb.joram.shared.admin.AddRemoteDestination;
+import org.objectweb.joram.shared.admin.AdminCommandConstant;
 import org.objectweb.joram.shared.admin.ClearQueue;
 import org.objectweb.joram.shared.admin.ClusterAdd;
 import org.objectweb.joram.shared.admin.ClusterLeave;
@@ -670,4 +671,21 @@ public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
 	//  public void resetDefaultDMQ() throws ConnectException, AdminException {
 	//    getWrapper().setDefaultDMQ(null);
 	//  }
+  
+  /**
+   * Set redeliveryDelay attribute.
+   * 
+   * @param redeliveryDelay The delay use to wait before re-delivering messages after a deny.
+   * @throws ConnectException
+   * @throws AdminException
+   */
+  public void setRedeliveryDelay(int redeliveryDelay) throws ConnectException, AdminException {
+    // Note: We could use the getWrapper().processAdmin method with the corresponding
+    // AdminCommandConstant.CMD_SET_REDELIVERY_DELAY command (this process is used to 
+    // configure redeliveryDelay of UserAgent). In this case we have to overload the
+    // processAdminCommand in the MOM Queue class. 
+    Properties properties = new Properties();
+    properties.setProperty(Queue.REDELIVERY_DELAY, "5");
+    setProperties(properties);
+  }
 }

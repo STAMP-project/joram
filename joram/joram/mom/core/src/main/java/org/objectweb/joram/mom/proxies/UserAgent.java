@@ -148,9 +148,11 @@ import org.objectweb.joram.shared.client.XACnxRecoverRequest;
 import org.objectweb.joram.shared.client.XACnxRollback;
 import org.objectweb.joram.shared.excepts.AccessException;
 import org.objectweb.joram.shared.excepts.DestinationException;
+import org.objectweb.joram.shared.excepts.MessageValueException;
 import org.objectweb.joram.shared.excepts.MomException;
 import org.objectweb.joram.shared.excepts.RequestException;
 import org.objectweb.joram.shared.excepts.StateException;
+import org.objectweb.joram.shared.messages.ConversionHelper;
 import org.objectweb.joram.shared.messages.MessageHelper;
 import org.objectweb.util.monolog.api.BasicLevel;
 import org.objectweb.util.monolog.api.Logger;
@@ -3458,6 +3460,22 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
         }
         break;
 
+      case AdminCommandConstant.CMD_SET_REDELIVERY_DELAY:
+        prop = request.getProp();
+        if (prop != null && prop.containsKey(AdminCommandConstant.REDELIVERY_DELAY)) {
+          int reDeliveryDelay;
+          try {
+            reDeliveryDelay = ConversionHelper.toInt(prop.get(AdminCommandConstant.REDELIVERY_DELAY));
+            setRedeliveryDelay(reDeliveryDelay);
+          } catch (MessageValueException e) {
+            if (logger.isLoggable(BasicLevel.WARN))
+              logger.log(BasicLevel.WARN, "EXCEPTION:: AdminCommandConstant handling [" + getName() + "] set the redelivery delay", e);
+          }
+        } else {
+          throw new Exception("redeliveryDelay undefined.");
+        }
+        break;
+        
       default:
         throw new Exception("Bad command : \"" + request.getCommand() + "\"");
       }
