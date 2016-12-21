@@ -92,9 +92,10 @@ public class RedeliveryDelay_Q extends TestCase implements javax.jms.MessageList
     } else if ("P".equals(mode)) { // "P" -> Use setProperties
       System.out.println("Configure Queue redelivery delay.");
       dest = Queue.create(0, name);
-      Properties prop = new Properties();
-      prop.setProperty(Queue.REDELIVERY_DELAY, "5");
-      dest.setProperties(prop);
+      dest.setRedeliveryDelay(5);
+//      Properties prop = new Properties();
+//      prop.setProperty(Queue.REDELIVERY_DELAY, "5");
+//      dest.setProperties(prop);
     } else {  // "C" -> set at creation time
       System.out.println("Configure Queue redelivery delay.");
       Properties prop = new Properties();

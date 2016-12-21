@@ -49,18 +49,18 @@ import framework.TestCase;
 public class RedeliveryDelay_T extends TestCase implements javax.jms.MessageListener {
 
   public static void main(String[] args) {
-    new RedeliveryDelay_T().run(Integer.parseInt(args[0]), (args.length > 1));
+    new RedeliveryDelay_T().run(Integer.parseInt(args[0]), args[1]);
   }
 
   JMSContext context;
   JMSConsumer consumer;
 
-  public void run(int sessionMode, boolean useDefault) {
+  public void run(int sessionMode, String mode) {
     try {
       startAgentServer((short) 0);
       Thread.sleep(1000);
 
-      admin(useDefault);
+      admin(mode);
       test(sessionMode);
 
       Thread.sleep(5000);
@@ -83,13 +83,17 @@ public class RedeliveryDelay_T extends TestCase implements javax.jms.MessageList
   ConnectionFactory cf = null;
   Topic dest = null;
 
-  void admin(boolean useDefault) throws Exception {
+  void admin(String mode) throws Exception {
     cf = TcpConnectionFactory.create("localhost", 2560);
     AdminModule.connect(cf, "root", "root");
-    if (useDefault) {
+    if ("D".equals(mode)) { // "D" -> Default
       System.out.println("Default redelivery delay set.");
       User.create("anonymous", "anonymous", 0);
-    } else {
+    } else if ("A".equals(mode)) { // "A" -> Use administration API
+      System.out.println("Configure User redelivery delay.");
+      User user = User.create("anonymous", "anonymous");
+      user.setRedeliveryDelay(5);
+    } else {  // "C" -> set at creation time
       System.out.println("Configure User redelivery delay.");
       Properties prop = new Properties();
       prop.setProperty(User.REDELIVERY_DELAY, "5");
