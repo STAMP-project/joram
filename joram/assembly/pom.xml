@@ -184,6 +184,12 @@
       <artifactId>joram-tools-jasp</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
+      <exclusions>
+       <exclusion>
+         <groupId>org.apache.geronimo.specs</groupId>
+         <artifactId>geronimo-jms_1.1_spec</artifactId>
+       </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.ow2.joram</groupId>

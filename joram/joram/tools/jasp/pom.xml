@@ -54,6 +54,12 @@
     <dependency>
     	<groupId>org.codehaus.stomp</groupId>
     	<artifactId>stompconnect</artifactId>
+      <exclusions>
+       <exclusion>
+         <groupId>org.apache.geronimo.specs</groupId>
+         <artifactId>geronimo-jms_1.1_spec</artifactId>
+       </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   
