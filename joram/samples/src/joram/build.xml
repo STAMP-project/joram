@@ -246,8 +246,72 @@
   </target>
 
   <!-- **************************************************
+       * Bridge tests based on real client configuration
+       ************************************************** -->
+  
+  <!-- EF Bridge server -->
+  <target name="efbridge_server" depends="simple_init"
+          description="--> Runs EF bridge server">
+    <antcall target="server">
+      <param name="sid" value="1"/>
+      <param name="a3.conf" value="${conf.dir}/efbridge_a3servers.xml"/>
+      <param name="osgi.conf" value="${conf.dir}/config_bridge.properties"/>    	
+    </antcall>
+  </target>
+	
+  <!-- Setup the central server configuration -->
+  <target name="efbridge_admin" depends="simple_init"
+          description="--> Runs the EF bridge sample administration">
+    <java classname="efbridge.Admin"
+      failonerror="no" fork="yes"
+      dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
+
+  <!-- Setup the bridge configuration -->
+  <target name="efbridge_adminxml" depends="simple_init"
+          description="-->  Runs XML administration script for EF bridge sample">
+    <copy file="${src.dir}/efbridge/joramAdmin.xml" overwrite="true" todir="${run.dir}"/>
+    <java classname="org.objectweb.joram.client.jms.admin.AdminModule"
+      failonerror="no" fork="yes"
+      dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <arg line="./joramAdmin.xml"/>
+    </java>
+  </target>
+
+  <!-- Runs the efbridge producer -->
+  <target name="efbridge_producer" depends="init"
+    description="--> Runs the EF bridge sample producer">
+    <java classname="efbridge.Producer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
+
+  <!-- Runs the efbridge consumer -->
+  <target name="efbridge_consumer" depends="init"
+    description="--> Runs the EF bridge sample consumer">
+    <java classname="efbridge.Consumer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
+
+  <!-- **************************************************
        * Classic Sample
        ************************************************** -->
+
+  <!-- Setup the classic configuration -->
+  <target name="test" depends="simple_init"
+          description="--> ">
+    <java classname="classic.test"
+      failonerror="no" fork="yes"
+      dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
 
   <!-- Runs the JoramAdmin class -->
   <target name="joram_admin" depends="simple_init"
