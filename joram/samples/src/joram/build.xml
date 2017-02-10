@@ -87,7 +87,8 @@
           dir="${run.dir}/server${sid}">
       <classpath path="${felix.class.path}"/>
       <!-- jvmarg line="-Dfelix.config.properties=file:config.properties -Dfr.dyade.aaa.agent.AgentServer.id=${sid} -Dcom.sun.management.jmxremote.port=9191 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -DTransaction.SyncOnWrite=false"/ -->
-      <jvmarg line="-server -Xmx2G -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,address=5000,suspend=n -Dfelix.config.properties=file:config.properties -Dfr.dyade.aaa.agent.AgentServer.id=${sid} -Dcom.sun.management.jmxremote -DTransaction.SyncOnWrite=false"/>
+      <!-- jvmarg line="-server -Xmx2G -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,address=5000,suspend=n -Dfelix.config.properties=file:config.properties -Dfr.dyade.aaa.agent.AgentServer.id=${sid} -Dcom.sun.management.jmxremote -DTransaction.SyncOnWrite=false"/ -->
+      <jvmarg line="-server -Xmx2G -Xdebug -Xnoagent -Djava.compiler=NONE -Dfelix.config.properties=file:config.properties -Dfr.dyade.aaa.agent.AgentServer.id=${sid} -Dcom.sun.management.jmxremote -DTransaction.SyncOnWrite=false"/>
       <!-- jvmarg line="-server -Xmx1500m -Xincgc -Dfelix.config.properties=file:config.properties -Dfr.dyade.aaa.agent.AgentServer.id=${sid} -Dcom.sun.management.jmxremote"/ -->
       <!-- jvmarg line="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y"/ -->
     </java>
@@ -251,7 +252,7 @@
   
   <!-- EF Bridge server -->
   <target name="efbridge_server" depends="simple_init"
-          description="--> Runs EF bridge server">
+          description="--> Starts the EF bridge server">
     <antcall target="server">
       <param name="sid" value="1"/>
       <param name="a3.conf" value="${conf.dir}/efbridge_a3servers.xml"/>

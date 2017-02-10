@@ -22,6 +22,8 @@
  */
 package efbridge;
 
+import java.util.Properties;
+
 import javax.jms.ConnectionFactory;
 
 import org.objectweb.joram.client.jms.Queue;
@@ -53,7 +55,12 @@ public class Admin {
     System.out.println("joram acquisition queue = " + acqq);
     
     // bind foreign destination and connectionFactory
-    javax.naming.Context jndiCtx = new javax.naming.InitialContext();
+    Properties jndiProps = new Properties();
+    jndiProps.setProperty("java.naming.factory.initial", "fr.dyade.aaa.jndi2.client.NamingContextFactory");
+    jndiProps.setProperty("java.naming.factory.host", "localhost");
+    jndiProps.setProperty("java.naming.factory.port", "16401");
+ 
+    javax.naming.Context jndiCtx = new javax.naming.InitialContext(jndiProps);
     jndiCtx.rebind("distq", distq);
     jndiCtx.rebind("acqq", acqq);
     jndiCtx.rebind("bridgeCF", bridgeCF);

@@ -22,6 +22,8 @@
  */
 package efbridge;
 
+import java.util.Properties;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -35,7 +37,12 @@ public class Consumer {
 
   public static void main(String[] args) throws Exception {
 
-    javax.naming.Context jndiCtx = new javax.naming.InitialContext();
+    Properties jndiProps = new Properties();
+    jndiProps.setProperty("java.naming.factory.initial", "fr.dyade.aaa.jndi2.client.NamingContextFactory");
+    jndiProps.setProperty("java.naming.factory.host", "localhost");
+    jndiProps.setProperty("java.naming.factory.port", "16401");
+ 
+    javax.naming.Context jndiCtx = new javax.naming.InitialContext(jndiProps);
     Destination bridgeDest = (Destination) jndiCtx.lookup("acqq");
     ConnectionFactory bridgeCF = (ConnectionFactory) jndiCtx.lookup("bridgeCF");
     jndiCtx.close();
