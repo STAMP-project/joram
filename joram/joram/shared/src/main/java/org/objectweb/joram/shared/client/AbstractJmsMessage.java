@@ -177,6 +177,7 @@ public abstract class AbstractJmsMessage implements Externalizable, Streamable, 
     classid = StreamUtil.readIntFrom(is);
     if (classid != NULL_CLASS_ID) {
       switch (classid) {
+      // NOTE: Avoid to use Class.forName for frequent messages.
       case PRODUCER_MESSAGES:
         msg = new ProducerMessages();
         break;
