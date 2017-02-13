@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2006 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2006 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -187,6 +187,11 @@ public final class ConsumerSubRequest extends AbstractJmsRequest {
     durable = StreamUtil.readBooleanFrom(is);
     asyncSub = StreamUtil.readBooleanFrom(is);
     clientID = StreamUtil.readStringFrom(is);
-    shared = StreamUtil.readBooleanFrom(is);
+    shared = false;
+    try {
+      shared = StreamUtil.readBooleanFrom(is);
+    } catch (IOException exc) {
+      // Compatibility with previous version if shared is not encoded.
+    }
   }
 }
