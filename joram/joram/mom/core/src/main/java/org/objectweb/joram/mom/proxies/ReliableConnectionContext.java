@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2006 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2006 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -29,7 +29,6 @@ import org.objectweb.joram.shared.client.AbstractJmsRequest;
 import org.objectweb.joram.shared.client.CnxCloseRequest;
 import org.objectweb.joram.shared.client.MomExceptionReply;
 import org.objectweb.joram.shared.excepts.MomException;
-import org.objectweb.util.monolog.api.BasicLevel;
 import org.objectweb.util.monolog.api.Logger;
 
 import fr.dyade.aaa.common.Debug;
@@ -59,6 +58,8 @@ public class ReliableConnectionContext implements ConnectionContext, Serializabl
   private boolean noAckedQueue;
   
   private QueueWorker queueWorker;
+  
+  private boolean active = false;
   
   public ReliableConnectionContext() {}
 
@@ -159,4 +160,12 @@ public class ReliableConnectionContext implements ConnectionContext, Serializabl
     }
     closed = false;
   }  
+  
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+  
+  public boolean isActive() {
+    return active;
+  }
 }

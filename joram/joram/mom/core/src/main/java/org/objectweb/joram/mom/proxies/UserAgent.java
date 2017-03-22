@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 2004 France Telecom R&D
  * Copyright (C) 2003 - 2004 Bull SA
  * Copyright (C) 1996 - 2000 Dyade
@@ -996,7 +996,7 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
       long date = System.currentTimeMillis();
       if ((date - lastRequestDate) > timeout) {
         if (logger.isLoggable(BasicLevel.WARN))
-          logger.log(BasicLevel.WARN, "HeartBeatTask: closeclose connection - key=" + key);
+          logger.log(BasicLevel.WARN, "HeartBeatTask: close connection - key=" + key);
 
         Channel.sendTo(userId, (Notification) new CloseConnectionNot2(key.intValue()));
         this.cancel();
@@ -2740,6 +2740,15 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
     // else the client doesn't expect any ack
   }
 
+  private <K, V> K getKeyByValue(Map<K, V> map, V value) {
+    for (Map.Entry<K, V> entry : map.entrySet()) {
+      if (value.equals(entry.getValue())) {
+        return entry.getKey();
+      }
+    }
+    return null;
+  }
+  
   /**
    * Method implementing the reaction to a <code>AddClientIDRequest</code>
    * instance add the clientID value of a connection.
@@ -2748,8 +2757,25 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
   private void doReact(int key, AddClientIDRequest req) throws Exception {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "AddClientIDRequest  key = " + key + ", clientID = " + req.clientID);
-    if (clientIDs.containsValue(req.clientID))
-      throw new Exception("clientID \""+ req.clientID + "\" already active.");
+
+    if (clientIDs.containsValue(req.clientID)) {
+      int oldKey = getKeyByValue(clientIDs, req.clientID);
+      ConnectionContext oldCtx = (ConnectionContext) connections.get(oldKey);
+      HeartBeatTask hbt = (HeartBeatTask) heartBeatTasks.get(oldKey);
+      
+      if (oldCtx instanceof ReliableConnectionContext && !((ReliableConnectionContext) oldCtx).isActive()) {
+        if (logger.isLoggable(BasicLevel.DEBUG))
+          logger.log(BasicLevel.DEBUG, "doReact AddClientIDRequest: try to connect with the same clientID \"" + req.clientID +
+              "\" on inactive context, so close the old context - oldKey=" + oldKey);
+        Channel.sendTo(getId(), (Notification) new CloseConnectionNot2(oldKey));
+        hbt.cancel();
+        clientIDs.remove(oldKey);
+        heartBeatTasks.remove(oldKey);
+        connections.remove(oldKey);
+      } else {
+        throw new Exception("clientID \""+ req.clientID + "\" already active.");
+      }
+    }
     clientIDs.put(new Integer(key), req.clientID);
     
     AddClientIDReply reply = new AddClientIDReply();

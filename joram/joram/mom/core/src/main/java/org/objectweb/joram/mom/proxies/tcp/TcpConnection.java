@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -132,6 +132,7 @@ public class TcpConnection implements TcpConnectionMBean, ProxyMessageSender {
       tcpReader = new TcpReader(ioctrl, proxyId, this, closeConnection, ctx);
       proxyService.registerConnection(this);
       tcpReader.start();
+      ctx.setActive(true);
     } catch (Exception exc) {
       close();
       throw exc;
@@ -150,6 +151,7 @@ public class TcpConnection implements TcpConnectionMBean, ProxyMessageSender {
       tcpReader.stop();
     if (ioctrl != null)
       ioctrl.close();
+    ctx.setActive(false);
     try {
       MXWrapper.unregisterMBean("Joram#" + AgentServer.getServerId(), getMBeanName());
     } catch (Exception e) {
