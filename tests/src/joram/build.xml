@@ -508,6 +508,7 @@
     <antcall target="bridge.jms.test18x"/>
     <antcall target="bridge.jms.test19x"/>
     <antcall target="bridge.jms.test20x"/>
+    <antcall target="bridge.jms.test21x"/>
   </target>
 	
   <target name="tests.schedqueue"
@@ -5212,6 +5213,16 @@
     </antcall>
   </target>
 
+  <target name="bridge.jms.test21x" depends="init.a3props,compile"
+          description=" --> Test the bridge with connection renaming">
+    <antcall target="test.run" inheritAll="true">
+      <param name="testid" value="bridge.jms.test21x"/>
+      <param name="className" value="joram.bridgejms.BridgeTest21x"/>
+      <param name="jndiconf" value="bridgejms/jndi.properties"/>
+      <param name="a3conf" value="bridgejms/a3servers1.xml"/>
+    </antcall>
+  </target>
+
   <target name="bridge.jms.testX" depends="init.a3props,compile"
           description=" --> ">
     <antcall target="test.run" inheritAll="true">
@@ -7154,7 +7165,7 @@
         <param name="jndiconf" value="jms2/jndi.properties"/>
         <param name="a3conf" value="jms2/a3servers1.xml"/>
         <param name="jvmargs" value=""/>
-        <param name="args" value="0 X"/>
+        <param name="args" value="0 D"/>
       </antcall>
     <antcall target="test.run" inheritAll="true">
       <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
@@ -7163,7 +7174,16 @@
       <param name="jndiconf" value="jms2/jndi.properties"/>
       <param name="a3conf" value="jms2/a3servers.xml"/>
       <param name="jvmargs" value=""/>
-      <param name="args" value="0"/>
+      <param name="args" value="0 A"/>
+    </antcall>
+    <antcall target="test.run" inheritAll="true">
+      <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
+      <param name="testid" value="jms2.redeliveryDelay_T_T-3"/>
+      <param name="className" value="joram.jms2.RedeliveryDelay_T"/>
+      <param name="jndiconf" value="jms2/jndi.properties"/>
+      <param name="a3conf" value="jms2/a3servers.xml"/>
+      <param name="jvmargs" value=""/>
+      <param name="args" value="0 C"/>
     </antcall>
     </target>
   
@@ -7207,7 +7227,7 @@
       <param name="jndiconf" value="jms2/jndi.properties"/>
       <param name="a3conf" value="jms2/a3servers1.xml"/>
       <param name="jvmargs" value=""/>
-      <param name="args" value="1 X"/>
+      <param name="args" value="1 D"/>
     </antcall>
     <antcall target="test.run" inheritAll="true">
       <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
@@ -7216,7 +7236,16 @@
       <param name="jndiconf" value="jms2/jndi.properties"/>
       <param name="a3conf" value="jms2/a3servers.xml"/>
       <param name="jvmargs" value=""/>
-      <param name="args" value="1"/>
+      <param name="args" value="1 A"/>
+    </antcall>
+    <antcall target="test.run" inheritAll="true">
+      <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
+      <param name="testid" value="jms2.redeliveryDelay_T_A-3"/>
+      <param name="className" value="joram.jms2.RedeliveryDelay_T"/>
+      <param name="jndiconf" value="jms2/jndi.properties"/>
+      <param name="a3conf" value="jms2/a3servers.xml"/>
+      <param name="jvmargs" value=""/>
+      <param name="args" value="1 C"/>
     </antcall>
     </target>
   
@@ -7260,7 +7289,7 @@
       <param name="jndiconf" value="jms2/jndi.properties"/>
       <param name="a3conf" value="jms2/a3servers1.xml"/>
       <param name="jvmargs" value=""/>
-      <param name="args" value="2 X"/>
+      <param name="args" value="2 D"/>
     </antcall>
     <antcall target="test.run" inheritAll="true">
       <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
@@ -7269,7 +7298,16 @@
       <param name="jndiconf" value="jms2/jndi.properties"/>
       <param name="a3conf" value="jms2/a3servers.xml"/>
       <param name="jvmargs" value=""/>
-      <param name="args" value="2"/>
+      <param name="args" value="2 A"/>
+    </antcall>
+    <antcall target="test.run" inheritAll="true">
+      <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
+      <param name="testid" value="jms2.redeliveryDelay_T_C-3"/>
+      <param name="className" value="joram.jms2.RedeliveryDelay_T"/>
+      <param name="jndiconf" value="jms2/jndi.properties"/>
+      <param name="a3conf" value="jms2/a3servers.xml"/>
+      <param name="jvmargs" value=""/>
+      <param name="args" value="2 C"/>
     </antcall>
     </target>
   
