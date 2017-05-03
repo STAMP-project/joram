@@ -311,7 +311,7 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
       }
     } catch (JMSException exc) {
       if (logger.isLoggable(BasicLevel.WARN)) {
-        logger.log(BasicLevel.WARN, "Connection failed", exc);
+        logger.log(BasicLevel.WARN, "Connection " + name + " failed", exc);
       }
       if (cnx != null) {
         try {
@@ -398,6 +398,10 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
         }
         try {
           doConnect();
+          if (logmon.isLoggable(BasicLevel.INFO)) {
+            logmon.log(BasicLevel.INFO,
+                       "StartupDaemon: " + name + " connected using " + cnxFactName + " ConnectionFactory.");
+          }
         } catch (AbstractMethodError exc) {
           notUsable = true;
           notUsableMessage = "Retrieved administered objects types not "
@@ -549,16 +553,16 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
               cnxFact = (ConnectionFactory) retrieveJndiObject(cnxFactName);
             }
             doConnect();
-
+            if (logmon.isLoggable(BasicLevel.INFO)) {
+              logmon.log(BasicLevel.INFO,
+                         "ReconnectionDaemon: " + name + " connected using " + cnxFactName + " ConnectionFactory.");
+            }
           } catch (Exception exc) {
             if (logmon.isLoggable(BasicLevel.DEBUG)) {
-              logmon.log(BasicLevel.DEBUG, "ReconnectionDaemon: connection failed, continue... " + exc.getMessage());
+              logmon.log(BasicLevel.DEBUG, "ReconnectionDaemon: connection " + name + " failed, continue... " + exc.getMessage());
             }
+            // TODO (AF): May be we have to get anew the ConnectionFactory
             continue;
-          }
-
-          if (logmon.isLoggable(BasicLevel.DEBUG)) {
-            logmon.log(BasicLevel.DEBUG, "ReconnectionDaemon: Connected using " + cnxFactName + " connection factory.");
           }
           break;
         }
