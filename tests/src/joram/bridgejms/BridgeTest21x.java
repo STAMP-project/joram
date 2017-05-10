@@ -120,6 +120,10 @@ public class BridgeTest21x extends TestCase {
         
         joramCnx.close();
         
+        AdminModule.connect(joramCF, "root", "root");
+        AdminModule.deleteJMSPBridgeConnection(0, "cnx1");
+        AdminModule.disconnect();
+        
         killAgentServer((short) 0);
         startAgentServer((short)0, new String[]{"-DTransaction.UseLockFile=false"});
         Thread.sleep(1000);
@@ -155,6 +159,11 @@ public class BridgeTest21x extends TestCase {
           System.out.println("Receive message: " + msgIn.getText());
           assertTrue("Should receive a message: " + msgIn, "Coucou2".equals(msgIn.getText()));
         }
+        
+        AdminModule.connect(joramCF, "root", "root");
+        AdminModule.deleteJMSPBridgeConnection(0, "cnx2");
+        AdminModule.disconnect();
+        
       } catch(Exception exc){
         exc.printStackTrace();
         error(exc);
