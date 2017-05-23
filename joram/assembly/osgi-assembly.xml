@@ -33,6 +33,7 @@
         <include>commons-io:commons-io</include>
         <include>org.ow2.joram:joram-mom-extensions-ftp</include>
         <include>org.ow2.joram:joram-mom-extensions-jmsbridge</include>
+        <include>org.ow2.joram:joram-mom-extensions-restbridge</include>
         <include>org.ow2.joram:joram-mom-extensions-mail</include>
         <include>org.ow2.joram:joram-mom-extensions-collector</include>
         <include>org.ow2.joram:joram-mom-extensions-scheduler</include>

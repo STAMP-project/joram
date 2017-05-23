@@ -163,6 +163,12 @@
     </dependency>
     <dependency>
       <groupId>org.ow2.joram</groupId>
+      <artifactId>joram-mom-extensions-restbridge</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.ow2.joram</groupId>
       <artifactId>joram-mom-extensions-mail</artifactId>
       <version>${project.version}</version>
       <type>jar</type>

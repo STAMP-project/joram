@@ -20,6 +20,7 @@
     <module>mail</module>
     <module>scheduler</module>
     <module>ftp</module>
+    <module>restbridge</module>
   </modules>
 
 </project>
