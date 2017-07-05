@@ -33,6 +33,8 @@ import org.objectweb.joram.client.jms.admin.User;
 import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 import org.objectweb.joram.client.jms.admin.JMSAcquisitionQueue;
 import org.objectweb.joram.client.jms.admin.JMSDistributionQueue;
+import org.objectweb.joram.client.jms.admin.RestAcquisitionQueue;
+import org.objectweb.joram.client.jms.admin.RestDistributionQueue;
 
 public class Admin {
   public static void main(String[] args) throws Exception {
@@ -44,30 +46,43 @@ public class Admin {
     AdminModule.connect(bridgeCF, "root", "root");
     
     // Create a topic forwarding its messages to the configured rest queue.
-    Properties prop = new Properties();
-    prop.put("distribution.className", "com.scalagent.joram.mom.dest.rest.RESTDistribution");
-    prop.put("rest.hostName", "localhost");
-    prop.put("rest.port", "8989");
-    prop.put("rest.userName", "anonymous");
-    prop.put("rest.password", "anonymous");
-    prop.put("jms.destination", "queue");
-    Queue queueDist = Queue.create(1, "queueDist", Destination.DISTRIBUTION_QUEUE, prop);
+//    Properties prop = new Properties();
+//    prop.put("distribution.className", "com.scalagent.joram.mom.dest.rest.RESTDistribution");
+//    prop.put("rest.hostName", "localhost");
+//    prop.put("rest.port", "8989");
+//    prop.put("rest.userName", "anonymous");
+//    prop.put("rest.password", "anonymous");
+//    prop.put("jms.destination", "queue");
+//    prop.put("distribution.batch", "true");
+//    prop.put("period", "1000");
+//    Queue queueDist = Queue.create(1, "queueDist", Destination.DISTRIBUTION_QUEUE, prop);
+    Queue queueDist = new RestDistributionQueue()
+        .setBatch(true)
+        .setHostName("localhost")
+        .setPort(8989)
+        .setPeriod(10)
+        .setBatch(true)
+        .create(1, "queueDist", "queue");
     queueDist.setFreeWriting();
     System.out.println("joram distribution queue = " + queueDist);
 
     // Create a queue getting its messages from the configured rest queue.
-    prop = new Properties();
-    prop.put("acquisition.className", "com.scalagent.joram.mom.dest.rest.RESTAcquisition");
-    prop.put("rest.hostName", "localhost");
-    prop.put("rest.port", "8989");
-    prop.put("rest.userName", "anonymous");
-    prop.put("rest.password", "anonymous");
-    prop.put("rest.nbMaxMsgByPeriode", "1000");
-    //prop.put("rest.mediaTypeJson", "false");
-//    prop.put("rest.timeout", "0");
-    prop.put("jms.destination", "queue");
-    prop.put("acquisition.period", "1000");
-    Queue queueAcq = Queue.create(1, "queueAcq", Destination.ACQUISITION_QUEUE, prop);
+//    prop = new Properties();
+//    prop.put("acquisition.className", "com.scalagent.joram.mom.dest.rest.RESTAcquisitionDaemon");
+//    prop.put("rest.hostName", "localhost");
+//    prop.put("rest.port", "8989");
+//    prop.put("rest.userName", "anonymous");
+//    prop.put("rest.password", "anonymous");
+//    prop.put("rest.nbMaxMsgByPeriode", "1000");
+//    //prop.put("rest.mediaTypeJson", "false");
+//    prop.put("rest.timeout", "5000");
+//    prop.put("jms.destination", "queue");
+//    //prop.put("acquisition.period", "1000");
+//    Queue queueAcq = Queue.create(1, "queueAcq", Destination.ACQUISITION_QUEUE, prop);
+    Queue queueAcq = new RestAcquisitionQueue()
+        .setTimeout(1000)
+        .setNbMaxMsgByPeriode(1000)
+        .create(1, "queueAcq", "queue");
     queueAcq.setFreeReading();
     System.out.println("joram acquisition queue = " + queueAcq);
 
