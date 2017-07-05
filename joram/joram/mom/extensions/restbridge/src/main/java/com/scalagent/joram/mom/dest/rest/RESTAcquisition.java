@@ -22,7 +22,10 @@
  */
 package com.scalagent.joram.mom.dest.rest;
 
-import java.io.Serializable;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.jms.MessageFormatException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation.Builder;
@@ -178,7 +182,7 @@ public class RESTAcquisition implements AcquisitionHandler {
           logger.log(BasicLevel.WARN, "-- DeliveryMode = " + jsonMessageHeader.get("DeliveryMode"));
       }
     
-    if (jsonMessageHeader.containsKey("DeliveryMode")) {
+    if (jsonMessageHeader.containsKey("Priority")) {
       try {
         message.priority = ((Double) jsonMessageHeader.get("Priority")).intValue();
       } catch (Exception e) { 
@@ -265,6 +269,41 @@ public class RESTAcquisition implements AcquisitionHandler {
           logger.log(BasicLevel.WARN, "-- Type = " + jsonMessageHeader.get("Type"));
       }
     }
+  }
+  
+  private Map getMapMessage(Map<String, Object> jsonMap) throws Exception {
+    if (jsonMap == null)
+      return null;
+
+    Map map = new HashMap<>();
+    // parse the json map
+    for (String key : jsonMap.keySet()) {
+      Object value = jsonMap.get(key);
+      if (value instanceof ArrayList) {
+        ArrayList<String> array =(ArrayList<String>) value; 
+        try {
+          if (array.size() == 2) {
+            String className = array.get(1);
+            if (Character.class.getName().equals(className)) {
+              value =  array.get(0).charAt(0);
+            } else if (byte[].class.getName().equals(className)) {
+             value = array.get(0).getBytes("UTF-8");
+            } else {
+              Constructor<?> constructor = Class.forName(className).getConstructor(String.class);
+              value = constructor.newInstance(array.get(0));
+            }
+            map.put(key, value);
+          }
+        } catch (Exception e) {
+          if (logger.isLoggable(BasicLevel.ERROR))
+            logger.log(BasicLevel.ERROR, "getMapMessage: ignore map entry " + key + ", " + value + " : " + e.getMessage());
+          continue;
+        }
+      }
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "getMapMessage: " + key + ", value = " + value + ", " + value.getClass().getSimpleName());
+    }
+    return map;
   }
   
   @Override
@@ -385,9 +424,23 @@ public class RESTAcquisition implements AcquisitionHandler {
               } break;
 
               case "MapMessage": {
-                Map jmsBody =  (Map) msg.get("body");
+                Map jsonBody =  (Map) msg.get("body");
+                Map map = getMapMessage(jsonBody);
                 message.type = Message.MAP;
-                message.setObject((Serializable) jmsBody);
+                try {
+                  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                  ObjectOutputStream oos = new ObjectOutputStream(baos);
+                  oos.writeObject(map);
+                  oos.flush();
+                  message.setBody(baos.toByteArray());
+                  oos.close();
+                  baos.close();
+                } catch (IOException exc) {
+                  MessageFormatException jExc =
+                    new MessageFormatException("The message body could not be serialized.");
+                  jExc.setLinkedException(exc);
+                  throw jExc;
+                }
               } break;
 
               case "BytesMessage": {
@@ -402,7 +455,7 @@ public class RESTAcquisition implements AcquisitionHandler {
               } break;
 
               default:
-                logger.log(BasicLevel.ERROR, "TODO::: RESTAcquisition.retrieve type = " + type + " not supported.");//NTA tmp
+                logger.log(BasicLevel.ERROR, "TODO::: RESTAcquisition.retrieve type = " + type + " not supported.");
                 break;
               }
             }
