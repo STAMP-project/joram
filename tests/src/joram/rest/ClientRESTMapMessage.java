@@ -23,6 +23,7 @@
 package joram.rest;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,8 +121,8 @@ public class ClientRESTMapMessage extends TestCase {
       String type = (String) msg.get("type");
       assertEquals("receive-next-message type", "MapMessage", type);
       Map jmsBody = (Map) msg.get("body");
-      // System.out.println("*** message = " + jmsBody);
-      assertEquals("receive-next-message key1", value1, jmsBody.get("key1"));
+      System.out.println("*** message = " + jmsBody);
+      assertEquals("receive-next-message key1", value1, ((ArrayList<String>)jmsBody.get("key1")).get(0));
       Map jmsProperties = (Map) msg.get("properties");
       // System.out.println("*** jmsProperties " + jmsProperties);
       assertNotNull("receive-next-message jmsProperties", jmsProperties);
