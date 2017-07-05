@@ -25,8 +25,10 @@ package org.objectweb.joram.tools.rest.jms;
 import java.net.URI;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.jms.BytesMessage;
@@ -593,6 +595,27 @@ public class JmsContextService {
     }
   }
 
+  private Map getMapMessageToJsonBodyMap(Message message) throws JMSException {
+    Map msgMap = message.getBody(Map.class);
+    if (msgMap == null)
+      return null;
+    HashMap<String, Object> jsonBodyMap = new HashMap<>();
+    Iterator<Map.Entry> entries = msgMap.entrySet().iterator();
+    while (entries.hasNext()) {
+      Entry entry = entries.next();
+      String name = (String) entry.getKey();
+      Object v = entry.getValue();
+      if (v != null) {
+        String[] value = {""+v, v.getClass().getName()};
+        if (v instanceof byte[]) {
+          value[0] = new String((byte[])v);
+        }
+        jsonBodyMap.put(name, value);
+      }
+    }
+    return jsonBodyMap;
+  }
+  
   @GET
   @Path("/{name}")
   @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})
@@ -628,7 +651,7 @@ public class JmsContextService {
         // receive the message
         message = helper.consume(consName, timeout, noLocal, durable, shared, subName, -1);
         if (logger.isLoggable(BasicLevel.DEBUG))
-          logger.log(BasicLevel.DEBUG, "consumeTextMsg: message = " + message); 
+          logger.log(BasicLevel.DEBUG, "consumeMsg: message = " + message); 
       } catch (Exception e) {
         if (logger.isLoggable(BasicLevel.WARN))
           logger.log(BasicLevel.WARN, "", e);
@@ -662,7 +685,7 @@ public class JmsContextService {
           if (jsonMedia) {
             HashMap jsonMap = new HashMap<>();
             jsonMap.put(JMS_TYPE, message.getClass().getSimpleName());
-            jsonMap.put(JMS_BODY, message.getBody(Map.class));
+            jsonMap.put(JMS_BODY, getMapMessageToJsonBodyMap(message));
             jsonMap.put(JMS_PROPERTIES, getPropertiesToJsonMap(message));
             jsonMap.put(JMS_HEADER, getHeaderToJsonMap(message));
             msg = jsonMap;
@@ -803,7 +826,7 @@ public class JmsContextService {
         // receive the message
         message = helper.consume(consName, timeout, noLocal, durable, shared, subName, id);
         if (logger.isLoggable(BasicLevel.DEBUG))
-          logger.log(BasicLevel.DEBUG, "consumeTextMsg: message = " + message); 
+          logger.log(BasicLevel.DEBUG, "consumeMsg: message = " + message); 
       } catch (Exception e) {
         if (logger.isLoggable(BasicLevel.WARN))
           logger.log(BasicLevel.WARN, "", e);
@@ -836,7 +859,7 @@ public class JmsContextService {
           if (jsonMedia) {
             HashMap jsonMap = new HashMap<>();
             jsonMap.put(JMS_TYPE, message.getClass().getSimpleName());
-            jsonMap.put(JMS_BODY, message.getBody(Map.class));
+            jsonMap.put(JMS_BODY, getMapMessageToJsonBodyMap(message));
             jsonMap.put(JMS_PROPERTIES, getPropertiesToJsonMap(message));
             jsonMap.put(JMS_HEADER, getHeaderToJsonMap(message));
             msg = jsonMap;

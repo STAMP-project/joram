@@ -53,6 +53,7 @@ import fr.dyade.aaa.common.Debug;
 
 public class Helper {
 
+  private static final String BYTES_CLASS_NAME = byte[].class.getName();
   public static final String BUNDLE_CF_PROP = "rest.jms.connectionFactory";
   public static final String BUNDLE_JNDI_FACTORY_INITIAL_PROP = "rest.jndi.factory.initial";
   public static final String BUNDLE_JNDI_FACTORY_HOST_PROP = "rest.jndi.factory.host";
@@ -428,8 +429,14 @@ public class Helper {
         try {
           if (array.size() == 2) {
             String className = array.get(1);
-            Constructor<?> constructor = Class.forName(className).getConstructor(String.class);
-            value = constructor.newInstance(array.get(0));
+            if (Character.class.getName().equals(className)) {
+              value =  array.get(0).charAt(0);
+            } else if (BYTES_CLASS_NAME.equals(className)) {
+              value = array.get(0).getBytes("UTF-8"); 
+            } else {
+              Constructor<?> constructor = Class.forName(className).getConstructor(String.class);
+              value = constructor.newInstance(array.get(0));
+            }
           }
         } catch (Exception e) {
           if (logger.isLoggable(BasicLevel.ERROR))
@@ -450,6 +457,9 @@ public class Helper {
       case "Integer":
         msg.setInt(key, (Integer)value);
         break;
+      case "Long":
+        msg.setLong(key, (Long)value);
+        break;
       case "Double":
         msg.setDouble(key, (Double)value);
         break;
@@ -459,13 +469,13 @@ public class Helper {
       case "Short":
         msg.setShort(key, (Short)value);
         break;
-      case "Char":
+      case "Character":
         msg.setChar(key, (char)value);
         break;
       case "Byte":
         msg.setByte(key, (Byte)value);
         break;
-      case "Bytes":
+      case "byte[]":
         msg.setBytes(key, (byte[])value);
         break;
 
@@ -634,6 +644,9 @@ public class Helper {
             break;
           case "Integer":
             msg.setIntProperty(key, (Integer)value);
+            break;
+          case "Long":
+            msg.setLongProperty(key, (Long)value);
             break;
           case "Double":
             msg.setDoubleProperty(key, (Double)value);
