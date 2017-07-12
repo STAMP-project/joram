@@ -24,15 +24,29 @@
 #include <stdio.h>
 
 #include "XoramWrapper.H"
+#include "XoramAdmin.H"
 
 int main(int argc, char *argv[]) {
+    XoramAdmin* admin = new XoramAdmin();
+    admin->connect("root", "root", 60);
+
+    // create destination
+    Queue* xqueue = admin->createQueue("queue");
+    
+    // set right
+    admin->setFreeReading(xqueue);
+    admin->setFreeWriting(xqueue);
+
+    // create "anonymous" user
+    admin->createUser("anonymous", "anonymous");
+    admin->disconnect();
 
     char* cf = create_tcp_connection_factory("localhost", 16010);
     char* cnx = create_connection(cf, "anonymous", "anonymous");
     start_connection(cnx);
 
     char* sess = create_session(cnx);
-    char* queue = create_queue("#0.0.1026", "queue");
+    char* queue = create_queue(xqueue.getUID(), xqueue.getName());
     char* prod = create_producer(sess, queue);
     char* cons = create_consumer(sess, queue);
     printf("prod = %x, cons = %x\n", prod, cons);

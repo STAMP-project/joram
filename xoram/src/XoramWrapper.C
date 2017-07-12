@@ -26,6 +26,7 @@
 #include "Xoram.H"
 #include "Message.H"
 #include "Destination.H"
+#include "XoramAdmin.H"
 #include "XoramWrapper.H"
 
 //##############################################################
@@ -106,6 +107,35 @@ char* create_queue(char* id, char* name) {
     printf("XoramWrapper: create_queue queue = 0x%x\n", queue);
   return (char*) queue;
 }
+
+/*
+char* create_queue() {
+  if (WRAPPER_DEBUG)
+    printf("XoramWrapper: create_queue()\n");
+  Queue* queue = XoramAdmin::createQueue();
+  if (WRAPPER_DEBUG)
+    printf("XoramWrapper: create_queue queue = 0x%x\n", queue);
+  return (char*) queue;
+}
+
+char* create_queue(char* name) {
+  if (WRAPPER_DEBUG)
+    printf("XoramWrapper: create_queue(%s)\n", name);
+  Queue* queue = XoramAdmin::createQueue(name);
+  if (WRAPPER_DEBUG)
+    printf("XoramWrapper: create_queue queue = 0x%x\n", queue);
+  return (char*) queue;
+}
+
+char* create_queue(int serverId) {
+  if (WRAPPER_DEBUG)
+    printf("XoramWrapper: create_queue(%d)\n", serverId);
+  Queue* queue = XoramAdmin::createQueue(serverId);
+  if (WRAPPER_DEBUG)
+    printf("XoramWrapper: create_queue queue = 0x%x\n", queue);
+  return (char*) queue;
+}
+*/
 
 char* create_topic(char* id, char* name) {
   // id = "#0.0.1026", name = "topic"
