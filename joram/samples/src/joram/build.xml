@@ -305,105 +305,105 @@
        ************************************************** -->
 
   <!-- Rest Bridge server -->
-    <target name="restbridge_server" depends="simple_init"
-            description="--> Starts the rest bridge server">
-      <antcall target="server">
-        <param name="sid" value="1"/>
-        <param name="a3.conf" value="${conf.dir}/restbridge_a3servers.xml"/>
-        <param name="osgi.conf" value="${conf.dir}/config_restbridge.properties"/>      
-      </antcall>
-    </target>
+  <target name="restbridge_server" depends="simple_init"
+          description="--> Starts the rest bridge server">
+    <antcall target="server">
+      <param name="sid" value="1"/>
+      <param name="a3.conf" value="${conf.dir}/restbridge_a3servers.xml"/>
+      <param name="osgi.conf" value="${conf.dir}/config_restbridge.properties"/>      
+    </antcall>
+  </target>
     
-    <!-- Setup the central server configuration -->
-    <target name="restbridge_admin" depends="simple_init"
-            description="--> Runs the rest bridge sample administration">
-      <java classname="restbridge.Admin"
-        failonerror="no" fork="yes"
-        dir="${run.dir}">
-        <classpath path="${project.class.path}"/>
-      </java>
-    </target>
+  <!-- Setup the central server configuration -->
+  <target name="restbridge_admin" depends="simple_init"
+          description="--> Runs the rest bridge sample administration">
+    <java classname="restbridge.Admin"
+      failonerror="no" fork="yes"
+      dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
 
-    <!-- Setup the bridge configuration -->
-    <!--target name="restbridge_adminxml" depends="simple_init"
-            description="  Runs XML administration script for rest bridge sample">
-      <copy file="${src.dir}/restbridge/joramAdmin.xml" overwrite="true" todir="${run.dir}"/>
-      <java classname="org.objectweb.joram.client.jms.admin.AdminModule"
-        failonerror="no" fork="yes"
-        dir="${run.dir}">
-        <classpath path="${project.class.path}"/>
-        <arg line="./joramAdmin.xml"/>
-      </java>
-    </target-->
+  <!-- Setup the bridge configuration -->
+  <!-- target name="restbridge_adminxml" depends="simple_init"
+          description="  Runs XML administration script for rest bridge sample">
+    <copy file="${src.dir}/restbridge/joramAdmin.xml" overwrite="true" todir="${run.dir}"/>
+    <java classname="org.objectweb.joram.client.jms.admin.AdminModule"
+      failonerror="no" fork="yes"
+      dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <arg line="./joramAdmin.xml"/>
+    </java>
+  </target-->
 
-    <!-- Runs the rest bridge producer -->
-    <target name="restbridge_producer" depends="init"
-      description="--> Runs the rest bridge sample producer">
-      <java classname="restbridge.Producer" failonerror="no" fork="yes"
-            dir="${run.dir}">
-        <classpath path="${project.class.path}"/>
-      </java>
-    </target>
+  <!-- Runs the rest bridge producer -->
+  <target name="restbridge_producer" depends="init"
+          description="--> Runs the rest bridge sample producer">
+    <java classname="restbridge.Producer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
 
-    <!-- Runs the rest bridge consumer -->
-    <target name="restbridge_consumer" depends="init"
-      description="--> Runs the rest bridge sample consumer">
-      <java classname="restbridge.Consumer" failonerror="no" fork="yes"
-            dir="${run.dir}">
-        <classpath path="${project.class.path}"/>
-      </java>
-    </target>
-  
+	<!-- Runs the rest bridge consumer -->
+  <target name="restbridge_consumer" depends="init"
+          description="--> Runs the rest bridge sample consumer">
+    <java classname="restbridge.Consumer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
+ 
   <!-- Runs the rest bridge receiver -->
-      <target name="restbridge_receiver" depends="init"
-        description="--> Runs the rest bridge sample receiver">
-        <java classname="restbridge.Receiver" failonerror="no" fork="yes"
-              dir="${run.dir}">
-          <classpath path="${project.class.path}"/>
-        </java>
-      </target>
+  <target name="restbridge_receiver" depends="init"
+          description="--> Runs the rest bridge sample receiver">
+    <java classname="restbridge.Receiver" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
   
   <!-- Runs the rest performance producer: send X messages on queue -->
-    <target name="rest_perfs_prod_q" depends="simple_init"
-      description="--> Starts the Rest PERFS producer">
-      <java classname="restbridge.PerfProducer" failonerror="no" fork="yes"
-            dir="${run.dir}">
-        <classpath path="${project.class.path}"/>
-        <jvmarg line="-DNbMsgPerRound=1000 -DRound=10 -DasyncSend=false -DTransacted=false -DMsgSize=10000 -DMsgTransient=false -Dmps=150000" />
-      </java>
-    </target>
-  
-  <!-- Runs the performance producer: send X messages on queue -->
-      <target name="perfs_prod_q" depends="simple_init"
-        description="--> Starts the PERFS producer">
-        <java classname="perfs.Producer" failonerror="no" fork="yes"
-              dir="${run.dir}">
-          <classpath path="${project.class.path}"/>
-          <jvmarg line="-DNbMsgPerRound=1000 -DRound=10 -DasyncSend=false -DTransacted=false -DMsgSize=10000 -DMsgTransient=false -Dmps=150000" />
-          <arg line="queue"/>
-        </java>
-      </target>
+  <target name="rest_perfs_prod_q" depends="simple_init"
+          description="--> Starts the Rest PERFS producer">
+    <java classname="restbridge.PerfProducer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <jvmarg line="-DNbMsgPerRound=1000 -DRound=10 -DasyncSend=true -DTransacted=false -DMsgSize=100 -DMsgTransient=false -Dmps=500" />
+    </java>
+  </target>
   
   <!-- Runs the rest performance consumer on queue -->
-    <target name="rest_perfs_cons_q" depends="simple_init"
-      description="--> Starts the Rest PERFS consumer">
-      <java classname="restbridge.PerfConsumer" failonerror="no" fork="yes"
-            dir="${run.dir}">
-        <classpath path="${project.class.path}"/>
-        <jvmarg line="-DNbMsgPerRound=1000 -DTransacted=false -DimplicitAck=false" />
-      </java>
-    </target>
+  <target name="rest_perfs_cons_q" depends="simple_init"
+          description="--> Starts the Rest PERFS consumer">
+    <java classname="restbridge.PerfConsumer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <jvmarg line="-DNbMsgPerRound=1000 -DTransacted=false -DimplicitAck=false" />
+    </java>
+  </target>
+  
+  <!-- Runs the performance producer: send X messages on queue -->
+  <target name="perfs_prod_q" depends="simple_init"
+          description="--> Starts the PERFS producer">
+    <java classname="perfs.Producer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <jvmarg line="-DNbMsgPerRound=1000 -DRound=100 -DasyncSend=false -DTransacted=false -DMsgSize=100 -DMsgTransient=false -Dmps=150000" />
+      <arg line="queue"/>
+    </java>
+  </target>
   
   <!-- Runs the performance sample consumer on queue -->
-      <target name="perfs_cons" depends="simple_init"
-        description="--> Starts the PERFS consumer">
-        <java classname="perfs.Consumer" failonerror="no" fork="yes"
-              dir="${run.dir}">
-          <classpath path="${project.class.path}"/>
-          <jvmarg line="-DNbMsgPerRound=1000 -DTransacted=false -DimplicitAck=false" />
-          <arg line="queue"/>
-        </java>
-      </target>
+  <target name="perfs_cons" depends="simple_init"
+          description="--> Starts the PERFS consumer">
+    <java classname="perfs.Consumer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <jvmarg line="-DNbMsgPerRound=1000 -DTransacted=false -DimplicitAck=false" />
+      <arg line="queue"/>
+    </java>
+  </target>
 
   <!-- **************************************************
        * Classic Sample
