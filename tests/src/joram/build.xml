@@ -5223,6 +5223,24 @@
     </antcall>
   </target>
 
+  <target name="bridge.jms.test22x" depends="init.a3props,compile"
+          description=" --> ">
+    <antcall target="test.run" inheritAll="true">
+      <param name="testid" value="bridge.jms.test22xA"/>
+      <param name="className" value="joram.bridgejms.BridgeTest22x"/>
+      <param name="jndiconf" value="bridgejms/jndi.properties"/>
+      <param name="a3conf" value="bridgejms/a3servers.xml"/>
+      <param name="jvmargs" value="-Dasync=true"/>
+    </antcall>
+    <antcall target="test.run" inheritAll="true">
+      <param name="testid" value="bridge.jms.test22xB"/>
+      <param name="className" value="joram.bridgejms.BridgeTest22x"/>
+      <param name="jndiconf" value="bridgejms/jndi.properties"/>
+      <param name="a3conf" value="bridgejms/a3servers.xml"/>
+      <param name="jvmargs" value="-Dasync=false"/>
+    </antcall>
+  </target>
+
   <target name="bridge.jms.testX" depends="init.a3props,compile"
           description=" --> ">
     <antcall target="test.run" inheritAll="true">
@@ -5304,6 +5322,16 @@
   <!-- end bridgejms test -->
   
   <!-- start bridgerest test -->
+	
+  <!-- Bridge REST -->
+  <target name="tests.bridge.rest"
+          description=" --> launch all bridge REST tests">
+    <antcall target="bridge.rest.simpleText"/>
+    <antcall target="bridge.rest.simpleBytes"/>
+    <antcall target="bridge.rest.simpleMap"/>
+    <antcall target="bridge.rest.test1"/>
+  </target>
+	
   <target name="init.bridgerest" depends="init.a3props,compile"
           description=" --> init Bridge REST">
     <antcall target="init.test" inheritAll="true">
@@ -5315,19 +5343,6 @@
     <replace file="${test.dir}/config.properties" token="@BUNDLE_DIR@" value="${bundle.dir}" />
     <replace file="${test.dir}/config.properties" token="\" value="/" />
     <replace file="${test.dir}/config.properties" token="@BACK_SLACH@" value="\" />
-  </target>
-  
-  <target name="bridge.rest.test1" depends="init.bridgerest"
-          description=" --> Tests behavior of the acquisition queue during foreign server failures">
-    <antcall target="test.start" inheritAll="true">
-      <param name="testid" value="bridge.rest.test1"/>
-      <param name="className" value="joram.bridgerest.BridgeRestTest1"/>
-      <param name="SCAdminClass" value="framework.SCAdminOSGi"/>
-      <param name="isOSGi" value="true"/>
-      <param name="jndiconf" value="jndi.properties"/>
-      <param name="a3conf" value="a3servers.xml"/>
-      <param name="jvmargs" value=""/>
-    </antcall>
   </target>
 
   <target name="bridge.rest.simpleText" depends="init.bridgerest"
@@ -5368,6 +5383,20 @@
       <param name="jvmargs" value=""/>
     </antcall>
   </target> 
+  
+  <target name="bridge.rest.test1" depends="init.bridgerest"
+          description=" --> Tests behavior of the acquisition queue during foreign server failures">
+    <antcall target="test.start" inheritAll="true">
+      <param name="testid" value="bridge.rest.test1"/>
+      <param name="className" value="joram.bridgerest.BridgeRestTest1"/>
+      <param name="SCAdminClass" value="framework.SCAdminOSGi"/>
+      <param name="isOSGi" value="true"/>
+      <param name="jndiconf" value="jndi.properties"/>
+      <param name="a3conf" value="a3servers.xml"/>
+      <param name="jvmargs" value=""/>
+    </antcall>
+  </target>
+	
   <!-- end bridgerest test -->
   
   <!-- start bridgeamqp test -->
