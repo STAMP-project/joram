@@ -113,16 +113,6 @@
       <param name="osgi.conf" value="${conf.dir}/config.properties"/>
     </antcall>
   </target>
-  
-  <!-- Start REST and a single server in NullTransaction mode -->
-  <target name="rest_server" depends="init"
-          description="--> Starts a single server in non-persistent mode and REST">
-    <antcall target="server">
-      <param name="sid" value="0"/>
-      <param name="a3.conf" value="${conf.dir}/centralized_a3servers.xml"/>
-      <param name="osgi.conf" value="${conf.dir}/config_rest.properties"/>
-    </antcall>
-  </target>
 	
   <!-- Start a single server with the shell commands -->
   <target name="shell_server" depends="init"
@@ -299,7 +289,59 @@
       <classpath path="${project.class.path}"/>
     </java>
   </target>
+
+  <!-- **************************************************
+       * Rest samples
+       ************************************************** -->
   
+  <!-- Start REST and a single server in NullTransaction mode -->
+  <target name="rest_server" depends="init"
+          description="--> Starts a single server with REST/JMS API">
+    <antcall target="server">
+      <param name="sid" value="0"/>
+      <param name="a3.conf" value="${conf.dir}/ngt_a3servers.xml"/>
+      <param name="osgi.conf" value="${conf.dir}/config_rest.properties"/>
+    </antcall>
+  </target>
+
+  <!-- Runs the rest producer -->
+  <target name="rest.producer" depends="init"
+    description="--> Runs the rest sample producer">
+    <java classname="rest.Producer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
+
+  <!-- Runs the rest consumer -->
+  <target name="rest.consumer" depends="init"
+    description="--> Runs the rest sample consumer">
+    <java classname="rest.Consumer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
+	
+  <!-- Runs the Rest PERFS producer -->
+  <target name="rest_perfs_prod_q" depends="simple_init"
+    description="--> Starts the Rest PERFS producer">
+    <java classname="rest.PerfProducer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <jvmarg line="-DNbClient=2 -DNbMsgPerRound=1000 -DRound=25 -DMsgSize=1000 -DMsgTransient=false -Dmps=250" />
+    </java>
+  </target>
+	
+  <!-- Runs the Rest PERFS consumer -->
+  <target name="rest_perfs_cons_q" depends="simple_init"
+    description="--> Starts the Rest PERFS consumer">
+    <java classname="rest.PerfConsumer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <jvmarg line="-DNbClient=5 -DNbMsgPerRound=1000 -DRound=10" />
+    </java>
+  </target>
+
   <!-- **************************************************
        * Rest bridge Sample
        ************************************************** -->
@@ -364,35 +406,35 @@
   </target>
   
   <!-- Runs the rest performance producer: send X messages on queue -->
-  <target name="rest_perfs_prod_q" depends="simple_init"
-          description="--> Starts the Rest PERFS producer">
-    <java classname="restbridge.PerfProducer" failonerror="no" fork="yes"
-          dir="${run.dir}">
-      <classpath path="${project.class.path}"/>
-      <jvmarg line="-DNbMsgPerRound=1000 -DRound=10 -DasyncSend=true -DTransacted=false -DMsgSize=100 -DMsgTransient=false -Dmps=500" />
-    </java>
-  </target>
-  
-  <!-- Runs the rest performance consumer on queue -->
-  <target name="rest_perfs_cons_q" depends="simple_init"
-          description="--> Starts the Rest PERFS consumer">
-    <java classname="restbridge.PerfConsumer" failonerror="no" fork="yes"
-          dir="${run.dir}">
-      <classpath path="${project.class.path}"/>
-      <jvmarg line="-DNbMsgPerRound=1000 -DTransacted=false -DimplicitAck=false" />
-    </java>
-  </target>
+    <target name="restbridge_perfs_prod_q" depends="simple_init"
+      description="--> Starts the Rest PERFS producer">
+      <java classname="restbridge.PerfProducer" failonerror="no" fork="yes"
+            dir="${run.dir}">
+        <classpath path="${project.class.path}"/>
+        <jvmarg line="-DNbMsgPerRound=100 -DRound=100 -DasyncSend=false -DTransacted=false -DMsgSize=1000 -DMsgTransient=false -Dmps=1000" />
+      </java>
+    </target>
   
   <!-- Runs the performance producer: send X messages on queue -->
-  <target name="perfs_prod_q" depends="simple_init"
-          description="--> Starts the PERFS producer">
-    <java classname="perfs.Producer" failonerror="no" fork="yes"
-          dir="${run.dir}">
-      <classpath path="${project.class.path}"/>
-      <jvmarg line="-DNbMsgPerRound=1000 -DRound=100 -DasyncSend=false -DTransacted=false -DMsgSize=100 -DMsgTransient=false -Dmps=150000" />
-      <arg line="queue"/>
-    </java>
-  </target>
+      <target name="perfs_prod_q" depends="simple_init"
+        description="--> Starts the PERFS producer">
+        <java classname="perfs.Producer" failonerror="no" fork="yes"
+              dir="${run.dir}">
+          <classpath path="${project.class.path}"/>
+          <jvmarg line="-DNbMsgPerRound=1000 -DRound=10 -DasyncSend=false -DTransacted=false -DMsgSize=10000 -DMsgTransient=false -Dmps=150000" />
+          <arg line="queue"/>
+        </java>
+      </target>
+  
+  <!-- Runs the rest performance consumer on queue -->
+    <target name="restbridge_perfs_cons_q" depends="simple_init"
+      description="--> Starts the Rest PERFS consumer">
+      <java classname="restbridge.PerfConsumer" failonerror="no" fork="yes"
+            dir="${run.dir}">
+        <classpath path="${project.class.path}"/>
+        <jvmarg line="-DNbMsgPerRound=1000 -DTransacted=false -DimplicitAck=false" />
+      </java>
+    </target>
   
   <!-- Runs the performance sample consumer on queue -->
   <target name="perfs_cons" depends="simple_init"
