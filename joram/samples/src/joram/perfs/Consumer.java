@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2011 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2011 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -135,13 +135,11 @@ public class Consumer implements MessageListener {
   
   public synchronized void onMessage(Message m) {
     try {
-      BytesMessage msg = (BytesMessage) m;
-
       last = System.currentTimeMillis();
-      int index = msg.getIntProperty("index");
+      int index = m.getIntProperty("index");
       if (index == 0) start = t1 = last;
 
-      travel += (last - msg.getLongProperty("time"));
+      travel += (last - m.getLongProperty("time"));
       counter += 1;
       
       if (transacted && (((counter%10) == 9) || (index == 0)))
