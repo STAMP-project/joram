@@ -1,19 +1,11 @@
 package rest;
 
-import java.net.URI;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-
-import org.glassfish.jersey.client.ClientConfig;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class PerfConsumer implements Runnable {
   static int NbClient = 1;
@@ -40,80 +32,46 @@ public class PerfConsumer implements Runnable {
   }
 
   public void run() {
-    ClientConfig config = new ClientConfig();
-    Client client = ClientBuilder.newClient(config);
-    WebTarget target = client.target(getBaseURI());
-    System.out.println(target.getUri());
+    RestConsumer cons = new RestConsumer("http://localhost:8989/joram/", "queue");
 
-    // lookup the destination
-    Builder builder = target.path("jndi").path("queue").request();
-    Response response = builder.accept(MediaType.TEXT_PLAIN).head();
-    System.out.println("== lookup \"queue\" = " + response.getStatus());
-    print(response.getLinks());
-
-    URI uriCreateCons = client.target(response.getLink("create-consumer"))
-//      .queryParam("name", "cons1")
-        .queryParam("idle-timeout", "120000")
-        .getUri();
-    
-    response = client.target(uriCreateCons)
-        .request()
-        .accept(MediaType.TEXT_PLAIN).post(null);
-
-    System.out.println("== create-consumer = " + response.getStatus());
-    print(response.getLinks());
-
-    URI uriCloseCons = response.getLink("close-context").getUri();
-    URI uriReceiveNextMsg = response.getLink("receive-next-message").getUri();
-    
     for (int i=0; i<(Round*NbMsgPerRound); i++) {
-      response = client.target(uriReceiveNextMsg)
-          .queryParam("timeout", "30000")
-          .request()
-          .accept(MediaType.TEXT_PLAIN)
-          .get();
-      String msg = response.readEntity(String.class);
+      //      String msg = cons.receiveNextMsg();
+      HashMap<String, Object> msg = cons.receiveJSonMsg();
+
+      String type = (String) msg.get("type");
+      Map header = (Map) msg.get("header");
+      Map props = (Map) msg.get("properties");
+
+      Gson gson = new GsonBuilder().create();
+      if (RestConsumer.BytesMessage.equals(type)) {
+        byte[] body = gson.fromJson(msg.get("body").toString(), byte[].class);
+      } else if (RestConsumer.MapMessage.equals(type)) {
+        Map body = (Map) msg.get("body");
+      } else if (RestConsumer.TextMessage.equals(type)) {
+        String body = (String) msg.get("body");
+      } else {
+        System.out.println("Error receiving message");
+        break;
+      }
 
       last = System.currentTimeMillis();
-      //      int index = msg.getIntProperty("index");
+      int index = Integer.parseInt((String) ((ArrayList) props.get("index")).get(0));
       if (i == 0) start = t1 = last;
 
-      //      long dt = (last - msg.getLongProperty("time"));
-      //      travel += dt;
+      long time = Long.parseLong((String) ((ArrayList) props.get("time")).get(0));
+      long dt = (last - time);
+      travel += dt;
 
       if ((i%NbMsgPerRound) == (NbMsgPerRound -1)) {
         long x = (NbMsgPerRound * 1000L) / (last - t1);
         t1 = last;
         System.out.println("#" + ((i+1)/NbMsgPerRound) + " x " + NbMsgPerRound + " msg -> " + x + " msg/s " + (travel/i));
       }
-      if (response.getStatus() == Response.Status.OK.getStatusCode() && msg != null) {
-        //        System.out.println("== receive-next-message = " + response.getStatus() + ", msg = " + msg);
-      } else {
-        System.out.println("ERROR consume msg = " + msg + ", response = " + response);
-      }
     }
 
     long x = (Round * NbMsgPerRound * 1000L) / (last - start);
     System.out.println("Moy -> " + x + " msg/s ");
-    
-    response = client.target(uriCloseCons)
-        .request()
-        .accept(MediaType.TEXT_PLAIN)
-        .delete();
 
-    System.out.println("== close-consumer = " + response.getStatus());
-    print(response.getLinks());
+    cons.close();
   }
-  
-  private static URI getBaseURI() {  
-    return UriBuilder.fromUri("http://localhost:8989/joram/").build();  
-  }
-
-  private static void print(Set<Link> links) {
-    System.out.println("  link :");
-    for (Link link : links)
-      System.out.println("\t" + link.getRel() + " : " + link.getUri());
-  }
-
-
 }

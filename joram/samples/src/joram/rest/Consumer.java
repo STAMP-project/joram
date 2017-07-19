@@ -1,80 +1,54 @@
 package rest;
 
-import java.net.URI;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-
-import org.glassfish.jersey.client.ClientConfig;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class Consumer {
 
   public static void main(String[] args) {
-    ClientConfig config = new ClientConfig();
-    Client client = ClientBuilder.newClient(config);
-    WebTarget target = client.target(getBaseURI());
-    System.out.println(target.getUri());
-
-    // lookup the destination
-    Builder builder = target.path("jndi").path("queue").request();
-    Response response = builder.accept(MediaType.TEXT_PLAIN).head();
-    System.out.println("== lookup \"queue\" = " + response.getStatus());
-    print(response.getLinks());
-
-    URI uriCreateCons = client.target(response.getLink("create-consumer"))
-//      .queryParam("name", "cons1")
-        .queryParam("idle-timeout", "120")
-        .getUri();
-    
-    response = client.target(uriCreateCons)
-        .request()
-        .accept(MediaType.TEXT_PLAIN).post(null);
-
-    System.out.println("== create-consumer = " + response.getStatus());
-    print(response.getLinks());
-
-    URI uriCloseCons = response.getLink("close-context").getUri();
-    URI uriReceiveNextMsg = response.getLink("receive-next-message").getUri();
-
-    for (int i=0; i<10; i++) {
-      response = client.target(uriReceiveNextMsg)
-          .queryParam("timeout", "30000")
-          .request()
-          .accept(MediaType.TEXT_PLAIN)
-          .get();
-
-      String msg = response.readEntity(String.class);
-      if (response.getStatus() == Response.Status.OK.getStatusCode() && msg != null) {
-        System.out.println("== receive-next-message = " + response.getStatus() + ", msg = " + msg);
-      } else {
-        System.out.println("ERROR consume msg = " + msg + ", response = " + response);
-      }
-    }
-
-    response = client.target(uriCloseCons)
-        .request()
-        .accept(MediaType.TEXT_PLAIN)
-        .delete();
-
-    System.out.println("== close-consumer = " + response.getStatus());
-    print(response.getLinks());
+    RestConsumer cons = new RestConsumer("http://localhost:8989/joram/", "queue");
+//  cons.debug = true;
+    testJSonMessage(cons);
+//    testStringMessage(cons);
+    cons.close();
   }
   
-  private static URI getBaseURI() {  
-    return UriBuilder.fromUri("http://localhost:8989/joram/").build();  
+  static void testStringMessage(RestConsumer cons) {
+    for (int i=0; i<10; i++) {
+      String msg = cons.receiveStringMsg();
+      System.out.println(msg);
+    }
   }
 
-  private static void print(Set<Link> links) {
-    System.out.println("  link :");
-    for (Link link : links)
-      System.out.println("\t" + link.getRel() + " : " + link.getUri());
+  static void testJSonMessage(RestConsumer cons) {
+    for (int i=0; i<10; i++) {
+      HashMap<String, Object> msg = cons.receiveJSonMsg();
+      System.out.println("Receive message -> " + msg);
+
+      String type = (String) msg.get("type");
+
+      Gson gson = new GsonBuilder().create();
+      if (RestConsumer.BytesMessage.equals(type)) {
+        byte[] body = null;
+
+        body = gson.fromJson(msg.get("body").toString(), byte[].class);
+      } else if ("TextMessage".equals(type)) {
+        String body = null;
+
+        body = (String) msg.get("body");
+      }
+
+      Map header = (Map) msg.get("header");
+      Map props = (Map) msg.get("properties");
+
+      int index = Integer.parseInt((String) ((ArrayList) props.get("index")).get(0));
+      long time = Long.parseLong((String) ((ArrayList) props.get("time")).get(0));
+
+      System.out.println("Receive msg#" + index + " at " + time);
+    }
   }
 }
