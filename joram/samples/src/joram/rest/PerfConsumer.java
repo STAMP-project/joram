@@ -31,6 +31,7 @@ public class PerfConsumer implements Runnable {
     }
   }
 
+  // Test with JSon message
   public void run() {
     RestConsumer cons = new RestConsumer("http://localhost:8989/joram/", "queue");
 
@@ -61,6 +62,34 @@ public class PerfConsumer implements Runnable {
       long time = Long.parseLong((String) ((ArrayList) props.get("time")).get(0));
       long dt = (last - time);
       travel += dt;
+
+      if ((i%NbMsgPerRound) == (NbMsgPerRound -1)) {
+        long x = (NbMsgPerRound * 1000L) / (last - t1);
+        t1 = last;
+        System.out.println("#" + ((i+1)/NbMsgPerRound) + " x " + NbMsgPerRound + " msg -> " + x + " msg/s " + (travel/i));
+      }
+    }
+
+    long x = (Round * NbMsgPerRound * 1000L) / (last - start);
+    System.out.println("Moy -> " + x + " msg/s ");
+
+    cons.close();
+  }
+
+  // Test with simple String message
+  public void run2() {
+    RestConsumer cons = new RestConsumer("http://localhost:8989/joram/", "queue");
+
+    for (int i=0; i<(Round*NbMsgPerRound); i++) {
+      String msg = cons.receiveStringMsg();
+
+      last = System.currentTimeMillis();
+//      int index = Integer.parseInt((String) ((ArrayList) props.get("index")).get(0));
+      if (i == 0) start = t1 = last;
+
+//      long time = Long.parseLong((String) ((ArrayList) props.get("time")).get(0));
+//      long dt = (last - time);
+//      travel += dt;
 
       if ((i%NbMsgPerRound) == (NbMsgPerRound -1)) {
         long x = (NbMsgPerRound * 1000L) / (last - t1);

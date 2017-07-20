@@ -37,6 +37,7 @@ public class PerfProducer implements Runnable {
     }
   }
 
+  // Test with JSon message
   public void run() {
     RestProducer prod = new RestProducer("http://localhost:8989/joram/", "queue");
 
@@ -62,6 +63,48 @@ public class PerfProducer implements Runnable {
       
 //      prod.sendBytesMessage(content, header, props);
       prod.sendTextMessage(content, header, props);
+      
+      if ((i%NbMsgPerRound) == (NbMsgPerRound-1)) {
+        long dtx1 = (i * 1000L) / mps;
+        long dtx2 = System.currentTimeMillis() - start;
+        if (dtx1 > (dtx2 + 20)) {
+          dtx += (dtx1 - dtx2);
+          try {
+            Thread.sleep(dtx1 - dtx2);
+          } catch (InterruptedException exc) { }
+        }
+        if (dtx2 > 0)
+          System.out.println("sent=" + i + ", mps=" + ((((long) i) * 1000L)/dtx2));
+        else
+          System.out.println("sent=" + i);
+      }
+    }
+    long end = System.currentTimeMillis();
+    long dt = end - start;
+
+    System.out.println("----------------------------------------------------");
+    System.out.println("| sender dt=" +  ((dt *1000L)/(Round*NbMsgPerRound)) + "us -> " +
+        ((1000L * (Round*NbMsgPerRound)) / (dt)) + "msg/s");
+    System.out.println("| sender wait=" + dtx + "ms");
+
+    // close the producer
+    prod.close();
+  }
+
+  // Test with simple String message
+  public void run2() {
+    RestProducer prod = new RestProducer("http://localhost:8989/joram/", "queue");
+
+    StringBuffer strbuf = new StringBuffer();
+    for (int i = 0; i< MsgSize; i++)
+      strbuf.append('0');
+    String content = strbuf.toString();
+    
+    long dtx = 0;
+    long start = System.currentTimeMillis();
+
+    for (int i=0; i<(Round*NbMsgPerRound); i++) {
+      prod.sendStringMessage(content);
       
       if ((i%NbMsgPerRound) == (NbMsgPerRound-1)) {
         long dtx1 = (i * 1000L) / mps;
