@@ -31,8 +31,7 @@ public class RestProducer {
 
   RestProducer(String uri, String dest) {
     URI base = UriBuilder.fromUri(uri).build();
-    ClientConfig config = new ClientConfig();
-    client = ClientBuilder.newClient(config);
+    client = ClientBuilder.newClient(new ClientConfig());
     WebTarget target = client.target(base);
     
     System.out.println("Use Rest/JMS interface: " + target.getUri());
