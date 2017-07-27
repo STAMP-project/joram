@@ -25,6 +25,7 @@ package org.objectweb.joram.mom.dest;
 import java.util.Properties;
 
 import org.objectweb.joram.mom.notifications.ClientMessages;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.excepts.AccessException;
 import org.objectweb.joram.shared.excepts.RequestException;
 import org.objectweb.util.monolog.api.BasicLevel;
@@ -70,9 +71,6 @@ public class AcquisitionQueue extends Queue implements AcquisitionQueueMBean {
   private long diff_max = 20;
   private long diff_min = 10;
   
-  private String ACQ_QUEUE_MAX_MSG = "acquisition.max_msg";
-  private String ACQ_QUEUE_MIN_MSG = "acquisition.min_msg";
-  
   /**
    * Returns the maximum number of acquired messages waiting to be handled by
    * the destination. When the number of messages waiting to be handled is greater
@@ -101,9 +99,6 @@ public class AcquisitionQueue extends Queue implements AcquisitionQueueMBean {
   /** The threshold of pending messages in the queue */
   private long pending_max = 20;
   private long pending_min = 10;
-  
-  private String ACQ_QUEUE_MAX_PND = "acquisition.max_pnd";
-  private String ACQ_QUEUE_MIN_PND = "acquisition.min_pnd";
   
   /**
    * Returns the maximum number of waiting messages in the destination. When the number
@@ -154,14 +149,14 @@ public class AcquisitionQueue extends Queue implements AcquisitionQueueMBean {
     
     this.properties = properties;
     
-    diff_max = Long.parseLong(properties.getProperty(ACQ_QUEUE_MAX_MSG, String.valueOf(diff_max)));
-    diff_min = Long.parseLong(properties.getProperty(ACQ_QUEUE_MIN_MSG, String.valueOf(diff_min)));
+    diff_max = Long.parseLong(properties.getProperty(DestinationConstants.ACQ_QUEUE_MAX_MSG, String.valueOf(diff_max)));
+    diff_min = Long.parseLong(properties.getProperty(DestinationConstants.ACQ_QUEUE_MIN_MSG, String.valueOf(diff_min)));
     if (diff_max < 2) diff_max = 2;
     if (diff_min >= diff_max) diff_min = diff_max -2;
     if (diff_min < 0) diff_min = 0;
     
-    pending_max = Long.parseLong(properties.getProperty(ACQ_QUEUE_MAX_PND, String.valueOf(pending_max)));
-    pending_min = Long.parseLong(properties.getProperty(ACQ_QUEUE_MIN_PND, String.valueOf(pending_min)));
+    pending_max = Long.parseLong(properties.getProperty(DestinationConstants.ACQ_QUEUE_MAX_PND, String.valueOf(pending_max)));
+    pending_min = Long.parseLong(properties.getProperty(DestinationConstants.ACQ_QUEUE_MIN_PND, String.valueOf(pending_min)));
     if (pending_max < 2) pending_max = 2;
     if (pending_min >= pending_max) pending_min = pending_max -2;
     if (pending_min < 0) pending_min = 0;
@@ -173,11 +168,11 @@ public class AcquisitionQueue extends Queue implements AcquisitionQueueMBean {
     // Acquisition class name can only be set the first time.
     if (firstTime) {
       if (properties != null) {
-        acquisitionClassName = properties.getProperty(AcquisitionModule.CLASS_NAME);
-        properties.remove(AcquisitionModule.CLASS_NAME);
+        acquisitionClassName = properties.getProperty(DestinationConstants.ACQUISITION_CLASS_NAME);
+        properties.remove(DestinationConstants.ACQUISITION_CLASS_NAME);
       }
       if (acquisitionClassName == null) {
-        throw new RequestException("Acquisition class name not found: " + AcquisitionModule.CLASS_NAME
+        throw new RequestException("Acquisition class name not found: " + DestinationConstants.ACQUISITION_CLASS_NAME
             + " property must be set on queue creation.");
       }
       try {
@@ -288,6 +283,19 @@ public class AcquisitionQueue extends Queue implements AcquisitionQueueMBean {
   }
 
   /**
+   * Start the handler.
+   * To be use by MBean interface
+   */
+  @Override
+  public void start() {
+    try {
+      startHandler(properties);
+    } catch (Exception exc) {
+      logger.log(BasicLevel.ERROR, "AcquisitionQueue.start(" + properties + ')');
+    }
+  }
+
+  /**
    * Stop the handler.
    * 
    * @param prop properties for stop if needed
@@ -302,6 +310,19 @@ public class AcquisitionQueue extends Queue implements AcquisitionQueueMBean {
   	if (p == null)
   		p = properties;
   	return acquisitionModule.stopHandler(p); 
+  }
+
+  /**
+   * Stop the handler.
+   * To be use by MBean interface
+   */
+  @Override
+  public void stop() {
+    try {
+      stopHandler(properties);
+    } catch (Exception exc) {
+      logger.log(BasicLevel.ERROR, "AcquisitionQueue.start(" + properties + ')');
+    }
   }
 
   /**
@@ -375,5 +396,4 @@ public class AcquisitionQueue extends Queue implements AcquisitionQueueMBean {
     // Not defined: still not encodable
     return -1;
   }
-
 }
