@@ -10,7 +10,9 @@ import com.google.gson.GsonBuilder;
 public class Consumer {
 
   public static void main(String[] args) {
-    RestConsumer cons = new RestConsumer("http://localhost:8989/joram/", "queue");
+    String queueName = System.getProperty("queue");
+
+    RestConsumer cons = new RestConsumer("http://localhost:8989/joram/", queueName);
 //  cons.debug = true;
     testJSonMessage(cons);
 //    testStringMessage(cons);

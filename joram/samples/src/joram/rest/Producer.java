@@ -5,7 +5,9 @@ import java.util.HashMap;
 public class Producer {
 
   public static void main(String[] args) {
-    RestProducer prod = new RestProducer("http://localhost:8989/joram/", "queue");
+    String queueName = System.getProperty("queue");
+    
+    RestProducer prod = new RestProducer("http://localhost:8989/joram/", queueName);
 //    prod.debug = true;
     testJSonMessage(prod);
 //    testStringMessage(prod);
