@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2009 - 2010 ScalAgent Distributed Technologies
+ * Copyright (C) 2009 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,44 @@ package org.objectweb.joram.shared;
  * Defines constants needed to distinguish Queue and Topic. 
  */
 public final class DestinationConstants {
+  /** The property name for the period of wakeup tasks */
+  public static final String WAKEUP_PERIOD = "period";
+  
+  /** The property name for the remote JMS destination in Acquisition/Distribution bridge destinations */
+  public static final String DESTINATION_NAME_PROP = "jms.destination";
+  
+  /** The property name for the distribution handler class name. */
+  public static final String DISTRIBUTION_CLASS_NAME = "distribution.className";
+  /** */
+  public static final String BATCH_DISTRIBUTION_OPTION = "distribution.batch";
+  public static final String ASYNC_DISTRIBUTION_OPTION = "distribution.async";
+
+  /** The property name for the acquisition handler class name. */
+  public static final String ACQUISITION_CLASS_NAME = "acquisition.className";
+  /** The property name for the acquisition period. */
+  public static final String ACQUISITION_PERIOD = "acquisition.period";
+  /** Persistent property name: tells if produced messages will be persistent. */
+  public static final String ACQUISITION_PERSISTENT = "persistent";
+  /** Expiration property name: tells the life expectancy of produced messages. */
+  public static final String ACQUISITION_EXPIRATION = "expiration";
+  /** Priority property name: tells the JMS priority of produced messages. */
+  public static final String ACQUISITION_PRIORITY = "priority";
+  /** */
+  public static final String ACQ_QUEUE_MAX_MSG = "acquisition.max_msg";
+  public static final String ACQ_QUEUE_MIN_MSG = "acquisition.min_msg";
+  /** */
+  public static final String ACQ_QUEUE_MAX_PND = "acquisition.max_pnd";
+  public static final String ACQ_QUEUE_MIN_PND = "acquisition.min_pnd";
+
+  public static final String REST_HOST_PROP = "rest.host";
+  public static final String REST_PORT_PROP = "rest.port";
+  public static final String REST_USERNAME_PROP = "rest.user";
+  public static final String REST_PASSWORD_PROP = "rest.pass";
+  public static final String MEDIA_TYPE_JSON_PROP = "rest.mediaTypeJson";
+  public static final String TIMEOUT_PROP = "rest.timeout";
+  public static final String IDLETIMEOUT_PROP = "rest.idletimeout";
+  public static final String NB_MAX_MSG_PROP = "rest.maxMsgPerPeriod"; // TODO (AF): To be remove
+  
   /** the destination is a Topic */
   public final static byte TOPIC_TYPE = 0x01;
   /** the destination is a Queue */
