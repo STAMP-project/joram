@@ -25,15 +25,15 @@ public class RestConsumer {
 
   URI uriCloseCons = null;
   URI uriReceiveNextMsg = null;
+  URI uriAcknowledgeMsg = null;
   
   boolean debug = false;
   
   RestConsumer(String uri, String dest) {
     URI base = UriBuilder.fromUri(uri).build();
-    ClientConfig config = new ClientConfig();
-    client = ClientBuilder.newClient(config);
-    WebTarget target = client.target(base);
+    client = ClientBuilder.newClient(new ClientConfig());
     
+    WebTarget target = client.target(base);
     System.out.println("Use Rest/JMS interface: " + target.getUri());
 
     // lookup the destination
@@ -43,7 +43,7 @@ public class RestConsumer {
     System.out.println("Lookup \"" + dest + "\" -> " + response.getStatus());
     if (debug) print(response.getLinks());
 
-    URI uriCreateCons = client.target(response.getLink("create-consumer"))
+    URI uriCreateCons = client.target(response.getLink("create-consumer-client-ack"))
 //      .queryParam("name", "cons1")
         .queryParam("idle-timeout", "120")
         .getUri();
@@ -60,6 +60,7 @@ public class RestConsumer {
   }
   
   String receiveStringMsg() {
+    if (debug) System.out.println("== receive-next-message -> " + uriReceiveNextMsg);
     Response response = client.target(uriReceiveNextMsg)
         .queryParam("timeout", "30000")
         .request()
@@ -69,6 +70,8 @@ public class RestConsumer {
     String msg = response.readEntity(String.class);
     if (response.getStatus() == Response.Status.OK.getStatusCode() && msg != null) {
       if (debug) System.out.println("== receive-next-message = " + response.getStatus() + ", msg = " + msg);
+      uriReceiveNextMsg = response.getLink("receive-next-message").getUri();
+      uriAcknowledgeMsg = response.getLink("acknowledge-message").getUri();
     } else {
       System.out.println("ERROR consume msg = " + msg + ", response = " + response);
     }
@@ -81,6 +84,7 @@ public class RestConsumer {
   public static final String TextMessage = "TextMessage";
 
   HashMap<String, Object> receiveJSonMsg() {
+    if (debug) System.out.println("== receive-next-message -> " + uriReceiveNextMsg);
     Response response = client.target(uriReceiveNextMsg)
         .queryParam("timeout", "30000")
         .request()
@@ -98,18 +102,31 @@ public class RestConsumer {
       if (debug) {
         Map header = (Map) msg.get("header");
         Map props = (Map) msg.get("properties");
-        
+
         System.out.println("*** header " + header);
         System.out.println("*** properties " + props);
         System.out.println("== receive-next-message = " + response.getStatus() + ", msg = " + msg);
 
         print(response.getLinks());
       }
+      uriReceiveNextMsg = response.getLink("receive-next-message").getUri();
+      uriAcknowledgeMsg = response.getLink("acknowledge-message").getUri();
     } else {
       System.out.println("ERROR receive-next-message = " + response.getStatus() + ", msg = " + json);
     }
     
+    acknowledgeMessage();
+    
     return msg;
+  }
+  
+  void acknowledgeMessage() {
+    if (debug) System.out.println("== acknowledge-message -> " + uriAcknowledgeMsg);
+    Response response = client.target(uriAcknowledgeMsg)
+        .request()
+        .accept(MediaType.TEXT_PLAIN)
+        .delete();
+    if (debug) System.out.println("== acknowledge-message = " + response.getStatus());
   }
   
   void close() {
