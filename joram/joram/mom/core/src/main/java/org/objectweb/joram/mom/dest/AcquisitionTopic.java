@@ -25,6 +25,7 @@ package org.objectweb.joram.mom.dest;
 import java.util.Properties;
 
 import org.objectweb.joram.mom.notifications.ClientMessages;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.excepts.RequestException;
 import org.objectweb.util.monolog.api.BasicLevel;
 import org.objectweb.util.monolog.api.Logger;
@@ -128,11 +129,11 @@ public class AcquisitionTopic extends Topic implements AcquisitionTopicMBean {
     // Acquisition class name can only be set the first time.
     if (firstTime) {
       if (properties != null) {
-        acquisitionClassName = properties.getProperty(AcquisitionModule.CLASS_NAME);
-        properties.remove(AcquisitionModule.CLASS_NAME);
+        acquisitionClassName = properties.getProperty(DestinationConstants.ACQUISITION_CLASS_NAME);
+        properties.remove(DestinationConstants.ACQUISITION_CLASS_NAME);
       }
       if (acquisitionClassName == null) {
-        throw new RequestException("Acquisition class name not found: " + AcquisitionModule.CLASS_NAME
+        throw new RequestException("Acquisition class name not found: " + DestinationConstants.ACQUISITION_CLASS_NAME
             + " property must be set on topic creation.");
       }
       try {
