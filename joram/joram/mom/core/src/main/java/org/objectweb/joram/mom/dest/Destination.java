@@ -53,6 +53,7 @@ import org.objectweb.joram.mom.proxies.SendReplyNot;
 import org.objectweb.joram.mom.util.DMQManager;
 import org.objectweb.joram.mom.util.InterceptorsHelper;
 import org.objectweb.joram.mom.util.MessageInterceptor;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.MessageErrorConstants;
 import org.objectweb.joram.shared.admin.AdminCommandConstant;
 import org.objectweb.joram.shared.admin.AdminCommandReply;
@@ -98,10 +99,7 @@ import fr.dyade.aaa.util.management.MXWrapper;
  * MOM destinations.
  */
 public abstract class Destination extends Agent implements DestinationMBean {
-
   public static Logger logger = Debug.getLogger(Destination.class.getName());
-  
-  public static final String WAKEUP_PERIOD = "period";
   
   /**
    * <code>true</code> if the destination successfully processed a deletion
@@ -366,9 +364,9 @@ public abstract class Destination extends Agent implements DestinationMBean {
     }
 
     long newPeriod = -1;
-    if (prop != null && prop.containsKey(WAKEUP_PERIOD)) {
+    if (prop != null && prop.containsKey(DestinationConstants.WAKEUP_PERIOD)) {
       try {
-        newPeriod = ConversionHelper.toLong(prop.get(WAKEUP_PERIOD));
+        newPeriod = ConversionHelper.toLong(prop.get(DestinationConstants.WAKEUP_PERIOD));
       } catch (Exception e) {
         logger.log(BasicLevel.ERROR, this + ": error setting destination period", e);
       }
