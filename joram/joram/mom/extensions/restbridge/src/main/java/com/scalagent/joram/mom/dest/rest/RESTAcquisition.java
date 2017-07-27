@@ -44,8 +44,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.objectweb.joram.mom.dest.AcquisitionHandler;
-import org.objectweb.joram.mom.dest.AcquisitionModule;
 import org.objectweb.joram.mom.dest.ReliableTransmitter;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.excepts.MessageValueException;
 import org.objectweb.joram.shared.messages.ConversionHelper;
 import org.objectweb.joram.shared.messages.Message;
@@ -64,15 +64,6 @@ public class RESTAcquisition implements AcquisitionHandler {
 
   private static final Logger logger = Debug.getLogger(RESTAcquisition.class.getName());
 
-  private static final String HOST_PROP = "rest.hostName";
-  private static final String PORT_PROP = "rest.port";
-  private static final String USER_NAME_PROP = "rest.userName";
-  private static final String PASSWORD_PROP = "rest.password";
-  private static final String TIMEOUT_PROP = "rest.timeout";
-  private static final String NB_MAX_MSG_PROP = "rest.nbMaxMsgByPeriode";
-  private static final String MEDIA_TYPE_JSON_PROP = "rest.mediaTypeJson";
-  private static final String DESTINATION_NAME_PROP = "jms.destination";
-
   private String hostName = "localhost";
   private int port = 8989;
   private Client client;
@@ -90,38 +81,39 @@ public class RESTAcquisition implements AcquisitionHandler {
   private URI uriCloseConsumer;
   
   public void init(Properties properties) {
-    destName = properties.getProperty(DESTINATION_NAME_PROP);
+    destName = properties.getProperty(DestinationConstants.DESTINATION_NAME_PROP);
     if (destName == null) {
       throw new IllegalArgumentException("Missing Destination JNDI name.");
     }
-    if (properties.containsKey(HOST_PROP)) {
-      hostName = properties.getProperty(HOST_PROP);
+    if (properties.containsKey(DestinationConstants.REST_HOST_PROP)) {
+      hostName = properties.getProperty(DestinationConstants.REST_HOST_PROP);
     }
 
-    if (properties.containsKey(PORT_PROP)) {
+    if (properties.containsKey(DestinationConstants.REST_PORT_PROP)) {
       try {
-        port = Integer.parseInt(properties.getProperty(PORT_PROP));
+        port = Integer.parseInt(properties.getProperty(DestinationConstants.REST_PORT_PROP));
       } catch (NumberFormatException nfe) {
-        logger.log(BasicLevel.ERROR, "Property " + PORT_PROP
+        logger.log(BasicLevel.ERROR, "Property " + DestinationConstants.REST_PORT_PROP
             + " could not be parsed properly, use default value.", nfe);
       }
     }
-    if (properties.containsKey(USER_NAME_PROP)) {
-      userName = properties.getProperty(USER_NAME_PROP);
+    if (properties.containsKey(DestinationConstants.REST_USERNAME_PROP)) {
+      userName = properties.getProperty(DestinationConstants.REST_USERNAME_PROP);
     }
-    if (properties.containsKey(PASSWORD_PROP)) {
-      password = properties.getProperty(PASSWORD_PROP);
+    if (properties.containsKey(DestinationConstants.REST_PASSWORD_PROP)) {
+      password = properties.getProperty(DestinationConstants.REST_PASSWORD_PROP);
     }
-    if (properties.containsKey(TIMEOUT_PROP)) {
+    if (properties.containsKey(DestinationConstants.TIMEOUT_PROP)) {
       try {
-        timeout = Long.parseLong(properties.getProperty(TIMEOUT_PROP));
+        timeout = Long.parseLong(properties.getProperty(DestinationConstants.TIMEOUT_PROP));
       } catch (NumberFormatException exc) { }
     }
-    if (properties.containsKey(NB_MAX_MSG_PROP)) {
+    if (properties.containsKey(DestinationConstants.NB_MAX_MSG_PROP)) {
       try {
-        nbMaxMsg = Integer.parseInt(properties.getProperty(NB_MAX_MSG_PROP));
+        nbMaxMsg = Integer.parseInt(properties.getProperty(DestinationConstants.NB_MAX_MSG_PROP));
       } catch (NumberFormatException exc) { }
     }
+    
     // init client and target
     if (client == null) {
       ClientConfig config = new ClientConfig();
@@ -136,8 +128,8 @@ public class RESTAcquisition implements AcquisitionHandler {
       client.target(uriCloseConsumer).request().accept(MediaType.TEXT_PLAIN).delete();
       uriCreateConsumer = null;
     }
-    if (properties.containsKey(MEDIA_TYPE_JSON_PROP)) {
-      mediaTypeJson = Boolean.parseBoolean(properties.getProperty(MEDIA_TYPE_JSON_PROP));
+    if (properties.containsKey(DestinationConstants.MEDIA_TYPE_JSON_PROP)) {
+      mediaTypeJson = Boolean.parseBoolean(properties.getProperty(DestinationConstants.MEDIA_TYPE_JSON_PROP));
     }
     createConsumer();
   }
@@ -227,7 +219,7 @@ public class RESTAcquisition implements AcquisitionHandler {
       }
     
     if (jsonMessageHeader.containsKey("CorrelationIDAsBytes")) {
-    // TODO "CorrelationIDAsBytes"
+      // TODO "CorrelationIDAsBytes"
       if (logger.isLoggable(BasicLevel.WARN))
         logger.log(BasicLevel.WARN, "-- TODO CorrelationIDAsBytes");
     }
@@ -483,9 +475,9 @@ public class RESTAcquisition implements AcquisitionHandler {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "RESTAcquisition.setProperties properties = " + properties);
     
-    if (properties.containsKey(AcquisitionModule.PERSISTENT_PROPERTY)) {
+    if (properties.containsKey(DestinationConstants.ACQUISITION_PERSISTENT)) {
       try {
-        persistent = ConversionHelper.toBoolean(properties.get(AcquisitionModule.PERSISTENT_PROPERTY));
+        persistent = ConversionHelper.toBoolean(properties.get(DestinationConstants.ACQUISITION_PERSISTENT));
       } catch (MessageValueException e) {
         if (logger.isLoggable(BasicLevel.WARN))
           logger.log(BasicLevel.WARN, "", e);

@@ -44,8 +44,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.objectweb.joram.mom.dest.AcquisitionDaemon;
-import org.objectweb.joram.mom.dest.AcquisitionModule;
 import org.objectweb.joram.mom.dest.ReliableTransmitter;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.excepts.MessageValueException;
 import org.objectweb.joram.shared.messages.ConversionHelper;
 import org.objectweb.joram.shared.messages.Message;
@@ -59,7 +59,6 @@ import fr.dyade.aaa.common.Daemon;
 import fr.dyade.aaa.common.Debug;
 
 public class RESTAcquisitionDaemon implements AcquisitionDaemon {
-
   private static final Logger logger = Debug.getLogger(RESTAcquisitionDaemon.class.getName());
   
   private static final String HOST_PROP = "rest.hostName";
@@ -179,9 +178,9 @@ public class RESTAcquisitionDaemon implements AcquisitionDaemon {
       mediaTypeJson = Boolean.parseBoolean(properties.getProperty(MEDIA_TYPE_JSON_PROP));
     }
 
-    if (properties.containsKey(AcquisitionModule.PERSISTENT_PROPERTY)) {
+    if (properties.containsKey(DestinationConstants.ACQUISITION_PERSISTENT)) {
       try {
-        persistent = ConversionHelper.toBoolean(properties.get(AcquisitionModule.PERSISTENT_PROPERTY));
+        persistent = ConversionHelper.toBoolean(properties.get(DestinationConstants.ACQUISITION_PERSISTENT));
       } catch (MessageValueException e) {
         if (logger.isLoggable(BasicLevel.WARN))
           logger.log(BasicLevel.WARN, "", e);
