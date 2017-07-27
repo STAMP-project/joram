@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2013 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,8 +26,8 @@ import java.io.Serializable;
 /**
  * Encodable object that wraps an integer.
  */
+@SuppressWarnings("serial")
 public class EncodableInteger implements Encodable, Serializable {
-  
   private int value;
   
   public EncodableInteger() {}
@@ -70,11 +70,8 @@ public class EncodableInteger implements Encodable, Serializable {
   }
 
   public static class Factory implements EncodableFactory {
-
     public Encodable createEncodable() {
       return new EncodableInteger();
     }
-    
   }
-
 }

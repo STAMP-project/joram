@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2013 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,8 +25,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class EncodedStringList implements Serializable, Encodable {
-  
   private List<EncodedString> list;
   
   public EncodedStringList() {
@@ -67,11 +67,8 @@ public class EncodedStringList implements Serializable, Encodable {
   }
   
   public static class Factory implements EncodableFactory {
-
     public Encodable createEncodable() {
       return new EncodedStringList();
     }
-    
   }
-
 }
