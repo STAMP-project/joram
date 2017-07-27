@@ -119,7 +119,7 @@ public class DistributionDaemon extends Daemon {
       	
       } catch (InterruptedException exc) {
         if (logger.isLoggable(BasicLevel.DEBUG))
-          logger.log(BasicLevel.DEBUG, "", exc);
+          logger.log(BasicLevel.DEBUG, "DistributionDaemon run()", exc);
         return;
       }
 
@@ -142,7 +142,7 @@ public class DistributionDaemon extends Daemon {
       		continue;
       	}
       	
-      	// Increment the delivery count
+      	// Increment the delivery count of failed message
       	incDeliveryCount(msg);
       	
       	canStop = true;
