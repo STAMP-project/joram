@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@ import java.util.TimerTask;
 
 import org.objectweb.joram.mom.notifications.ClientMessages;
 import org.objectweb.joram.mom.util.DMQManager;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.MessageErrorConstants;
 import org.objectweb.joram.shared.excepts.MessageValueException;
 import org.objectweb.joram.shared.messages.ConversionHelper;
@@ -46,28 +47,12 @@ import fr.dyade.aaa.common.Debug;
  * and the specified {@link AcquisitionHandler}.
  */
 public class AcquisitionModule implements ReliableTransmitter {
-
   public static Logger logger = Debug.getLogger(AcquisitionModule.class.getName());
-
-  /** The property name for the acquisition period. */
-  public static final String PERIOD = "acquisition.period";
-
-  /** The property name for the acquisition handler class name. */
-  public static final String CLASS_NAME = "acquisition.className";
-
-  /** Persistent property name: tells if produced messages will be persistent. */
-  public static final String PERSISTENT_PROPERTY = "persistent";
-
-  /** Expiration property name: tells the life expectancy of produced messages. */
-  public static final String EXPIRATION_PROPERTY = "expiration";
-
-  /** Priority property name: tells the JMS priority of produced messages. */
-  public static final String PRIORITY_PROPERTY = "priority";
 
   /** Verify that one and only one correct interface is implemented. */
   public static void checkAcquisitionClass(String className) throws Exception {
     if (className == null) {
-      throw new Exception("AcquisitionHandler class not defined: use " + CLASS_NAME
+      throw new Exception("AcquisitionHandler class not defined: use " + DestinationConstants.ACQUISITION_CLASS_NAME
           + " property to chose acquisition class.");
     }
     Class<?> clazz = Class.forName(className);
@@ -264,9 +249,9 @@ public class AcquisitionModule implements ReliableTransmitter {
       logger.log(BasicLevel.DEBUG, "AcquisitionModule.setProperties = " + props + " daemon = " + isDaemon);
     }
 
-    if (props.containsKey(PERIOD)) {
+    if (props.containsKey(DestinationConstants.ACQUISITION_PERIOD)) {
       try {
-        period = ConversionHelper.toLong(props.get(PERIOD));
+        period = ConversionHelper.toLong(props.get(DestinationConstants.ACQUISITION_PERIOD));
       } catch (MessageValueException exc) {
         logger.log(BasicLevel.ERROR, "AcquisitionModule: can't parse defined period property.");
       }
@@ -280,20 +265,20 @@ public class AcquisitionModule implements ReliableTransmitter {
       AgentServer.getTimer().schedule(acquisitionTask, period, period);
     }
 
-    if (props.containsKey(PERSISTENT_PROPERTY)) {
+    if (props.containsKey(DestinationConstants.ACQUISITION_PERSISTENT)) {
       try {
-        isPersistent = ConversionHelper.toBoolean(props.get(PERSISTENT_PROPERTY));
+        isPersistent = ConversionHelper.toBoolean(props.get(DestinationConstants.ACQUISITION_PERSISTENT));
         isPersistencySet = true;
       } catch (MessageValueException exc) {
         logger.log(BasicLevel.ERROR, "AcquisitionModule: can't parse defined message persistence property.");
-        props.remove(PERSISTENT_PROPERTY);
+        props.remove(DestinationConstants.ACQUISITION_PERSISTENT);
       }
 //      props.remove(PERSISTENT_PROPERTY);
     }
 
-    if (props.containsKey(PRIORITY_PROPERTY)) {
+    if (props.containsKey(DestinationConstants.ACQUISITION_PRIORITY)) {
       try {
-        priority = ConversionHelper.toInt(props.get(PRIORITY_PROPERTY));
+        priority = ConversionHelper.toInt(props.get(DestinationConstants.ACQUISITION_PRIORITY));
         isPrioritySet = true;
       } catch (MessageValueException exc) {
         logger.log(BasicLevel.ERROR, "AcquisitionModule: can't parse defined message priority property.");
@@ -301,9 +286,9 @@ public class AcquisitionModule implements ReliableTransmitter {
 //      props.remove(PRIORITY_PROPERTY);
     }
 
-    if (props.containsKey(EXPIRATION_PROPERTY)) {
+    if (props.containsKey(DestinationConstants.ACQUISITION_EXPIRATION)) {
       try {
-        expiration = ConversionHelper.toLong(props.get(EXPIRATION_PROPERTY));
+        expiration = ConversionHelper.toLong(props.get(DestinationConstants.ACQUISITION_EXPIRATION));
         isExpirationSet = true;
       } catch (MessageValueException exc) {
         logger.log(BasicLevel.ERROR, "AcquisitionModule: can't parse defined message expiration property.");
@@ -311,11 +296,11 @@ public class AcquisitionModule implements ReliableTransmitter {
 //      props.remove(EXPIRATION_PROPERTY);
     }
 
-    if (props.containsKey(CLASS_NAME)
-        && !props.get(CLASS_NAME).equals(acquisitionHandler.getClass().getName())) {
+    if (props.containsKey(DestinationConstants.ACQUISITION_CLASS_NAME)
+        && !props.get(DestinationConstants.ACQUISITION_CLASS_NAME).equals(acquisitionHandler.getClass().getName())) {
       logger.log(BasicLevel.ERROR,
           "AcquisitionModule: Changing dynamically the acquisition class is not allowed.");
-      props.remove(CLASS_NAME);
+      props.remove(DestinationConstants.ACQUISITION_CLASS_NAME);
     }
 
     if (isDaemon) {
