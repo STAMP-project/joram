@@ -83,7 +83,7 @@ public class JndiService {
     buff.append("\n  <b>correlation-id:</b> Specifies that messages sent using this JMSProducer will have their JMSCorrelationID header value set to the specified correlation ID");
     buff.append("\n  <b>priority:</b> Specifies the priority of messages that are sent using this JMSProducer");
     buff.append("\n  <b>time-to-live:</b> Specifies the time to live of messages that are sent using this JMSProducer");
-    buff.append("\n  <b>idle-timeout:</b> Allows to set the idle time in milliseconds in which the producer context will be closed if idle");
+    buff.append("\n  <b>idle-timeout:</b> Allows to set the idle time in seconds in which the producer context will be closed if idle");
     buff.append("\n  <b>user:</b> Specifies the userName for the JMS connection");
     buff.append("\n  <b>password:</b> Specifies the password for the JMS connection");
     buff.append("</pre>");
@@ -100,7 +100,7 @@ public class JndiService {
     buff.append("\n  <b>durable:</b> true to creates an durable subscription on the specified topic");
     buff.append("\n  <b>shared:</b> true for shared");
     buff.append("\n  <b>sub-name:</b> the name used to identify this subscription");
-    buff.append("\n  <b>idle-timeout:</b> Allows to set the idle time in milliseconds in which the consumer context will be closed if idle");
+    buff.append("\n  <b>idle-timeout:</b> Allows to set the idle time in seconds in which the consumer context will be closed if idle");
     buff.append("\n  <b>user:</b> Specifies the userName for the JMS connection");
     buff.append("\n  <b>password:</b> Specifies the password for the JMS connection");
     buff.append("</pre>");
