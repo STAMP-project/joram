@@ -33,10 +33,6 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.objectweb.util.monolog.api.BasicLevel;
-import org.objectweb.util.monolog.api.Logger;
-
-import fr.dyade.aaa.common.Debug;
 import fr.dyade.aaa.common.encoding.Decoder;
 import fr.dyade.aaa.common.encoding.Encodable;
 import fr.dyade.aaa.common.encoding.EncodableFactoryRepository;
@@ -49,8 +45,8 @@ import fr.dyade.aaa.common.encoding.Encoder;
  * Only string object can be used as a key, all primitives type can be used
  * as a value. <p>
  */
+@SuppressWarnings("serial")
 public class Properties implements Serializable, Cloneable, Encodable {
-  private static Logger logger = Debug.getLogger("fr.dyade.aaa.common.Properties");
   
   /** The total number of entries in the hash table. */
   private transient int count;
@@ -553,7 +549,6 @@ public class Properties implements Serializable, Cloneable, Encodable {
   // Types of Enumerations/Iterations
   private static final int KEYS = 0;
   private static final int VALUES = 1;
-  private static final int ENTRIES = 2;
 
   /**
    * A hashtable enumerator class.  This class implements both the
@@ -566,25 +561,25 @@ public class Properties implements Serializable, Cloneable, Encodable {
     Entry[] table = Properties.this.table;
     int index = table.length;
     Entry entry = null;
-    Entry lastReturned = null;
+//    Entry lastReturned = null;
     int type;
 
     /**
      * Indicates whether this Enumerator is serving as an Iterator
      * or an Enumeration.  (true -> Iterator).
      */
-    boolean iterator;
+//    boolean iterator;
 
     /**
      * The modCount value that the iterator believes that the backing
      * List should have.  If this expectation is violated, the iterator
      * has detected concurrent modification.
      */
-    protected int expectedModCount = modCount;
+//    protected int expectedModCount = modCount;
 
     Enumerator(int type, boolean iterator) {
       this.type = type;
-      this.iterator = iterator;
+//      this.iterator = iterator;
     }
 
     public boolean hasMoreElements() {
@@ -611,53 +606,54 @@ public class Properties implements Serializable, Cloneable, Encodable {
       entry = et;
       index = i;
       if (et != null) {
-        Entry e = lastReturned = entry;
+//        Entry e = lastReturned = entry;
+        Entry e = entry;
         entry = e.next;
         return type == KEYS ? e.key : (type == VALUES ? e.value : e);
       }
       throw new NoSuchElementException("Properties Enumerator");
     }
 
-    // Iterator methods
-    public boolean hasNext() {
-      return hasMoreElements();
-    }
-
-    public Object next() {
-      if (modCount != expectedModCount)
-        throw new ConcurrentModificationException();
-      return nextElement();
-    }
-
-    public void remove() {
-      if (!iterator)
-        throw new UnsupportedOperationException();
-      if (lastReturned == null)
-        throw new IllegalStateException("Properties Enumerator");
-      if (modCount != expectedModCount)
-        throw new ConcurrentModificationException();
-
-      synchronized(Properties.this) {
-        Entry[] tab = Properties.this.table;
-        int index = (lastReturned.hash & 0x7FFFFFFF) % tab.length;
-
-        for (Entry e = tab[index], prev = null; e != null;
-             prev = e, e = e.next) {
-          if (e == lastReturned) {
-            modCount++;
-            expectedModCount++;
-            if (prev == null)
-              tab[index] = e.next;
-            else
-              prev.next = e.next;
-            count--;
-            lastReturned = null;
-            return;
-          }
-        }
-        throw new ConcurrentModificationException();
-      }
-    }
+//    // Iterator methods
+//    public boolean hasNext() {
+//      return hasMoreElements();
+//    }
+//
+//    public Object next() {
+//      if (modCount != expectedModCount)
+//        throw new ConcurrentModificationException();
+//      return nextElement();
+//    }
+//
+//    public void remove() {
+//      if (!iterator)
+//        throw new UnsupportedOperationException();
+//      if (lastReturned == null)
+//        throw new IllegalStateException("Properties Enumerator");
+//      if (modCount != expectedModCount)
+//        throw new ConcurrentModificationException();
+//
+//      synchronized(Properties.this) {
+//        Entry[] tab = Properties.this.table;
+//        int index = (lastReturned.hash & 0x7FFFFFFF) % tab.length;
+//
+//        for (Entry e = tab[index], prev = null; e != null;
+//             prev = e, e = e.next) {
+//          if (e == lastReturned) {
+//            modCount++;
+//            expectedModCount++;
+//            if (prev == null)
+//              tab[index] = e.next;
+//            else
+//              prev.next = e.next;
+//            count--;
+//            lastReturned = null;
+//            return;
+//          }
+//        }
+//        throw new ConcurrentModificationException();
+//      }
+//    }
   }
    
   private static EmptyEnumerator emptyEnumerator = new EmptyEnumerator();
