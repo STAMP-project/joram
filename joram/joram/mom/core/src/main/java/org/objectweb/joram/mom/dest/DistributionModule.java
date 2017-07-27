@@ -24,6 +24,7 @@ package org.objectweb.joram.mom.dest;
 
 import java.util.Properties;
 
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.excepts.MessageValueException;
 import org.objectweb.joram.shared.messages.ConversionHelper;
 import org.objectweb.joram.shared.messages.Message;
@@ -34,9 +35,6 @@ import fr.dyade.aaa.common.Debug;
 
 public class DistributionModule {
   public static Logger logger = Debug.getLogger(DistributionModule.class.getName());
-
-  /** The property name for the distribution handler class name. */
-  public static final String CLASS_NAME = "distribution.className";
 
   /** Holds the distribution logic. */
   private DistributionHandler distributionHandler;
@@ -60,9 +58,9 @@ public class DistributionModule {
       distributionHandler.init(properties, firstTime);
     }
     
-    if (properties.containsKey(DistributionQueue.ASYNC_DISTRIBUTION_OPTION)) {
+    if (properties.containsKey(DestinationConstants.ASYNC_DISTRIBUTION_OPTION)) {
     	try {
-    		isAsyncDistribution = ConversionHelper.toBoolean(properties.get(DistributionQueue.ASYNC_DISTRIBUTION_OPTION));
+    		isAsyncDistribution = ConversionHelper.toBoolean(properties.get(DestinationConstants.ASYNC_DISTRIBUTION_OPTION));
     	} catch (MessageValueException exc) {	}
     }
   }
