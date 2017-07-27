@@ -32,23 +32,29 @@ import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-
-import javax.naming.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 import org.objectweb.joram.client.jms.Queue;
 import org.objectweb.joram.client.jms.admin.AdminModule;
 import org.objectweb.joram.client.jms.admin.RestAcquisitionQueue;
+import org.objectweb.joram.client.jms.admin.RestDistributionQueue;
 import org.objectweb.joram.client.jms.admin.User;
 import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 
 import framework.TestCase;
 
 /**
- * Test: Test the behavior of BridgeAcquisitionQueue during stop / restart of Foreign server.
+ * Test: Test the rest bridge behavior during stop / restart of Foreign server (#1).
+ *  - Architecture: producer --JMS--> [#0 DistributionQueue] --REST--> [#1 foreignQueue]
+ *                  consumer <--JMS-- [#0 AcquisitionQueue]  <--REST-- [#1 foreignQueue]
+ *  - Sends 1000 messages on a DistributionQueue
+ *  - Stops the Joram foreign server, then restarts it.
+ *  - Receives the messages through an AcquisitionQueue.
  */
-public class BridgeRestTest1 extends TestCase implements MessageListener {
+public class BridgeRestTest5 extends TestCase implements MessageListener {
   public static void main(String[] args) {
-    new BridgeRestTest1().run();
+    new BridgeRestTest5().run();
   }
 
   public void startAgentServer0() throws Exception {
@@ -67,7 +73,7 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
       startAgentServer0();
       startAgentServer1();
       Thread.sleep(1000);
-
+      
       admin();
       test();
     } catch (Throwable exc) {
@@ -81,6 +87,7 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
     }
   }
 
+  
   private void admin() throws Exception {
     javax.jms.ConnectionFactory bridgeCF = TcpConnectionFactory.create("localhost", 16010);
 
@@ -103,15 +110,26 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
     jndiCtx.rebind("foreignCF", foreignCF);
 
     // Create a REST acquisition queue on server.
+    Queue distQueue = new RestDistributionQueue()
+        .setHostName("localhost")
+        .setPort(8989)
+        .setPeriod(500)
+        .setIdleTimeout(10)
+        .setBatch(true)
+        .create(0, "distQueue", "foreignQueue");
+    distQueue.setFreeWriting();
+    System.out.println("joram distribution queue = " + distQueue);
+
+    // Create a REST acquisition queue on server.
     Queue acqQueue = new RestAcquisitionQueue()
         .setMediaTypeJson(true)
         .setTimeout(5000)
-        .setIdleTimeout(10)
         .create(0, "acqQueue", "foreignQueue");
     acqQueue.setFreeReading();
     System.out.println("joram acquisition queue = " + acqQueue);
 
     jndiCtx.bind("acqQueue", acqQueue);
+    jndiCtx.bind("distQueue", distQueue);
     jndiCtx.rebind("bridgeCF", bridgeCF);
     jndiCtx.close();
 
@@ -121,99 +139,117 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
     Thread.sleep(1000);
   }
 
-  int nbmsg = 10;
-  Object lock = new Object();
+//  public void test() throws Exception {
+//      boolean ret = false;
+//      for (int i=0; i<10; i++) {
+//        ret = test(1000);
+//        if (!ret && failureCount() != 0) break;
+//      }
+//
+//      if (ret) {
+//        try {
+//          Thread.sleep(100);
+//          killAgentServer((short) 0);
+//          System.out.println("\nJoram server stopped.");
+//          startAgentServer((short) 0, new String[]{"-DTransaction.UseLockFile=false"});
+//          Thread.sleep(10000);
+//          System.out.println("Joram server started.\n");
+//        } catch (Exception e) {
+//          e.printStackTrace();
+//        }
+//        //System.out.println("Joram server status: " + AgentServer.getStatusInfo());
+//
+//        test(1000);
+//      }
+//  }
   
-  public void test() throws Exception {
+  public static final int NB_MSG = 1000;
+  public static final Object lock = new Object();
+  
+  void test() throws Exception {
     Context jndiCtx = new InitialContext();
     ConnectionFactory bridgeCF = (ConnectionFactory) jndiCtx.lookup("bridgeCF");
     Destination acqQueue = (Destination) jndiCtx.lookup("acqQueue");
-    ConnectionFactory foreignCF = (ConnectionFactory) jndiCtx.lookup("foreignCF");
-    Destination foreignQueue = (Destination) jndiCtx.lookup("foreignQueue");
+    Destination distQueue = (Destination) jndiCtx.lookup("distQueue");
     jndiCtx.close();
 
-    Connection bridgeCnx = bridgeCF.createConnection();
-    Session bridgeSess = bridgeCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    MessageConsumer bridgeCons = bridgeSess.createConsumer(acqQueue);
-    bridgeCons.setMessageListener(this);
-    bridgeCnx.start(); 
+    Connection cnx = bridgeCF.createConnection();
 
-    Connection foreignCnx = foreignCF.createConnection();
-    Session foreignSess = foreignCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    MessageProducer foreignProd = foreignSess.createProducer(foreignQueue);
-    foreignCnx.start();
+    Session session1 = cnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    MessageProducer producer = session1.createProducer(distQueue);
 
-    TextMessage msg = foreignSess.createTextMessage();
-    for (int i = 0; i < nbmsg; i++) {
-      System.out.println("Send msg #" + i);
+    Session session2 = cnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    MessageConsumer consumer = session2.createConsumer(acqQueue);
+    consumer.setMessageListener(this);
+
+    cnx.start(); 
+
+    TextMessage msg = session1.createTextMessage();
+    for (int i=0; i < NB_MSG; i++) {
+//      System.out.println("Send msg #" + i);
       msg.setText("Message number #" + i);
-      foreignProd.send(msg);
+      producer.send(msg);
     }
-    
+    System.out.println(NB_MSG + " messages sent.");
+
+    try {
+      Thread.sleep(1000);
+      killAgentServer((short) 1);
+      System.out.println("Foreign server stopped: " + nbmsg);
+      Thread.sleep(1000);
+      startAgentServer1();
+      System.out.println("Foreign server started: " + nbmsg);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     synchronized (lock) {
-      if (counter != nbmsg)
-        lock.wait((1000L*nbmsg) + 10000L);
+      //      if (msgs != nbmsg && failureCount() == 0)
+      //        lock.wait((timeout*msgs) +100000L);
+      //    }
+      lock.wait(120000L);
     }
-    assertTrue("Assertion#1", (counter == nbmsg));
-    
-    if (counter != nbmsg)
-      throw new Exception("Bad message count");
-    
-    System.out.println("Kill server#1");
-    killAgentServer((short)1);
-    Thread.sleep(1000);
-    System.out.println("Start server#1");
-    startAgentServer1();
-    Thread.sleep(1000);
-    System.out.println("Server#1 started");
-    
-    nbmsg = 20;
+    System.out.println("Receives " + nbmsg + " messages.");
+    assertEquals("Receives " + nbmsg + "messages, should be " + NB_MSG, NB_MSG, nbmsg);
 
-    foreignCnx = foreignCF.createConnection();
-    foreignSess = foreignCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    foreignProd = foreignSess.createProducer(foreignQueue);
-
-    msg = foreignSess.createTextMessage();
-    for (int i = 10; i < nbmsg; i++) {
-      System.out.println("Send msg #" + i);
-      msg.setText("Message number #" + i);
-      foreignProd.send(msg);
-    }
-    
-    synchronized (lock) {
-      System.out.println("wait for lock");
-      if (counter != nbmsg)
-        lock.wait((1000L*nbmsg) + 30000L);
-    }
-    assertTrue("Assertion#1", (counter == nbmsg));
-    
-    if (counter != nbmsg)
-      throw new Exception("Bad message count");
-
+    cnx.close();
   }
   
-  int counter = 0;
+  int nbmsg = 0;
+  
+  String previous = null;
+  String current = null;
   
   public void onMessage(Message msg) {
     try {
-      String txt1 = "Message number #" + counter;
-      String txt2 = ((TextMessage) msg).getText();
-      if (! txt1.equals(txt2))
-        System.out.println("Message " + msg.getJMSMessageID() + ": Expected <" + txt1 + "> but was <" + txt2 + "> ");
-      assertEquals("Message " + msg.getJMSMessageID(), txt1, txt2);
+      String current = "Message number #" + nbmsg;
+      String txt = ((TextMessage) msg).getText();
       
-      System.out.println("Receives " + msg.getJMSMessageID() + " -> " + txt2);
+      if (! current.equals(txt)) {
+        // Verify if it is a duplicate due to the server's failure.
+        if ((previous == null) || (! previous.equals(txt))) {
+          System.out.println("Expected <" + current + "> but was <" + txt + "> ");
+          assertEquals("Message " + msg.getJMSMessageID(), current, txt);
+        } else {
+          System.out.println("Duplicate message: " + msg.getJMSMessageID() + " -> " + txt);
+          return;
+        }
+      }
       
-      counter += 1;
-      if (counter == nbmsg) {
+      previous = current;
+      if (nbmsg % 100 == 0)//NTA tmp
+        System.out.println(txt);//NTA tmp
+      
+      nbmsg += 1;
+      if (nbmsg == NB_MSG) {
         synchronized (lock) {
           System.out.println("notify");
           lock.notify(); 
         }
       }
-    } catch (JMSException exc) {
-      error(exc);
-      exc.printStackTrace();
+    } catch (JMSException e) {
+      assertTrue("Exception: " + e, false);
+      e.printStackTrace();
     }
   }
 }

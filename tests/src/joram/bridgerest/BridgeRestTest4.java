@@ -37,18 +37,18 @@ import javax.naming.*;
 
 import org.objectweb.joram.client.jms.Queue;
 import org.objectweb.joram.client.jms.admin.AdminModule;
-import org.objectweb.joram.client.jms.admin.RestAcquisitionQueue;
+import org.objectweb.joram.client.jms.admin.RestDistributionQueue;
 import org.objectweb.joram.client.jms.admin.User;
 import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 
 import framework.TestCase;
 
 /**
- * Test: Test the behavior of BridgeAcquisitionQueue during stop / restart of Foreign server.
+ * Test: Test the behavior of BridgeDistributionQueue during stop / restart of bridge server.
  */
-public class BridgeRestTest1 extends TestCase implements MessageListener {
+public class BridgeRestTest4 extends TestCase implements MessageListener {
   public static void main(String[] args) {
-    new BridgeRestTest1().run();
+    new BridgeRestTest4().run();
   }
 
   public void startAgentServer0() throws Exception {
@@ -103,15 +103,18 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
     jndiCtx.rebind("foreignCF", foreignCF);
 
     // Create a REST acquisition queue on server.
-    Queue acqQueue = new RestAcquisitionQueue()
-        .setMediaTypeJson(true)
-        .setTimeout(5000)
+    Queue distQueue = new RestDistributionQueue()
+        .setHostName("localhost")
+        .setPort(8989)
+        .setPeriod(500)
         .setIdleTimeout(10)
-        .create(0, "acqQueue", "foreignQueue");
-    acqQueue.setFreeReading();
-    System.out.println("joram acquisition queue = " + acqQueue);
+        .setBatch(true)
+        .create(0, "distQueue", "foreignQueue");
+    distQueue.setFreeWriting();
+    System.out.println("joram distribution queue = " + distQueue);
 
-    jndiCtx.bind("acqQueue", acqQueue);
+
+    jndiCtx.bind("distQueue", distQueue);
     jndiCtx.rebind("bridgeCF", bridgeCF);
     jndiCtx.close();
 
@@ -127,27 +130,27 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
   public void test() throws Exception {
     Context jndiCtx = new InitialContext();
     ConnectionFactory bridgeCF = (ConnectionFactory) jndiCtx.lookup("bridgeCF");
-    Destination acqQueue = (Destination) jndiCtx.lookup("acqQueue");
+    Destination distQueue = (Destination) jndiCtx.lookup("distQueue");
     ConnectionFactory foreignCF = (ConnectionFactory) jndiCtx.lookup("foreignCF");
     Destination foreignQueue = (Destination) jndiCtx.lookup("foreignQueue");
     jndiCtx.close();
 
     Connection bridgeCnx = bridgeCF.createConnection();
     Session bridgeSess = bridgeCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    MessageConsumer bridgeCons = bridgeSess.createConsumer(acqQueue);
-    bridgeCons.setMessageListener(this);
+    MessageProducer bridgeProd = bridgeSess.createProducer(distQueue);
     bridgeCnx.start(); 
 
     Connection foreignCnx = foreignCF.createConnection();
     Session foreignSess = foreignCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    MessageProducer foreignProd = foreignSess.createProducer(foreignQueue);
+    MessageConsumer foreignCons = foreignSess.createConsumer(foreignQueue);
+    foreignCons.setMessageListener(this);
     foreignCnx.start();
-
+    
     TextMessage msg = foreignSess.createTextMessage();
     for (int i = 0; i < nbmsg; i++) {
       System.out.println("Send msg #" + i);
       msg.setText("Message number #" + i);
-      foreignProd.send(msg);
+      bridgeProd.send(msg);
     }
     
     synchronized (lock) {
@@ -159,25 +162,27 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
     if (counter != nbmsg)
       throw new Exception("Bad message count");
     
-    System.out.println("Kill server#1");
-    killAgentServer((short)1);
+    Thread.sleep(500L);
+    System.out.println("Kill server#0");
+    killAgentServer((short)0);
     Thread.sleep(1000);
-    System.out.println("Start server#1");
-    startAgentServer1();
+    System.out.println("Start server#0");
+    startAgentServer0();
     Thread.sleep(1000);
-    System.out.println("Server#1 started");
+    System.out.println("Server#0 started");
     
     nbmsg = 20;
 
-    foreignCnx = foreignCF.createConnection();
-    foreignSess = foreignCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    foreignProd = foreignSess.createProducer(foreignQueue);
+    bridgeCnx = bridgeCF.createConnection();
+    bridgeSess = bridgeCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    bridgeProd = bridgeSess.createProducer(distQueue);
+    bridgeCnx.start(); 
 
     msg = foreignSess.createTextMessage();
     for (int i = 10; i < nbmsg; i++) {
       System.out.println("Send msg #" + i);
       msg.setText("Message number #" + i);
-      foreignProd.send(msg);
+      bridgeProd.send(msg);
     }
     
     synchronized (lock) {

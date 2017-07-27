@@ -44,11 +44,11 @@ import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 import framework.TestCase;
 
 /**
- * Test: Test the behavior of BridgeAcquisitionQueue during stop / restart of Foreign server.
+ * Test: Test the behavior of BridgeAcquisitionQueue during stop / restart of bridge server.
  */
-public class BridgeRestTest1 extends TestCase implements MessageListener {
+public class BridgeRestTest2 extends TestCase implements MessageListener {
   public static void main(String[] args) {
-    new BridgeRestTest1().run();
+    new BridgeRestTest2().run();
   }
 
   public void startAgentServer0() throws Exception {
@@ -106,7 +106,7 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
     Queue acqQueue = new RestAcquisitionQueue()
         .setMediaTypeJson(true)
         .setTimeout(5000)
-        .setIdleTimeout(10)
+        .setIdleTimeout(10000)
         .create(0, "acqQueue", "foreignQueue");
     acqQueue.setFreeReading();
     System.out.println("joram acquisition queue = " + acqQueue);
@@ -142,7 +142,7 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
     Session foreignSess = foreignCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
     MessageProducer foreignProd = foreignSess.createProducer(foreignQueue);
     foreignCnx.start();
-
+    
     TextMessage msg = foreignSess.createTextMessage();
     for (int i = 0; i < nbmsg; i++) {
       System.out.println("Send msg #" + i);
@@ -159,19 +159,22 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
     if (counter != nbmsg)
       throw new Exception("Bad message count");
     
-    System.out.println("Kill server#1");
-    killAgentServer((short)1);
+    Thread.sleep(1000); // Needed to wait acknowledge from consumer listener
+    System.out.println("Kill server#0");
+    killAgentServer((short)0);
+    Thread.sleep(5000); // Needed to wait the last consume from AcquisitionQueue failed
+    System.out.println("Start server#0");
+    startAgentServer0();
     Thread.sleep(1000);
-    System.out.println("Start server#1");
-    startAgentServer1();
-    Thread.sleep(1000);
-    System.out.println("Server#1 started");
+    System.out.println("Server#0 started");
     
     nbmsg = 20;
 
-    foreignCnx = foreignCF.createConnection();
-    foreignSess = foreignCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    foreignProd = foreignSess.createProducer(foreignQueue);
+    bridgeCnx = bridgeCF.createConnection();
+    bridgeSess = bridgeCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    bridgeCons = bridgeSess.createConsumer(acqQueue);
+    bridgeCons.setMessageListener(this);
+    bridgeCnx.start(); 
 
     msg = foreignSess.createTextMessage();
     for (int i = 10; i < nbmsg; i++) {
@@ -189,7 +192,6 @@ public class BridgeRestTest1 extends TestCase implements MessageListener {
     
     if (counter != nbmsg)
       throw new Exception("Bad message count");
-
   }
   
   int counter = 0;
