@@ -22,8 +22,6 @@
  */
 package joram.bridgerest;
 
-import java.util.Properties;
-
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -54,11 +52,21 @@ public class BridgeRestSimpleBytesMessage extends TestCase implements MessageLis
     new BridgeRestSimpleBytesMessage().run();
   }
 
+  public void startAgentServer0() throws Exception {
+    System.setProperty("felix.config.properties", "file:config0.properties");
+    startAgentServer((short)0, new String[]{"-DTransaction.UseLockFile=false"});
+  }
+
+  public void startAgentServer1() throws Exception {
+    System.setProperty("felix.config.properties", "file:config1.properties");
+    startAgentServer((short)1, new String[]{"-DTransaction.UseLockFile=false"});
+  }
+
   public void run() {
     try {
       System.out.println("servers start");
-      startAgentServer((short)0, new String[]{"-DTransaction.UseLockFile=false"});
-      startAgentServer((short)1, new String[]{"-DTransaction.UseLockFile=false"});
+      startAgentServer0();
+      startAgentServer1();
       Thread.sleep(1000);
 
       try{
@@ -84,7 +92,6 @@ public class BridgeRestSimpleBytesMessage extends TestCase implements MessageLis
       
         // Create a REST distribution queue on server 0
         Queue queueDist = new RestDistributionQueue()
-            .setBatch(true)
             .setHostName("localhost")
             .setPort(8989)
             .setPeriod(500)
@@ -94,10 +101,7 @@ public class BridgeRestSimpleBytesMessage extends TestCase implements MessageLis
         System.out.println("joram distribution queue = " + queueDist);
 
         // Create a REST acquisition queue on server.
-        Queue queueAcq = new RestAcquisitionQueue()
-            .setTimeout(5)
-            .setNbMaxMsgByPeriode(500)
-            .create(0, "queueAcq", "foreignQueue");
+        Queue queueAcq = new RestAcquisitionQueue().create(0, "queueAcq", "foreignQueue");
         queueAcq.setFreeReading();
         System.out.println("joram acquisition queue = " + queueAcq);
         
