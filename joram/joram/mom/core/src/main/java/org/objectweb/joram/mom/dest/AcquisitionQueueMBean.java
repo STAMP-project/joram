@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,4 +72,14 @@ public interface AcquisitionQueueMBean extends QueueMBean, AcquisitionMBean {
    * @return the minimum threshold of waiting messages in the destination.
    */
   long getPendingMin();
+  
+  /**
+   * Starts the handler.
+   */
+  void start();
+  
+  /**
+   * Stops the handler.
+   */
+  void stop();
 }
