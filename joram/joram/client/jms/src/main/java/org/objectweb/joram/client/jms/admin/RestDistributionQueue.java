@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.objectweb.joram.client.jms.Destination;
 import org.objectweb.joram.client.jms.Queue;
+import org.objectweb.joram.shared.DestinationConstants;
 
 /**
  * The <code>RestDistributionQueue</code> class allows administrators to create REST
@@ -45,8 +46,10 @@ public class RestDistributionQueue {
   private int port = 8989;
   private String userName = "anonymous";
   private String password = "anonymous";
-  private boolean batch =  true;
+  private boolean batch =  false;
+  private boolean async = true;
   private int period = 1000;
+  private long idleTimeout;
   
   /**
    * @return the hostName
@@ -108,19 +111,37 @@ public class RestDistributionQueue {
     return this;
   }
 
-
   /**
-   * @return the batch
+   * Gets the batch parameter.
+   * @return the batch parameter
    */
   public boolean isBatch() {
     return batch;
   }
 
   /**
+   * Sets the batch parameter.
    * @param batch the batch to set
    */
   public RestDistributionQueue setBatch(boolean batch) {
     this.batch = batch;
+    return this;
+  }
+
+  /**
+   * Gets the async parameter.
+   * @return the async parameter
+   */
+  public boolean isAsync() {
+    return async;
+  }
+
+  /**
+   * Sets the async parameter.
+   * @param async the batch to set
+   */
+  public RestDistributionQueue setAsync(boolean async) {
+    this.async = async;
     return this;
   }
 
@@ -136,6 +157,15 @@ public class RestDistributionQueue {
    */
   public RestDistributionQueue setPeriod(int period) {
     this.period = period;
+    return this;
+  }
+  
+  public long getIdleTimeout() {
+    return idleTimeout;
+  }
+
+  public RestDistributionQueue setIdleTimeout(long idleTimeout) {
+    this.idleTimeout = idleTimeout;
     return this;
   }
 
@@ -214,7 +244,8 @@ public class RestDistributionQueue {
    * message, regardless of distribution errors. This can lead to the loss of message ordering, but will
    * prevent a blocking message from blocking every following message. When set to false, the distribution
    * process will stop on the first error. Default is false.</li>
-   * <li>distribution.async - If set to true, the messages are asynchronously forwarded through a daemon.</li>
+   * <li>distribution.async - If set to true, the messages are asynchronously forwarded through a daemon.
+   * Default is true.</li>
    * </ul>
    * The request fails if the target server does not belong to the platform,
    * or if the destination deployment fails server side.
@@ -237,21 +268,25 @@ public class RestDistributionQueue {
     if (props == null)
       props = new Properties();
     props.setProperty("distribution.className", RESTDistribution);
-    if (!props.containsKey("rest.hostName"))
-      props.setProperty("rest.hostName", hostName);
-    if (!props.containsKey("rest.port"))
-      props.setProperty("rest.port", ""+port);
-    if (!props.containsKey("rest.userName"))
-      props.setProperty("rest.userName", userName);
-    if (!props.containsKey("rest.password"))
-      props.setProperty("rest.password", password);
-    if (!props.containsKey("distribution.batch"))
-      props.setProperty("distribution.batch", ""+batch);
+    if (!props.containsKey(DestinationConstants.REST_HOST_PROP))
+      props.setProperty(DestinationConstants.REST_HOST_PROP, hostName);
+    if (!props.containsKey(DestinationConstants.REST_PORT_PROP))
+      props.setProperty(DestinationConstants.REST_PORT_PROP, ""+port);
+    if (!props.containsKey(DestinationConstants.REST_USERNAME_PROP))
+      props.setProperty(DestinationConstants.REST_USERNAME_PROP, userName);
+    if (!props.containsKey(DestinationConstants.REST_PASSWORD_PROP))
+      props.setProperty(DestinationConstants.REST_PASSWORD_PROP, password);
+    if (!props.containsKey(DestinationConstants.ASYNC_DISTRIBUTION_OPTION))
+      props.setProperty(DestinationConstants.ASYNC_DISTRIBUTION_OPTION, ""+async);
+    if (!props.containsKey(DestinationConstants.BATCH_DISTRIBUTION_OPTION))
+      props.setProperty(DestinationConstants.BATCH_DISTRIBUTION_OPTION, ""+batch);
+    if (!props.containsKey(DestinationConstants.IDLETIMEOUT_PROP))
+      props.setProperty(DestinationConstants.IDLETIMEOUT_PROP, ""+ idleTimeout);
     if (!props.containsKey("period"))
-    props.setProperty("period", ""+period);
-    
-    props.setProperty("jms.destination", dest);
-    
+      props.setProperty("period", ""+period);
+
+    props.setProperty(DestinationConstants.DESTINATION_NAME_PROP, dest);
+
     return Queue.create(serverId, name, Destination.DISTRIBUTION_QUEUE, props);
   }
 }
