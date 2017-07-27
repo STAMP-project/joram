@@ -28,6 +28,7 @@ import java.util.Properties;
 import org.objectweb.joram.mom.notifications.ClientMessages;
 import org.objectweb.joram.mom.notifications.WakeUpNot;
 import org.objectweb.joram.mom.util.DMQManager;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.MessageErrorConstants;
 import org.objectweb.joram.shared.excepts.MessageValueException;
 import org.objectweb.joram.shared.excepts.RequestException;
@@ -86,11 +87,11 @@ public class DistributionTopic extends Topic {
     
     if (firstTime) {
       if (properties != null) {
-        distributionClassName = properties.getProperty(DistributionModule.CLASS_NAME);
-        properties.remove(DistributionModule.CLASS_NAME);
+        distributionClassName = properties.getProperty(DestinationConstants.DISTRIBUTION_CLASS_NAME);
+        properties.remove(DestinationConstants.DISTRIBUTION_CLASS_NAME);
       }
       if (distributionClassName == null) {
-        throw new RequestException("Distribution class name not found: " + DistributionModule.CLASS_NAME
+        throw new RequestException("Distribution class name not found: " + DestinationConstants.DISTRIBUTION_CLASS_NAME
             + " property must be set on topic creation.");
       }
 
@@ -117,9 +118,9 @@ public class DistributionTopic extends Topic {
   }
 
   private boolean isAsyncDistribution(Properties properties) {
-  	if (properties.containsKey(DistributionQueue.ASYNC_DISTRIBUTION_OPTION)) {
+  	if (properties.containsKey(DestinationConstants.ASYNC_DISTRIBUTION_OPTION)) {
   		try {
-  			return ConversionHelper.toBoolean(properties.get(DistributionQueue.ASYNC_DISTRIBUTION_OPTION));
+  			return ConversionHelper.toBoolean(properties.get(DestinationConstants.ASYNC_DISTRIBUTION_OPTION));
   		} catch (MessageValueException exc) {
   			logger.log(BasicLevel.ERROR, "DistributionModule: can't parse DaemonDistribution option.", exc);
   		}	
