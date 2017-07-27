@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@ import javax.mail.Store;
 import org.objectweb.joram.mom.dest.AcquisitionHandler;
 import org.objectweb.joram.mom.dest.AcquisitionModule;
 import org.objectweb.joram.mom.dest.ReliableTransmitter;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.excepts.MessageValueException;
 import org.objectweb.joram.shared.messages.ConversionHelper;
 import org.objectweb.joram.shared.messages.Message;
@@ -160,9 +161,9 @@ public class MailAcquisition implements AcquisitionHandler {
   boolean persistent = true;
   
   public void setProperties(Properties properties) {
-    if (properties.containsKey(AcquisitionModule.PERSISTENT_PROPERTY)) {
+    if (properties.containsKey(DestinationConstants.ACQUISITION_PERSISTENT)) {
       try {
-        persistent = ConversionHelper.toBoolean(properties.get(AcquisitionModule.PERSISTENT_PROPERTY));
+        persistent = ConversionHelper.toBoolean(properties.get(DestinationConstants.ACQUISITION_PERSISTENT));
       } catch (MessageValueException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
