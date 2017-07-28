@@ -61,6 +61,8 @@ public class Helper {
   public static final String BUNDLE_IDLE_TIMEOUT_PROP = "rest.idle.timeout";
   public static final String BUNDLE_CLEANER_PERIOD_PROP = "rest.cleaner.period";
   
+  public static final int DFLT_CLEANER_PERIOD = 15;
+  
   public static Logger logger = Debug.getLogger(Helper.class.getName());
   private static final AtomicLong counter = new AtomicLong(1);
   private static Helper helper = null;
@@ -69,7 +71,7 @@ public class Helper {
   private HashMap<String, SessionContext> sessionCtxs;
   private String cfName;
   private BundleContext bundleContext;
-  private long globalIdleTimeout;
+  private long globalIdleTimeout = 0;
   private Properties jndiProps;
   
   private Helper() {
@@ -102,17 +104,24 @@ public class Helper {
       jndiProps.setProperty("java.naming.factory.host", "localhost");
       jndiProps.setProperty("java.naming.factory.port", "16400");
     }
-    // TODO: use the osgi service jndi ?
-//    ServiceReference<ObjectFactory> ref = context.getServiceReference(javax.naming.spi.ObjectFactory.class);
-//    ObjectFactory jndiFactory = bundleContext.getService(ref);
+    // TODO: use the osgi service jndi?
+    //    ServiceReference<ObjectFactory> ref = context.getServiceReference(javax.naming.spi.ObjectFactory.class);
+    //    ObjectFactory jndiFactory = bundleContext.getService(ref);
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "jndiProperties = " + jndiProps);
     
     // set default idle timeout
     String value = bundleContext.getProperty(BUNDLE_IDLE_TIMEOUT_PROP);
-    if (value != null && !value.isEmpty())
-      globalIdleTimeout = Long.parseLong(value);
-   }
+    if (value != null && !value.isEmpty()) {
+      try {
+        globalIdleTimeout = Long.parseLong(value);
+      } catch (NumberFormatException exc) {
+        if (logger.isLoggable(BasicLevel.WARN))
+          logger.log(BasicLevel.WARN,
+              "Bad configuration property " + BUNDLE_IDLE_TIMEOUT_PROP + ", should be a number: " + value, exc);
+      }
+    }
+  }
   
   /**
    * @return the restClientCtxs
@@ -546,15 +555,16 @@ public class Helper {
       if (type.equals(TextMessage.class.getSimpleName())) {
         if (logger.isLoggable(BasicLevel.DEBUG))
           logger.log(BasicLevel.DEBUG, "send text message = " + jmsBody);
+        
         // create the text message
         msg = producerCtx.getJmsContext().createTextMessage((String) jmsBody);
-        
       } else if(type.equals(BytesMessage.class.getSimpleName())) {
         // create the byte message
         if (jmsBody instanceof ArrayList) {
-          msg = producerCtx.getJmsContext().createBytesMessage();
           if (logger.isLoggable(BasicLevel.DEBUG))
-            logger.log(BasicLevel.DEBUG, "send bytes message = " + jmsBody);
+            logger.log(BasicLevel.DEBUG, "send bytes message");
+          
+          msg = producerCtx.getJmsContext().createBytesMessage();
           byte[] bytes = new byte[((ArrayList) jmsBody).size()];
           for (int i = 0; i < ((ArrayList) jmsBody).size(); i++) {
             Object value = ((ArrayList) jmsBody).get(i);
@@ -565,8 +575,10 @@ public class Helper {
         } else {
           throw new Exception("BytesMessage: invalid jmsBody = " + jmsBody.getClass().getName());
         }
-
       } else if(type.equals(MapMessage.class.getSimpleName())) {
+        if (logger.isLoggable(BasicLevel.DEBUG))
+          logger.log(BasicLevel.DEBUG, "send map message");
+
         // create the map message
         if (jmsBody instanceof Map) {
           msg = producerCtx.getJmsContext().createMapMessage();
@@ -574,19 +586,10 @@ public class Helper {
         } else {
           throw new Exception("MapMessage: invalid jmsBody = " + jmsBody.getClass().getName());
         }
-
       } else if(type.equals(ObjectMessage.class.getSimpleName())) {
-        if (logger.isLoggable(BasicLevel.DEBUG))
-          logger.log(BasicLevel.DEBUG, "send object message = " + jmsBody);
-        // create the object message
-        //msg = producerCtx.getJmsContext().createObjectMessage((Serializable) jmsBody);
         throw new Exception("type: " + type + ", not yet implemented");
-        
       } else if(type.equals(StreamMessage.class.getSimpleName())) {
-        // create the stream message
-        //msg = producerCtx.getJmsContext().createStreamMessage();
         throw new Exception("type: " + type + ", not yet implemented");
-
       } else {
         throw new Exception("Unknown message type: " + type); 
       }
@@ -619,6 +622,18 @@ public class Helper {
             msg.setJMSCorrelationID(value);
         }
       }
+      
+      if (deliveryMode > -1)
+        msg.setJMSDeliveryMode(deliveryMode);
+      if (deliveryTime > -1)
+        msg.setJMSDeliveryTime(deliveryTime);
+      if (priority > -1)
+        msg.setJMSPriority(priority);
+      if (timeToLive > -1)
+        msg.setJMSExpiration(timeToLive);
+      if (correlationID != null)
+        msg.setJMSCorrelationID(correlationID);
+      
       if (jmsProps != null) {
         // Properties
         for (String key : jmsProps.keySet()) {
@@ -672,18 +687,7 @@ public class Helper {
           }
         }
       }
-      
-      if (deliveryMode > -1)
-        msg.setJMSDeliveryMode(deliveryMode);
-      if (deliveryTime > -1)
-        msg.setJMSDeliveryTime(deliveryTime);
-      if (priority > -1)
-        msg.setJMSPriority(priority);
-      if (timeToLive > -1)
-        msg.setJMSExpiration(timeToLive);
-      if (correlationID != null)
-        msg.setJMSCorrelationID(correlationID);
-      
+            
       // send the message
       producerCtx.getProducer().send(producerCtx.getDest(), msg);
       // Increment the last id
@@ -712,6 +716,9 @@ public class Helper {
     if (consumerCtx == null)
       throw new Exception(consName + " not found.");
     
+    //update activity
+    consumerCtx.getClientCtx().setLastActivity(System.currentTimeMillis());
+    
     Message message = consumerCtx.getMessage(msgId);
     if (message != null)
       return message;
@@ -730,17 +737,15 @@ public class Helper {
     //update activity
     consumerCtx.getClientCtx().setLastActivity(System.currentTimeMillis());
     
-    if (message == null) {
-      return null;
-    }
-    
-    if (consumerCtx.getJmsContext().getSessionMode() == JMSContext.CLIENT_ACKNOWLEDGE) {
-      long id = msgId;
-      if (id == -1)
-        id = consumerCtx.incLastId();
-      consumerCtx.put(id, message);
-    } else {
-      consumerCtx.incLastId();
+    if (message != null) {
+      if (consumerCtx.getJmsContext().getSessionMode() == JMSContext.CLIENT_ACKNOWLEDGE) {
+        long id = msgId;
+        if (id == -1)
+          id = consumerCtx.incLastId();
+        consumerCtx.put(id, message);
+      } else {
+        consumerCtx.incLastId();
+      }
     }
     
     return message;
