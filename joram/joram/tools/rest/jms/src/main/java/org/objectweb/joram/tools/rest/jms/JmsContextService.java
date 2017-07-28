@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -185,7 +185,7 @@ public class JmsContextService {
   public Response sendMsg(
       @Context HttpHeaders headers,
       @PathParam("name") String prodName,
-      @DefaultValue("-1")@QueryParam("persistent") int deliveryMode,
+      @DefaultValue("-1")@QueryParam("delivery-mode") int deliveryMode,
       @DefaultValue("-1")@QueryParam("delivery-time") long deliveryTime,
       @DefaultValue("-1")@QueryParam("priority") int priority,
       @DefaultValue("-1")@QueryParam("time-to-live") long timeToLive,
@@ -266,7 +266,7 @@ public class JmsContextService {
   public Response sendMsgJson(
       @Context HttpHeaders headers,
       @PathParam("name") String prodName,
-      @DefaultValue("-1")@QueryParam("persistent") int deliveryMode,
+      @DefaultValue("-1")@QueryParam("delivery-mode") int deliveryMode,
       @DefaultValue("-1")@QueryParam("delivery-time") long deliveryTime,
       @DefaultValue("-1")@QueryParam("priority") int priority,
       @DefaultValue("-1")@QueryParam("time-to-live") long timeToLive,
@@ -380,7 +380,7 @@ public class JmsContextService {
       @Context HttpHeaders headers,
       @PathParam("name") String prodName,
       @PathParam("id") long id,
-      @DefaultValue("-1")@QueryParam("persistent") int deliveryMode,
+      @DefaultValue("-1")@QueryParam("delivery-mode") int deliveryMode,
       @DefaultValue("-1")@QueryParam("delivery-time") long deliveryTime,
       @DefaultValue("-1")@QueryParam("priority") int priority,
       @DefaultValue("-1")@QueryParam("time-to-live") long timeToLive,
@@ -476,7 +476,7 @@ public class JmsContextService {
       @Context HttpHeaders headers,
       @PathParam("name") String prodName,
       @PathParam("id") long id,
-      @DefaultValue("-1")@QueryParam("persistent") int deliveryMode,
+      @DefaultValue("-1")@QueryParam("delivery-mode") int deliveryMode,
       @DefaultValue("-1")@QueryParam("delivery-time") long deliveryTime,
       @DefaultValue("-1")@QueryParam("priority") int priority,
       @DefaultValue("-1")@QueryParam("time-to-live") long timeToLive,
