@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -127,11 +127,11 @@ public class CleanerTask implements Callable<Boolean> {
         // never close
         continue;
       }
-//      if (logger.isLoggable(BasicLevel.DEBUG))
-//        logger.log(BasicLevel.DEBUG, "cleanerTask.call : " + restClientCtx.getClientId() + ", idleTimeout = " + restClientCtx.getIdleTimeout());
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "cleanerTask.call : " + restClientCtx.getClientId() + ", idleTimeout = " + restClientCtx.getIdleTimeout());
       if (restClientCtx.getLastActivity() + restClientCtx.getIdleTimeout() < System.currentTimeMillis()) {
-        if (logger.isLoggable(BasicLevel.DEBUG))
-          logger.log(BasicLevel.DEBUG, "cleanerTask.call close : " + restClientCtx.getClientId());
+        if (logger.isLoggable(BasicLevel.INFO))
+          logger.log(BasicLevel.INFO, "cleanerTask.call close : " + restClientCtx.getClientId());
         if (!toClose.contains(restClientCtx.getClientId()))
           toClose.add(restClientCtx.getClientId());
       }
