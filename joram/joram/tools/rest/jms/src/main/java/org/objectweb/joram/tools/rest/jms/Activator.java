@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -80,14 +80,23 @@ public class Activator implements BundleActivator {
       HttpContext httpContext = null;
       // register the servlet
       httpService.registerServlet(servletAlias, new ServletContainer(), jerseyServletParams, httpContext);
-      
-      String period = bundleContext.getProperty(Helper.BUNDLE_CLEANER_PERIOD_PROP);
-      if (period != null && !period.isEmpty()) {
+
+      int period = Helper.DFLT_CLEANER_PERIOD;
+      String value = bundleContext.getProperty(Helper.BUNDLE_CLEANER_PERIOD_PROP);
+      if (value != null && !value.isEmpty()) {
+        try {
+          period = Integer.parseInt(value);
+        } catch (NumberFormatException exc) {
+          if (logger.isLoggable(BasicLevel.WARN))
+            logger.log(BasicLevel.WARN,
+                "Bad configuration property " + Helper.BUNDLE_CLEANER_PERIOD_PROP + ", should be a number: " + value, exc);
+        }
+      }
+      if (period > 0) {
         cleanerTask = new CleanerTask();
-        cleanerTask.setPeriod(Integer.parseInt(period));
+        cleanerTask.setPeriod(period);
         cleanerTask.start();
       }
-      
     } finally {
       Thread.currentThread().setContextClassLoader(originalContextClassLoader);
     }
