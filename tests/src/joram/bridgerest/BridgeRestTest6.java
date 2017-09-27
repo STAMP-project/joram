@@ -51,6 +51,7 @@ import framework.TestCase;
  *  - Sends 1000 messages on a DistributionQueue
  *  - Stops the Joram bridge server, then restarts it.
  *  - Receives the messages through an AcquisitionQueue.
+ * Note: This test can either use the administration API or XML script.
  */
 public class BridgeRestTest6 extends TestCase implements MessageListener {
   public static void main(String[] args) {
@@ -74,7 +75,11 @@ public class BridgeRestTest6 extends TestCase implements MessageListener {
       startAgentServer1();
       Thread.sleep(1000);
       
-      admin();
+      if (Boolean.getBoolean("useXML"))
+        AdminModule.executeXMLAdmin("joramAdmin.xml");
+      else
+        admin();
+      
       test();
     } catch (Throwable exc) {
       exc.printStackTrace();
@@ -111,7 +116,7 @@ public class BridgeRestTest6 extends TestCase implements MessageListener {
 
     // Create a REST acquisition queue on server.
     Queue distQueue = new RestDistributionQueue()
-        .setHostName("localhost")
+        .setHost("localhost")
         .setPort(8989)
         .setPeriod(1000)
         .setIdleTimeout(10)
