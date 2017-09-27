@@ -111,7 +111,7 @@ public class BridgeRestTest5 extends TestCase implements MessageListener {
 
     // Create a REST acquisition queue on server.
     Queue distQueue = new RestDistributionQueue()
-        .setHostName("localhost")
+        .setHost("localhost")
         .setPort(8989)
         .setPeriod(500)
         .setIdleTimeout(10)

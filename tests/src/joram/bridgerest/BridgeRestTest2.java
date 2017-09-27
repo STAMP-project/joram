@@ -106,7 +106,7 @@ public class BridgeRestTest2 extends TestCase implements MessageListener {
     Queue acqQueue = new RestAcquisitionQueue()
         .setMediaTypeJson(true)
         .setTimeout(5000)
-        .setIdleTimeout(10000)
+        .setIdleTimeout(10)
         .create(0, "acqQueue", "foreignQueue");
     acqQueue.setFreeReading();
     System.out.println("joram acquisition queue = " + acqQueue);
