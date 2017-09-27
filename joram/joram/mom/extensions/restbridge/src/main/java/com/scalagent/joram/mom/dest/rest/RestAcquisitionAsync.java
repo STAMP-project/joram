@@ -54,6 +54,9 @@ import com.google.gson.GsonBuilder;
 import fr.dyade.aaa.common.Daemon;
 import fr.dyade.aaa.common.Debug;
 
+/**
+ * Asynchronous acquisition handler implementing the AcquisitionDaemon interface.
+ */
 public class RestAcquisitionAsync implements AcquisitionDaemon {
   private static final Logger logger = Debug.getLogger(RestAcquisitionAsync.class.getName());
   
@@ -63,18 +66,21 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
   private String hostName = "localhost";
   private int port = 8989;
 
-  private int connectTimeout = 10000;
-  private int readTimeout = 10000;
+  private final int connectTimeout = 5000; // Value for jersey.config.client.connectTimeout.
+  private final int readTimeout = 5000;    // Base value for jersey.config.client.readTimeout (timeout is added).
 
-  private String userName = null;
-  private String password = null;
+  private String userName = "anonymous";
+  private String password = "anonymous";
   
   private String destName = null;
   
   private String consName = null;
   private String clientId = null;
-  private String idleTimeout = "60";      // TODO (AF): default value (Be careful in seconds)
-  private String timeout = "30000";       // TODO (AF): default value (Be careful in milliseconds)
+  // Normally each consumer resource need to be explicitly closed, this parameter allows to set the idle time
+  // in seconds in which the consumer context will be closed if idle.
+  private String idleTimeout = "60";
+  // Timeout for waiting for a message.
+  private String timeout = "10000";
   
   private boolean mediaTypeJson = true; //default true, use "application/json"
   private boolean persistent = true;
@@ -136,9 +142,7 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
     destName = properties.getProperty(DestinationConstants.DESTINATION_NAME_PROP);
     if (destName == null) {
       logger.log(BasicLevel.ERROR,
-          "Missing property Destination JNDI name.");
-      // TODO (AF):
-//      throw new IllegalArgumentException("Missing Destination JNDI name.");
+          "Missing Destination JNDI name, should fixed property " + DestinationConstants.DESTINATION_NAME_PROP);
     }
 
     if (properties.containsKey(DestinationConstants.MEDIA_TYPE_JSON_PROP)) {
@@ -237,6 +241,8 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
       WebTarget target = client.target(uriCreateConsumer);
       if (consName != null)  target = target.queryParam("name", consName);
       if (clientId != null)  target = target.queryParam("client-id", clientId);
+      // Normally each consumer resource need to be explicitly closed, this parameter allows to set the idle time
+      // in seconds in which the consumer context will be closed if idle.
       if (idleTimeout != null)  target = target.queryParam("idle-timeout", idleTimeout);
       if (userName != null) target = target.queryParam("user", userName);
       if (password != null) target = target.queryParam("password", password);

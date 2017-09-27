@@ -58,10 +58,9 @@ import com.google.gson.GsonBuilder;
 import fr.dyade.aaa.common.Debug;
 
 /**
- * Acquisition handler for the REST acquisition bridge.
+ * Simple acquisition handler for the REST acquisition bridge.
  */
 public class RESTAcquisition implements AcquisitionHandler {
-
   private static final Logger logger = Debug.getLogger(RESTAcquisition.class.getName());
 
   private String hostName = "localhost";

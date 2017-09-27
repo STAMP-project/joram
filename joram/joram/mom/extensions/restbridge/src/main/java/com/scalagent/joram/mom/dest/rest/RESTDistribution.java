@@ -68,10 +68,10 @@ public class RESTDistribution implements DistributionHandler {
   private int connectTimeout = 10000;
   private int readTimeout = 10000;
   
-  private String userName = null;
-  private String password = null;
+  private String userName = "anonymous";
+  private String password = "anonymous";
 
-  private String destName;
+  private String destName = null;
   
   private String idleTimeout = "60";      // TODO (AF): default value (Be careful in seconds)
 
@@ -123,7 +123,8 @@ public class RESTDistribution implements DistributionHandler {
 
     destName = properties.getProperty(DestinationConstants.DESTINATION_NAME_PROP);
     if (destName == null) {
-      throw new IllegalArgumentException("Missing Destination JNDI name.");
+      logger.log(BasicLevel.ERROR,
+          "Missing Destination JNDI name, should fixed property " + DestinationConstants.DESTINATION_NAME_PROP);
     }
   }
   
@@ -216,6 +217,12 @@ public class RESTDistribution implements DistributionHandler {
   	if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "RESTDistribution.distribute(" + message + ')');
     
+  	if (destName == null) {
+  	  logger.log(BasicLevel.ERROR,
+  	      "Missing Destination JNDI name, should fixed property " + DestinationConstants.DESTINATION_NAME_PROP);
+  	  throw new Exception("Missing Destination JNDI name, should fixed property " + DestinationConstants.DESTINATION_NAME_PROP);
+  	}
+
   	try {
   	  createProducer(userName, password);
     } catch (Exception exc) {
