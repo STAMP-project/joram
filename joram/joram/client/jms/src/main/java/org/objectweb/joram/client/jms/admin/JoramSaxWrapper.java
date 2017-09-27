@@ -50,6 +50,7 @@ import org.objectweb.joram.client.jms.Queue;
 import org.objectweb.joram.client.jms.Topic;
 import org.objectweb.joram.client.jms.local.LocalConnectionFactory;
 import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.security.SimpleIdentity;
 import org.objectweb.util.monolog.api.BasicLevel;
 import org.objectweb.util.monolog.api.Logger;
@@ -141,6 +142,9 @@ public class JoramSaxWrapper extends DefaultHandler {
   static final String ELT_JMS_DISTRIBUTION_QUEUE = "JMSDistributionQueue";
   static final String ELT_JMS_DISTRIBUTION_TOPIC = "JMSDistributionTopic";
   
+  static final String ELT_REST_ACQUISITION_QUEUE = "RestAcquisitionQueue";
+  static final String ELT_REST_DISTRIBUTION_QUEUE = "RestDistributionQueue";
+
   static final String ELT_AMQP_ACQUISITION_QUEUE = "AMQPAcquisitionQueue";
   static final String ELT_AMQP_ACQUISITION_TOPIC = "AMQPAcquisitionTopic";
   static final String ELT_AMQP_DISTRIBUTION_QUEUE = "AMQPDistributionQueue";
@@ -579,6 +583,8 @@ public class JoramSaxWrapper extends DefaultHandler {
         className = atts.getValue(ATT_CLASSNAME);
       } else if ((rawName.equals(ELT_JMS_ACQUISITION_QUEUE)) ||
                  (rawName.equals(ELT_JMS_DISTRIBUTION_QUEUE)) ||
+                 (rawName.equals(ELT_REST_ACQUISITION_QUEUE)) ||
+                 (rawName.equals(ELT_REST_DISTRIBUTION_QUEUE)) ||
                  (rawName.equals(ELT_AMQP_ACQUISITION_QUEUE)) ||
                  (rawName.equals(ELT_AMQP_DISTRIBUTION_QUEUE))) {
         getQueueAtts(atts);
@@ -1075,6 +1081,52 @@ public class JoramSaxWrapper extends DefaultHandler {
             properties.setProperty("distribution.className", JMSDistributionQueue.JMSDistribution);
           if (!properties.containsKey("jms.DestinationName"))
             properties.setProperty("jms.DestinationName", foreign);
+          Queue queue = (Queue) getWrapper().createQueue(serverId, name, Queue.DISTRIBUTION_QUEUE, properties);
+
+          properties = null;
+          foreign = null;
+
+          configureDestination(queue);
+          if (threshold > 0) queue.setThreshold(threshold);
+          if (nbMaxMsg > 0) queue.setNbMaxMsg(nbMaxMsg);
+          registerDestination(queue);
+          setDestinationDMQ(name, queue, dmq);
+        } else if (rawName.equals(ELT_REST_ACQUISITION_QUEUE)) {
+          if (logger.isLoggable(BasicLevel.DEBUG))
+            logger.log(BasicLevel.DEBUG,
+                       rawName + ".create(" + serverId + "," + name + "," + foreign + "," + properties + ")");
+          if (properties == null)
+            properties = new Properties();
+          if (!properties.containsKey("acquisition.className"))
+            properties.setProperty("acquisition.className", RestAcquisitionQueue.RESTAcquisition);
+          if (!properties.containsKey(DestinationConstants.DESTINATION_NAME_PROP))
+            properties.setProperty(DestinationConstants.DESTINATION_NAME_PROP, foreign);
+          if (properties.getProperty(DestinationConstants.DESTINATION_NAME_PROP) == null)
+            throw new Exception("Remote destination cannot be null");
+          
+          Queue queue = (Queue) getWrapper().createQueue(serverId, name, Queue.ACQUISITION_QUEUE, properties);
+
+          properties = null;
+          foreign = null;
+
+          configureDestination(queue);
+          if (threshold > 0) queue.setThreshold(threshold);
+          if (nbMaxMsg > 0) queue.setNbMaxMsg(nbMaxMsg);
+          registerDestination(queue);
+          setDestinationDMQ(name, queue, dmq);
+        } else if (rawName.equals(ELT_REST_DISTRIBUTION_QUEUE)) {
+          if (logger.isLoggable(BasicLevel.DEBUG))
+            logger.log(BasicLevel.DEBUG,
+                       rawName + ".create(" + serverId + "," + name + "," + foreign + "," + properties + ")");
+          if (properties == null)
+            properties = new Properties();
+          if (!properties.containsKey("distribution.className"))
+            properties.setProperty("distribution.className", RestDistributionQueue.RESTDistribution);
+          if (!properties.containsKey(DestinationConstants.DESTINATION_NAME_PROP))
+            properties.setProperty(DestinationConstants.DESTINATION_NAME_PROP, foreign);
+          if (properties.getProperty(DestinationConstants.DESTINATION_NAME_PROP) == null)
+            throw new Exception("Remote destination cannot be null");
+          
           Queue queue = (Queue) getWrapper().createQueue(serverId, name, Queue.DISTRIBUTION_QUEUE, properties);
 
           properties = null;
