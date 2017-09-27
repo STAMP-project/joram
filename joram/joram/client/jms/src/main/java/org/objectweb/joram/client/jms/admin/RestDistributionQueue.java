@@ -35,6 +35,20 @@ import org.objectweb.joram.shared.DestinationConstants;
  * <p>
  * The REST bridge destinations rely on a particular Joram service which purpose is to maintain
  * valid connections with the foreign REST Joram servers.
+ * 
+ * The valid properties define by this destination are:<ul>
+ * <li>rest.host: hostname or IP address of remote JMS REST server, by default "localhost".</li>
+ * <li>rest.port: listening port of remote JMS REST server, by default 8989.</li>
+ * <li>rest.user: user name needed to connect to remote JMS REST server, by default "anonymous".</li>
+ * <li>rest.pass: password needed to connect to remote JMS REST server, by default "anonymous".</li>
+ * <li>distribution.async: default true.<li>
+ * <li>distribution.batch: default true.<li>
+ * <li>rest.idletimeout: normally each remote resource need to be explicitly closed, this parameter allows to 
+ *     set the idle time in seconds in which the remote context will be closed if idle. If less than or equal
+ *     to 0, the context never closes. By default 60 seconds.</li>
+ * <li>period: default 1.000 (1 second).</li>
+ * <li>jms.destination: the name of remote JMS destination.</li>
+ * </ul>
  */
 public class RestDistributionQueue {
   /**
@@ -42,27 +56,27 @@ public class RestDistributionQueue {
    */
   public final static String RESTDistribution = "com.scalagent.joram.mom.dest.rest.RESTDistribution";
   
-  private String hostName = "localhost";
+  private String host = "localhost";
   private int port = 8989;
   private String userName = "anonymous";
   private String password = "anonymous";
-  private boolean batch =  false;
+  private boolean batch =  true;
   private boolean async = true;
   private int period = 1000;
-  private long idleTimeout;
+  private long idleTimeout; // TODO (AF): Fix a default value (used in constructor)
   
   /**
    * @return the hostName
    */
-  public String getHostName() {
-    return hostName;
+  public String getHost() {
+    return host;
   }
 
   /**
    * @param hostName the hostName to set
    */
-  public RestDistributionQueue setHostName(String hostName) {
-    this.hostName = hostName;
+  public RestDistributionQueue setHost(String host) {
+    this.host = host;
     return this;
   }
 
@@ -237,15 +251,19 @@ public class RestDistributionQueue {
   /**
    * Administration method creating and deploying a REST distribution queue on a given server.
    * <p>
-   * A set of properties is used to configure the distribution destination:<ul>
-   * <li>period – Tells the time to wait before another distribution attempt. Default is 0, which
-   * means there won't be other attempts.</li>
-   * <li>distribution.batch –  If set to true, the destination will try to distribute each time every waiting
-   * message, regardless of distribution errors. This can lead to the loss of message ordering, but will
-   * prevent a blocking message from blocking every following message. When set to false, the distribution
-   * process will stop on the first error. Default is false.</li>
-   * <li>distribution.async - If set to true, the messages are asynchronously forwarded through a daemon.
-   * Default is true.</li>
+   * In addition to properties used to configure distribution queues a set of specific properties allows to
+   * configure Rest/JMS distribution destination:<ul>
+   * <li>rest.host: hostname or IP address of remote JMS REST server, by default "localhost".</li>
+   * <li>rest.port: listening port of remote JMS REST server, by default 8989.</li>
+   * <li>rest.user: user name needed to connect to remote JMS REST server, by default "anonymous".</li>
+   * <li>rest.pass: password needed to connect to remote JMS REST server, by default "anonymous".</li>
+   * <li>distribution.async: default true.<li>
+   * <li>distribution.batch: default true.<li>
+   * <li>rest.idletimeout: normally each remote resource need to be explicitly closed, this parameter allows to 
+   *     set the idle time in seconds in which the remote context will be closed if idle. If less than or equal
+   *     to 0, the context never closes. By default 60 seconds.</li>
+   * <li>period: default 1.000 (1 second).</li>
+   * <li>jms.destination: the name of remote JMS destination.</li>
    * </ul>
    * The request fails if the target server does not belong to the platform,
    * or if the destination deployment fails server side.
@@ -265,11 +283,15 @@ public class RestDistributionQueue {
       String name,
       String dest,
       Properties props) throws ConnectException, AdminException {
+    if (dest == null)
+      throw new AdminException("Remote destination cannot be null");
+
     if (props == null)
       props = new Properties();
+    
     props.setProperty("distribution.className", RESTDistribution);
     if (!props.containsKey(DestinationConstants.REST_HOST_PROP))
-      props.setProperty(DestinationConstants.REST_HOST_PROP, hostName);
+      props.setProperty(DestinationConstants.REST_HOST_PROP, host);
     if (!props.containsKey(DestinationConstants.REST_PORT_PROP))
       props.setProperty(DestinationConstants.REST_PORT_PROP, ""+port);
     if (!props.containsKey(DestinationConstants.REST_USERNAME_PROP))

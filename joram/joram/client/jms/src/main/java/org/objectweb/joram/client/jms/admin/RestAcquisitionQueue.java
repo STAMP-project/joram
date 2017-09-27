@@ -35,6 +35,21 @@ import org.objectweb.joram.shared.DestinationConstants;
  * <p>
  * The Rest bridge destinations rely on a particular Joram service which purpose is to maintain
  * valid connections with the foreign REST Joram servers.
+ * 
+ * The valid properties define by this destination are:<ul>
+ * <li>rest.host: hostname or IP address of remote JMS REST server, by default "localhost".</li>
+ * <li>rest.port: listening port of remote JMS REST server, by default 8989.</li>
+ * <li>rest.user: user name needed to connect to remote JMS REST server, by default "anonymous".</li>
+ * <li>rest.pass: password needed to connect to remote JMS REST server, by default "anonymous".</li>
+ * <li>rest.mediaTypeJson: if true the acquisition queue accepts JSON message, default true.</li>
+ * <li>rest.timeout: Timeout for waiting for a message, by default 10.000 (10 seconds).</li>
+ * <li>rest.idletimeout: normally each remote resource need to be explicitly closed, this parameter allows to 
+ *     set the idle time in seconds in which the remote context will be closed if idle. If less than or equal
+ *     to 0, the context never closes. By default 60 seconds.</li>
+ * <li>acquisition.period: delay between to attempts to receive a message if the acquisition
+ *     queue doesn't use the asyncrhonous mode, by default 100 milliseconds.</li>
+ * <li>jms.destination: the name of remote JMS destination.</li>
+ * </ul>
  */
 public class RestAcquisitionQueue {
   /**
@@ -47,10 +62,12 @@ public class RestAcquisitionQueue {
   private int port = 8989;
   private String username = "anonymous";
   private String password = "anonymous";
-  private boolean mediaTypeJson = true;;
+  private boolean mediaTypeJson = true;
   private long timeout = 10000;
-  private int acquisitionPeriod = 100;  // TODO (AF):
-  private long idleTimeout;
+  private int acquisitionPeriod = 100;  // TODO (AF): Normally not needed with asynchronous acquisition.
+  // Normally each consumer resource need to be explicitly closed, this parameter allows to set the idle time
+  // in seconds in which the consumer context will be closed if idle.
+  private long idleTimeout = 60;
 
   /**
    * @return the hostName
@@ -234,21 +251,20 @@ public class RestAcquisitionQueue {
   /**
    * Administration method creating and deploying a REST acquisition queue on a given server.
    * <p>
-   * A set of properties is used to configure the distribution destination:<ul>
-   * <li>period – .</li>
-   * <li>acquisition.period - The period between two acquisitions, default is 0 (no periodic acquisition).</li>
-   * <li>persistent - Tells if produced messages will be persistent, default is true (JMS default).</li>
-   * <li>expiration - Tells the life expectancy of produced messages, default is 0 (JMS default time to live).</li>
-   * <li>priority - Tells the JMS priority of produced messages, default is 4 (JMS default).</li>
-   * <li>acquisition.max_msg - The maximum number of messages between the last message acquired by the handler
-   * and the message correctly handled by the acquisition destination, default is 20. When the number of messages
-   * waiting to be handled is greater the acquisition handler is temporarily stopped. A value lesser or equal to
-   * 0 disables the mechanism.</li>
-   * <li>acquisition.min_msg - The minimum number of message to restart the acquisition, default is 10.</li>
-   * <li>acquisition.max_pnd - The maximum number of pending messages on the acquisition destination, default is 20.
-   * When the number of waiting messages is greater the acquisition handler is temporarily stopped. A value lesser
-   * or equal to 0 disables the mechanism.</li>
-   * <li>acquisition.min_pnd - The minimum number of pending messages to restart the acquisition, default is 10.</li>
+   * In addition to properties used to configure acquisition queues a set of specific properties allows to
+   * configure Rest/JMS acquisition destination:<ul>
+   * <li>rest.host: hostname or IP address of remote JMS REST server, by default "localhost".</li>
+   * <li>rest.port: listening port of remote JMS REST server, by default 8989.</li>
+   * <li>rest.user: user name needed to connect to remote JMS REST server, by default "anonymous".</li>
+   * <li>rest.pass: password needed to connect to remote JMS REST server, by default "anonymous".</li>
+   * <li>rest.mediaTypeJson: if true the acquisition queue accepts JSON message, default true.</li>
+   * <li>rest.timeout: Timeout for waiting for a message, by default 10.000 (10 seconds).</li>
+   * <li>rest.idletimeout: normally each remote resource need to be explicitly closed, this parameter allows to 
+   *     set the idle time in seconds in which the remote context will be closed if idle. If less than or equal
+   *     to 0, the context never closes. By default 60 seconds.</li>
+   * <li>acquisition.period: delay between to attempts to receive a message if the acquisition
+   *     queue doesn't use the asyncrhonous mode, by default 100 milliseconds.</li>
+   * <li>jms.destination: the name of remote JMS destination.</li>
    * </ul>
    * The request fails if the target server does not belong to the platform,
    * or if the destination deployment fails server side.
@@ -268,6 +284,9 @@ public class RestAcquisitionQueue {
       String name,
       String dest,
       Properties props) throws ConnectException, AdminException {
+    if (dest == null)
+      throw new AdminException("Remote destination cannot be null");
+    
     if (props == null)
       props = new Properties();
     
@@ -275,19 +294,19 @@ public class RestAcquisitionQueue {
     if (!props.containsKey(DestinationConstants.REST_HOST_PROP))
       props.setProperty(DestinationConstants.REST_HOST_PROP, host);
     if (!props.containsKey(DestinationConstants.REST_PORT_PROP))
-      props.setProperty(DestinationConstants.REST_PORT_PROP, ""+port);
+      props.setProperty(DestinationConstants.REST_PORT_PROP, "" + port);
     if (!props.containsKey(DestinationConstants.REST_USERNAME_PROP))
       props.setProperty(DestinationConstants.REST_USERNAME_PROP, username);
     if (!props.containsKey(DestinationConstants.REST_PASSWORD_PROP))
       props.setProperty(DestinationConstants.REST_PASSWORD_PROP, password);
     if (!props.containsKey(DestinationConstants.MEDIA_TYPE_JSON_PROP))
-      props.setProperty(DestinationConstants.MEDIA_TYPE_JSON_PROP, ""+mediaTypeJson);
+      props.setProperty(DestinationConstants.MEDIA_TYPE_JSON_PROP, "" + mediaTypeJson);
     if (!props.containsKey(DestinationConstants.TIMEOUT_PROP))
-      props.setProperty(DestinationConstants.TIMEOUT_PROP, ""+timeout);
+      props.setProperty(DestinationConstants.TIMEOUT_PROP, "" + timeout);
     if (!props.containsKey(DestinationConstants.IDLETIMEOUT_PROP))
-      props.setProperty(DestinationConstants.IDLETIMEOUT_PROP, ""+ idleTimeout);
+      props.setProperty(DestinationConstants.IDLETIMEOUT_PROP, "" + idleTimeout);
     if (!props.containsKey(DestinationConstants.ACQUISITION_PERIOD))
-      props.setProperty(DestinationConstants.ACQUISITION_PERIOD, ""+ acquisitionPeriod);
+      props.setProperty(DestinationConstants.ACQUISITION_PERIOD, "" + acquisitionPeriod);
     
     props.setProperty(DestinationConstants.DESTINATION_NAME_PROP, dest);
     
