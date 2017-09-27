@@ -5337,10 +5337,11 @@
 		<antcall target="bridge.rest.test3" />
 		<antcall target="bridge.rest.test4" />
 		<antcall target="bridge.rest.test5" />
-		<antcall target="bridge.rest.test6" />
+		<antcall target="bridge.rest.test6.1" />
+		<antcall target="bridge.rest.test6.2" />
 	</target>
 
-	<target name="init.bridgerest" depends="init.a3props,compile"
+	<target name="init.bridgerest"
 		description=" --> init Bridge REST">
 		<antcall target="init.test" inheritAll="true">
 			<param name="jndiconf" value="bridgerest/jndi.properties" />
@@ -5362,9 +5363,14 @@
 			value="\" />
 	</target>
 
-	<target name="bridge.rest.simpleText" depends="init.bridgerest"
+	<target name="run.bridgerest" depends="init.a3props,compile">
+		<antcall target="init.bridgerest" inheritAll="true"/>
+		<antcall target="test.start" inheritAll="true"/>
+	</target>	
+	
+	<target name="bridge.rest.simpleText"
 		description=" --> Test simple send/receive a TextMessage">
-		<antcall target="test.start" inheritAll="true">
+		<antcall target="run.bridgerest" inheritAll="true">
 			<param name="testid" value="bridge.rest.simpleText" />
 			<param name="className" value="joram.bridgerest.BridgeRestSimpleTextMessage" />
 			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
@@ -5375,9 +5381,9 @@
 		</antcall>
 	</target>
 
-	<target name="bridge.rest.simpleBytes" depends="init.bridgerest"
+	<target name="bridge.rest.simpleBytes"
 		description=" --> Test simple send/receive a BytesMessage">
-		<antcall target="test.start" inheritAll="true">
+		<antcall target="run.bridgerest" inheritAll="true">
 			<param name="testid" value="bridge.rest.simpleBytes" />
 			<param name="className" value="joram.bridgerest.BridgeRestSimpleBytesMessage" />
 			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
@@ -5388,9 +5394,9 @@
 		</antcall>
 	</target>
 
-	<target name="bridge.rest.simpleMap" depends="init.bridgerest"
+	<target name="bridge.rest.simpleMap"
 		description=" --> Test simple send/receive a MapMessage">
-		<antcall target="test.start" inheritAll="true">
+		<antcall target="run.bridgerest" inheritAll="true">
 			<param name="testid" value="bridge.rest.simpleMap" />
 			<param name="className" value="joram.bridgerest.BridgeRestSimpleMapMessage" />
 			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
@@ -5401,9 +5407,9 @@
 		</antcall>
 	</target>
 
-	<target name="bridge.rest.test1" depends="init.bridgerest"
+	<target name="bridge.rest.test1"
 		description=" --> Tests behavior of the acquisition queue during foreign server failures">
-		<antcall target="test.start" inheritAll="true">
+		<antcall target="run.bridgerest" inheritAll="true">
 			<param name="testid" value="bridge.rest.test1" />
 			<param name="className" value="joram.bridgerest.BridgeRestTest1" />
 			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
@@ -5414,9 +5420,9 @@
 		</antcall>
 	</target>
 
-	<target name="bridge.rest.test2" depends="init.bridgerest"
+	<target name="bridge.rest.test2"
 		description=" --> Tests behavior of the acquisition queue during bridge server failures">
-		<antcall target="test.start" inheritAll="true">
+		<antcall target="run.bridgerest" inheritAll="true">
 			<param name="testid" value="bridge.rest.test2" />
 			<param name="className" value="joram.bridgerest.BridgeRestTest2" />
 			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
@@ -5427,9 +5433,9 @@
 		</antcall>
 	</target>
 
-	<target name="bridge.rest.test3" depends="init.bridgerest"
+	<target name="bridge.rest.test3"
 		description=" --> Tests behavior of the distribution queue during foreign server failures">
-		<antcall target="test.start" inheritAll="true">
+		<antcall target="run.bridgerest" inheritAll="true">
 			<param name="testid" value="bridge.rest.test3" />
 			<param name="className" value="joram.bridgerest.BridgeRestTest3" />
 			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
@@ -5440,9 +5446,9 @@
 		</antcall>
 	</target>
 
-	<target name="bridge.rest.test4" depends="init.bridgerest"
+	<target name="bridge.rest.test4"
 		description=" --> Tests behavior of the distribution queue during bridge server failures">
-		<antcall target="test.start" inheritAll="true">
+		<antcall target="run.bridgerest" inheritAll="true">
 			<param name="testid" value="bridge.rest.test4" />
 			<param name="className" value="joram.bridgerest.BridgeRestTest4" />
 			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
@@ -5453,9 +5459,9 @@
 		</antcall>
 	</target>
 
-	<target name="bridge.rest.test5" depends="init.bridgerest"
+	<target name="bridge.rest.test5"
 		description=" --> Tests behavior of acquisition/distribution queue during foreign server failures">
-		<antcall target="test.start" inheritAll="true">
+		<antcall target="run.bridgerest" inheritAll="true">
 			<param name="testid" value="bridge.rest.test5" />
 			<param name="className" value="joram.bridgerest.BridgeRestTest5" />
 			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
@@ -5466,10 +5472,10 @@
 		</antcall>
 	</target>
 
-	<target name="bridge.rest.test6" depends="init.bridgerest"
+	<target name="bridge.rest.test6.1"
 		description=" --> Tests behavior of acquisition/distribution queue during bridge server failures">
-		<antcall target="test.start" inheritAll="true">
-			<param name="testid" value="bridge.rest.test6" />
+		<antcall target="run.bridgerest" inheritAll="true">
+			<param name="testid" value="bridge.rest.test6.1" />
 			<param name="className" value="joram.bridgerest.BridgeRestTest6" />
 			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
 			<param name="isOSGi" value="true" />
@@ -5479,6 +5485,20 @@
 		</antcall>
 	</target>
 	
+	<target name="bridge.rest.test6.2"
+		description=" --> Tests behavior of acquisition/distribution queue during bridge server failures">
+		<antcall target="run.bridgerest" inheritAll="true">
+			<param name="testid" value="bridge.rest.test6.2" />
+			<param name="className" value="joram.bridgerest.BridgeRestTest6" />
+			<param name="SCAdminClass" value="framework.SCAdminOSGi" />
+			<param name="isOSGi" value="true" />
+			<param name="jndiconf" value="jndi.properties" />
+			<param name="a3conf" value="a3servers.xml" />
+			<param name="joramAdmin" value="bridgerest/joramAdmin.xml" />
+			<param name="jvmargs" value="-DuseXML=true" />
+		</antcall>
+	</target>
+
   <!-- end bridgerest test -->
 
   <!-- start bridgeamqp test -->
