@@ -92,7 +92,7 @@ public class BridgeRestSimpleBytesMessage extends TestCase implements MessageLis
       
         // Create a REST distribution queue on server 0
         Queue queueDist = new RestDistributionQueue()
-            .setHostName("localhost")
+            .setHost("localhost")
             .setPort(8989)
             .setPeriod(500)
             .setBatch(true)
