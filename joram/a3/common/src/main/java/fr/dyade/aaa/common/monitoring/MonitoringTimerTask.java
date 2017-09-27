@@ -112,8 +112,8 @@ public abstract class MonitoringTimerTask extends java.util.TimerTask implements
    */
   protected abstract void finalizeRecords();
   
-// Joram#0:type=User,*=NbMsgsDeliveredSinceCreation,NbMsgsSentToDMQSinceCreation,PendingMessageCount
-// Joram#0:type=Destination,*=NbMsgsDeliverSinceCreation,NbMsgsReceiveSinceCreation,NbMsgsSentToDMQSinceCreation
+// Joram#0:type=User,*          NbMsgsDeliveredSinceCreation,NbMsgsSentToDMQSinceCreation,PendingMessageCount
+// Joram#0:type=Destination,*   NbMsgsDeliverSinceCreation,NbMsgsReceiveSinceCreation,NbMsgsSentToDMQSinceCreation
 
   /**
    * When the task is waken up, collect the monitoring information required and saves it.
@@ -132,6 +132,7 @@ public abstract class MonitoringTimerTask extends java.util.TimerTask implements
         mBeans = MXWrapper.queryNames(name);
       } catch (Exception exc) {
         logger.log(BasicLevel.ERROR, "MonitoringTimerTask.run, bad name: " + name, exc);
+        continue;
       }
 
       if (mBeans != null) {
