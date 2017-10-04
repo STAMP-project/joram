@@ -417,7 +417,7 @@ public class JmsContextService {
           logger.log(BasicLevel.DEBUG, "sendMsg: The message already send, nothing to do.");
         //message already send, nothing to do
         builder = Response.status(Response.Status.OK);
-        //TODO
+        // TODO: Adds links?
         return builder.build();
       }
 
@@ -513,7 +513,7 @@ public class JmsContextService {
           logger.log(BasicLevel.DEBUG, "sendMsg: The message already send, nothing to do.");
         //message already send, nothing to do
         builder = Response.status(Response.Status.OK);
-        //TODO
+        // TODO: Adds links?
         return builder.build();
       }
 
