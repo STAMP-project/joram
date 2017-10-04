@@ -73,14 +73,16 @@ public class PerfConsumer implements MessageListener {
 
     NbMsgPerRound = Integer.getInteger("NbMsgPerRound", NbMsgPerRound).intValue();
     NbMaxMessage = Integer.getInteger("NbMaxMessage", NbMaxMessage).intValue();
-    
+
+    String queueName = System.getProperty("queue");
+
     Properties jndiProps = new Properties();
     jndiProps.setProperty("java.naming.factory.initial", "fr.dyade.aaa.jndi2.client.NamingContextFactory");
     jndiProps.setProperty("java.naming.factory.host", "localhost");
     jndiProps.setProperty("java.naming.factory.port", "16401");
  
     javax.naming.Context jndiCtx = new javax.naming.InitialContext(jndiProps);
-    Destination dest = (Destination) jndiCtx.lookup("queueAcq");
+    Destination dest = (Destination) jndiCtx.lookup(queueName);
     ConnectionFactory cf = (ConnectionFactory) jndiCtx.lookup("bridgeCF");
     jndiCtx.close();
 
@@ -92,7 +94,7 @@ public class PerfConsumer implements MessageListener {
     System.out.println("Subscriber:       implicitAck=" + implicitAck);
 
     Connection cnx = cf.createConnection();
-    cnx.setClientID("cnx_dursub");
+    cnx.setClientID("cnx_dursub" + System.currentTimeMillis());
     int mode;
     if (dupsOk) {
       mode = Session.DUPS_OK_ACKNOWLEDGE;
@@ -151,12 +153,15 @@ public class PerfConsumer implements MessageListener {
       int index = msg.getIntProperty("index");
       if (index == 0) start = t1 = last;
 
-      travel += (last - msg.getLongProperty("time"));
+      long dt = (last - msg.getLongProperty("time"));
+      travel += dt;
       counter += 1;
       
       if (transacted && (((counter%10) == 9) || (index == 0)))
         session.commit();
       
+      if ((counter %100) == 0)
+    	  System.out.println("--> " + dt);
       if ((counter%NbMsgPerRound) == (NbMsgPerRound -1)) {
         long x = (NbMsgPerRound * 1000L) / (last - t1);
         t1 = last;

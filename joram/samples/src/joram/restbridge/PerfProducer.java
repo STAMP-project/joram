@@ -69,13 +69,15 @@ public class PerfProducer implements Runnable {
     transacted = getBoolean("Transacted", transacted);
     asyncSend = getBoolean("asyncSend", asyncSend);
 
+    String queueName = System.getProperty("queue");
+        
     Properties jndiProps = new Properties();
     jndiProps.setProperty("java.naming.factory.initial", "fr.dyade.aaa.jndi2.client.NamingContextFactory");
     jndiProps.setProperty("java.naming.factory.host", "localhost");
     jndiProps.setProperty("java.naming.factory.port", "16401");
  
     javax.naming.Context jndiCtx = new javax.naming.InitialContext(jndiProps);
-    dest = (Destination) jndiCtx.lookup("queueDist");
+    dest = (Destination) jndiCtx.lookup(queueName);
     cf = (ConnectionFactory) jndiCtx.lookup("bridgeCF");
     jndiCtx.close();
 
@@ -102,9 +104,10 @@ public class PerfProducer implements Runnable {
         producer.setDeliveryMode(javax.jms.DeliveryMode.NON_PERSISTENT);
       }
       
-      byte[] content = new byte[MsgSize];
+      StringBuffer strbuf = new StringBuffer();
       for (int i = 0; i< MsgSize; i++)
-        content[i] = (byte) (i & 0xFF);
+        strbuf.append('0');
+      String content = strbuf.toString();
 
       long dtx = 0;
       long start = System.currentTimeMillis();
@@ -114,7 +117,7 @@ public class PerfProducer implements Runnable {
         if (SwapAllowed) {
           msg.setBooleanProperty("JMS_JORAM_SWAPALLOWED", true);
         }
-        msg.setText(new String(content));
+        msg.setText(content);
         //msg.writeBytes(content);
         msg.setLongProperty("time", System.currentTimeMillis());
         msg.setIntProperty("index", i);
@@ -128,7 +131,9 @@ public class PerfProducer implements Runnable {
           long dtx2 = System.currentTimeMillis() - start;
           if (dtx1 > (dtx2 + 20)) {
             dtx += (dtx1 - dtx2);
-            Thread.sleep(dtx1 - dtx2);
+            try {
+              Thread.sleep(dtx1 - dtx2);
+            } catch (InterruptedException exc) { }
           }
           if (dtx2 > 0)
             System.out.println("sent=" + i + ", mps=" + ((((long) i) * 1000L)/dtx2));

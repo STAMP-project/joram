@@ -36,7 +36,7 @@ import org.objectweb.joram.client.jms.admin.JMSDistributionQueue;
 import org.objectweb.joram.client.jms.admin.RestAcquisitionQueue;
 import org.objectweb.joram.client.jms.admin.RestDistributionQueue;
 
-public class Admin {
+public class PerfAdmin {
   public static void main(String[] args) throws Exception {
     System.out.println();
     System.out.println("Rest Bridge administration...");
@@ -45,23 +45,43 @@ public class Admin {
 
     AdminModule.connect(bridgeCF, "root", "root");
     
-    // Create a queue forwarding its messages to the configured rest queue.
-    Queue queueDist = new RestDistributionQueue()
+    // Creates queues forwarding their messages to the configured rest queue.
+    
+    Queue queueDist1 = new RestDistributionQueue()
         .setHost("localhost")
         .setPort(8989)
         .setIdleTimeout(10000)
-        .create(1, "queueDist", "queue");
-    queueDist.setFreeWriting();
-    System.out.println("joram distribution queue = " + queueDist);
+        .create(1, "queueDist1", "queue");
+    queueDist1.setFreeWriting();
+    System.out.println("joram distribution queue = " + queueDist1);
+
+    Queue queueDist2 = new RestDistributionQueue()
+        .setHost("localhost")
+        .setPort(8989)
+        .setIdleTimeout(10000)
+        .create(1, "queueDist2", "queue");
+    queueDist2.setFreeWriting();
+    System.out.println("joram distribution queue = " + queueDist2);
+
+    // Creates queues getting its messages from the configured rest queue.
     
-    Queue queueAcq = new RestAcquisitionQueue()
+    Queue queueAcq1 = new RestAcquisitionQueue()
         .setHost("localhost")
         .setPort(8989)
         .setTimeout(5000)
         .setIdleTimeout(10000)
-        .create(1, "queueAcq", "queue");
-    queueAcq.setFreeReading();
-    System.out.println("joram acquisition queue = " + queueAcq);
+        .create(1, "queueAcq1", "queue");
+    queueAcq1.setFreeReading();
+    System.out.println("joram acquisition queue = " + queueAcq1);
+    
+    Queue queueAcq2 = new RestAcquisitionQueue()
+        .setHost("localhost")
+        .setPort(8989)
+        .setTimeout(5000)
+        .setIdleTimeout(10000)
+        .create(1, "queueAcq2", "queue");
+    queueAcq2.setFreeReading();
+    System.out.println("joram acquisition queue = " + queueAcq2);
 
     User.create("anonymous", "anonymous");
     
@@ -73,8 +93,10 @@ public class Admin {
  
     javax.naming.Context jndiCtx = new javax.naming.InitialContext(jndiProps);
     jndiCtx.bind("bridgeCF", bridgeCF);
-    jndiCtx.bind("queueDist", queueDist);
-    jndiCtx.bind("queueAcq", queueAcq);
+    jndiCtx.bind("queueDist1", queueDist1);
+    jndiCtx.bind("queueDist2", queueDist2);
+    jndiCtx.bind("queueAcq1", queueAcq1);
+    jndiCtx.bind("queueAcq2", queueAcq2);
     jndiCtx.close();
     
     AdminModule.disconnect();

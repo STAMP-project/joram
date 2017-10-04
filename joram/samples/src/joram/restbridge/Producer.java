@@ -39,13 +39,15 @@ public class Producer {
 
   public static void main(String[] args) throws Exception {
 
+    String queueName = System.getProperty("queue");
+
     Properties jndiProps = new Properties();
     jndiProps.setProperty("java.naming.factory.initial", "fr.dyade.aaa.jndi2.client.NamingContextFactory");
     jndiProps.setProperty("java.naming.factory.host", "localhost");
     jndiProps.setProperty("java.naming.factory.port", "16401");
  
     javax.naming.Context jndiCtx = new javax.naming.InitialContext(jndiProps);
-    Destination bridgeDest = (Destination) jndiCtx.lookup("queueDist");
+    Destination bridgeDest = (Destination) jndiCtx.lookup(queueName);
     ConnectionFactory bridgeCF = (ConnectionFactory) jndiCtx.lookup("bridgeCF");
     jndiCtx.close();
 
