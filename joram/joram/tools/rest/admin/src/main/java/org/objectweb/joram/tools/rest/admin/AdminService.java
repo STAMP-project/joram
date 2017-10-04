@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -239,7 +239,7 @@ public class AdminService implements ContainerRequestFilter {
     }
 
     builder = Response.status(Response.Status.CREATED);
-    //TODO: links ?
+    // TODO: Adds links?
     return builder.build();
   }
 
@@ -280,7 +280,7 @@ public class AdminService implements ContainerRequestFilter {
     }
 
     builder = Response.status(Response.Status.CREATED);
-    //TODO: links ?
+    // TODO: Adds links?
     return builder.build();
   }
 
@@ -396,7 +396,7 @@ public class AdminService implements ContainerRequestFilter {
     }
 
     builder = Response.status(Response.Status.CREATED);
-    //TODO: links ?
+    // TODO: Adds links?
     return builder.build();
   }
 
@@ -512,7 +512,7 @@ public class AdminService implements ContainerRequestFilter {
     }
 
     builder = Response.status(Response.Status.CREATED);
-    //TODO: links ?
+    // TODO: Adds links?
     return builder.build();
   }
 
@@ -588,7 +588,7 @@ public class AdminService implements ContainerRequestFilter {
     }
 
     builder = Response.status(Response.Status.CREATED);
-    //TODO: links ?
+    // TODO: Adds links?
     return builder.build();
   }
   
