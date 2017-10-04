@@ -196,7 +196,7 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
     
     // Initializes Rest client and target
     try {
-      // TODO (AF): It seems that there is no exceptions thrown by these methods.
+      // It seems that there is no exceptions thrown by these methods.
       client = ClientBuilder.newClient(
           new ClientConfig() // TODO (AF): Fix these properties with configuration values
           .property(ClientProperties.CONNECT_TIMEOUT, connectTimeout)
@@ -479,10 +479,9 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
     }
 
     if (header.containsKey("CorrelationIDAsBytes")) {
-      // TODO "CorrelationIDAsBytes"
+      msg.setJMSCorrelationIDAsBytes((byte[]) header.get("CorrelationIDAsBytes"));
       if (logger.isLoggable(BasicLevel.WARN))
-        logger.log(BasicLevel.WARN,
-            "RESTAcquisitionAsync.setJMSMessageHeader -- TODO CorrelationIDAsBytes");
+        logger.log(BasicLevel.DEBUG, "-- CorrelationIDAsBytes = " + header.get("CorrelationIDAsBytes"));
     }
 
     // TODO (AF): Is it correct? The destination should correspond to the current destination.
@@ -745,8 +744,7 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
       try {
         Response response = client.target(uriCloseConsumer).request().accept(MediaType.TEXT_PLAIN).delete();
         if (logger.isLoggable(BasicLevel.DEBUG))
-          // TODO (AF): remove stacktrace
-          logger.log(BasicLevel.DEBUG, "RestDistribution.closeConsumer(): -> " + response.getStatus(), new Exception());
+          logger.log(BasicLevel.DEBUG, "RestDistribution.closeConsumer(): -> " + response.getStatus());
       } catch (Exception exc) {
         logger.log(BasicLevel.ERROR, "RestDistribution.closeConsumer()", exc);
         return;
@@ -855,6 +853,7 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
     @Override
     public synchronized void stop() {
       logger.log(BasicLevel.ERROR, "RestAcquisitionAsync.Daemon.stop()", new Exception());
+      super.stop();
     }
 
     @Override
@@ -865,7 +864,7 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
     @Override
     protected void shutdown() {
       // TODO (AF): force jersey to close
-      
+      close();
     }
   }
 }
