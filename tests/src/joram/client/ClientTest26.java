@@ -103,7 +103,7 @@ public class ClientTest26 extends TestCase {
       producer.send(msg);
 
       consumer.setMessageListener(new MessageListener() {
-        private int counter;
+        private int counter = 0;
 
         public void onMessage(Message message) {
           try {
@@ -115,7 +115,6 @@ public class ClientTest26 extends TestCase {
                   + ", getJMSRedelivered  = " + message.getJMSRedelivered());
 
               if (message.getBooleanProperty("last") == false) {
-                System.out.println("first message isRedelivered = " + message.getJMSRedelivered());
                 assertEquals("received first message, redelivered must be false", false, message.getJMSRedelivered());
               } else {
                 if (message.getJMSRedelivered() == false) {
@@ -123,16 +122,15 @@ public class ClientTest26 extends TestCase {
                   System.out.println("==== second message: recover");
                   session.recover();
                 } else {
-
                   // should be redelivered after recover
-                  System.out.println("==== second message again as expected");
+                  System.out.println("==== second message again");
                   ClientTest26.this.notify();
                 }
               }
 
               if (counter > 3) {
                 ClientTest26.this.notify();
-                fail("The message reiceved > 3.");
+                fail("Too many messages received > 3.");
               }
             }
            
@@ -146,6 +144,7 @@ public class ClientTest26 extends TestCase {
         // System.out.println("wait");
         wait(20000);
       }
+      Thread.sleep(1000L);
 
       // System.out.println("close");
       connection.close();
