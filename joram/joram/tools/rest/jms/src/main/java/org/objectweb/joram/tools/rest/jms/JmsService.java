@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -448,11 +448,13 @@ public class JmsService {
       builder = Response.status(Response.Status.OK);
 
       // link jndi 
-      UriBuilder nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JndiService.JNDI);//TODO
+      UriBuilder nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JndiService.JNDI);
+      // TODO: Adds more links?
       builder.link(nextBuilder.build(), JndiService.JNDI);
       
       // link jms 
-      nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JMS);//TODO
+      nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JMS);
+      // TODO: Adds more links?
       builder.link(nextBuilder.build(), JMS);
 
       return builder.build();
