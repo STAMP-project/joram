@@ -117,7 +117,7 @@ public class JndiService {
   @HEAD
   @Path("/{destName}")
   @Produces(MediaType.TEXT_PLAIN)
-  public Response lookupDestination(
+  public synchronized Response lookupDestination(
       @Context HttpHeaders headers,
       @PathParam("destName") String destName,
       @Context UriInfo uriInfo) {
@@ -190,7 +190,7 @@ public class JndiService {
   @Path("/{destName}/"+ JmsService.JMS_CREATE_PROD)
   @Produces(MediaType.TEXT_PLAIN)
   @Consumes(MediaType.TEXT_PLAIN)
-  public Response createProducer(
+  public synchronized Response createProducer(
       @Context HttpHeaders headers,
       @PathParam("destName") String destName,
       @QueryParam("client-id") String clientID,
@@ -270,7 +270,7 @@ public class JndiService {
   @POST
   @Path("/{destName}/"+ JmsService.JMS_CREATE_CONS)
   @Produces(MediaType.TEXT_PLAIN)
-  public Response createConsumer(
+  public synchronized Response createConsumer(
       @Context HttpHeaders headers,
       @PathParam("destName") String destName,
       @QueryParam("client-id") String clientID,
@@ -296,7 +296,6 @@ public class JndiService {
 
     Response.ResponseBuilder builder = null;
     try {
-
       String consId = null;
       try {
         // lookup the destination
@@ -351,7 +350,7 @@ public class JndiService {
   @Path("/{name}")
   @Produces(MediaType.TEXT_PLAIN)
   @Consumes(MediaType.TEXT_PLAIN)
-  public Response closeSessionCtx(
+  public synchronized Response closeSessionCtx(
       @Context HttpHeaders headers,
       @PathParam("name") String ctxName,
       @Context UriInfo uriInfo) {
@@ -384,11 +383,13 @@ public class JndiService {
       builder = Response.status(Response.Status.OK);
 
       // link jndi 
-      UriBuilder nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JNDI);//TODO
+      UriBuilder nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JNDI);
+      // TODO: Adds more links?
       builder.link(nextBuilder.build(), JNDI);
       
       // link jms 
-      nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JmsService.JMS);//TODO
+      nextBuilder = UriBuilder.fromUri(uriInfo.getBaseUri()).path(JmsService.JMS);
+      // TODO: Adds more links?
       builder.link(nextBuilder.build(), JmsService.JMS);
 
       return builder.build();
