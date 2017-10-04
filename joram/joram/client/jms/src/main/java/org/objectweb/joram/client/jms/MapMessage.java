@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -309,8 +309,7 @@ public final class MapMessage extends Message implements javax.jms.MapMessage {
    */ 
   public void setObject(String name, Object value) throws JMSException {
     if (RObody)
-      throw new MessageNotWriteableException("Can't set a value as the message"
-                                             + " body is read-only.");
+      throw new MessageNotWriteableException("Can't set a value as the message body is read-only.");
 
     if (name == null || name.equals(""))
       throw new IllegalArgumentException("Invalid null or empty value name.");
@@ -320,8 +319,7 @@ public final class MapMessage extends Message implements javax.jms.MapMessage {
         value instanceof byte[] || value == null)
       map.put(name, value);
     else
-      throw new MessageFormatException("Can't set non Java primitive type as"
-                                       + " a map value.");
+      throw new MessageFormatException("Can't set non Java primitive type as a map value.");
   }
   
   /**
@@ -510,7 +508,7 @@ public final class MapMessage extends Message implements javax.jms.MapMessage {
     if (value instanceof byte[])
       throw new MessageFormatException("Type " + value.getClass().getName() 
                                        + " can't be converted to String.");
-    return ConversionHelper.toString(map.get(name));
+    return ConversionHelper.toString(value);
   }
 
   /**
