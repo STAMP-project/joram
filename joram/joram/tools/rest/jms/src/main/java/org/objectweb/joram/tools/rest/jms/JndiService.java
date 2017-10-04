@@ -190,7 +190,7 @@ public class JndiService {
   @Path("/{destName}/"+ JmsService.JMS_CREATE_PROD)
   @Produces(MediaType.TEXT_PLAIN)
   @Consumes(MediaType.TEXT_PLAIN)
-  public synchronized Response createProducer(
+  public Response createProducer(
       @Context HttpHeaders headers,
       @PathParam("destName") String destName,
       @QueryParam("client-id") String clientID,
@@ -270,7 +270,7 @@ public class JndiService {
   @POST
   @Path("/{destName}/"+ JmsService.JMS_CREATE_CONS)
   @Produces(MediaType.TEXT_PLAIN)
-  public synchronized Response createConsumer(
+  public Response createConsumer(
       @Context HttpHeaders headers,
       @PathParam("destName") String destName,
       @QueryParam("client-id") String clientID,
