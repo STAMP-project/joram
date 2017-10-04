@@ -38,7 +38,7 @@ import framework.TestCase;
 
 /**
  * Test: 
- * - lockup queue
+ * - lookup queue
  * - create producer
  * - send Text message
  * - send Text message next
