@@ -63,7 +63,7 @@ public class RestDistributionQueue {
   private boolean batch =  true;
   private boolean async = true;
   private int period = 1000;
-  private long idleTimeout; // TODO (AF): Fix a default value (used in constructor)
+  private long idleTimeout = 60;
   
   /**
    * @return the hostName
@@ -303,7 +303,7 @@ public class RestDistributionQueue {
     if (!props.containsKey(DestinationConstants.BATCH_DISTRIBUTION_OPTION))
       props.setProperty(DestinationConstants.BATCH_DISTRIBUTION_OPTION, ""+batch);
     if (!props.containsKey(DestinationConstants.IDLETIMEOUT_PROP))
-      props.setProperty(DestinationConstants.IDLETIMEOUT_PROP, ""+ idleTimeout);
+      props.setProperty(DestinationConstants.IDLETIMEOUT_PROP, ""+idleTimeout);
     if (!props.containsKey("period"))
       props.setProperty("period", ""+period);
 

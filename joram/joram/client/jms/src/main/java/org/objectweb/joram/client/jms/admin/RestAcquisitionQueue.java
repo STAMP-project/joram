@@ -64,7 +64,8 @@ public class RestAcquisitionQueue {
   private String password = "anonymous";
   private boolean mediaTypeJson = true;
   private long timeout = 10000;
-  private int acquisitionPeriod = 100;  // TODO (AF): Normally not needed with asynchronous acquisition.
+  // This attribute below is only needed with timed acquisition.
+  private int acquisitionPeriod = -1;
   // Normally each consumer resource need to be explicitly closed, this parameter allows to set the idle time
   // in seconds in which the consumer context will be closed if idle.
   private long idleTimeout = 60;
