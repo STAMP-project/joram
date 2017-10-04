@@ -29,18 +29,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.jms.BytesMessage;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSContext;
-import javax.jms.JMSException;
 import javax.jms.JMSProducer;
 import javax.jms.MapMessage;
 import javax.jms.Message;
-import javax.jms.ObjectMessage;
 import javax.jms.Queue;
-import javax.jms.StreamMessage;
-import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -71,7 +66,6 @@ public class Helper {
   private HashMap<String, RestClientContext> restClientCtxs;
   private HashMap<String, SessionContext> sessionCtxs;
   private String cfName;
-  private BundleContext bundleContext;
   private long globalIdleTimeout = 0;
   private Properties jndiProps;
   
@@ -87,7 +81,6 @@ public class Helper {
   }
   
   public void setGlobalProperties(BundleContext bundleContext) throws NamingException {
-    this.bundleContext = bundleContext;
     // set the connection factory
     setConnectionFactoryName(bundleContext.getProperty(BUNDLE_CF_PROP));
     
@@ -439,7 +432,7 @@ public class Helper {
     for (String key : jsonMap.keySet()) {
       Object value = jsonMap.get(key);
       if (value instanceof ArrayList) {
-        ArrayList<String> array =(ArrayList<String>) value; 
+        ArrayList<String> array = (ArrayList<String>) value; 
         try {
           if (array.size() == 2) {
             String className = array.get(1);
@@ -508,7 +501,7 @@ public class Helper {
   static final Object getValue(Map map, String key) throws Exception {
     Object value = map.get(key);
     if (value instanceof ArrayList) {
-      ArrayList<String> array =(ArrayList<String>) value; 
+      ArrayList<String> array = (ArrayList<String>) value; 
       try {
         if (array.size() == 2) {
           String className = array.get(1);
