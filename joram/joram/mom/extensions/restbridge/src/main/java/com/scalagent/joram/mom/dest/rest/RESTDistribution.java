@@ -73,7 +73,7 @@ public class RESTDistribution implements DistributionHandler {
 
   private String destName = null;
   
-  private String idleTimeout = "60";      // TODO (AF): default value (Be careful in seconds)
+  private String idleTimeout = "60";
 
   private String prodName = null;
   private String clientId = null;
@@ -142,7 +142,7 @@ public class RESTDistribution implements DistributionHandler {
 
     // Initializes Rest client and target
     try {
-      // TODO (AF): It seems that there is no exceptions thrown by these methods.
+      // It seems that there is no exceptions thrown by these methods.
       client = ClientBuilder.newClient(new ClientConfig() // TODO (AF): Fix these properties with configuration values
           .property(ClientProperties.CONNECT_TIMEOUT, connectTimeout)
           .property(ClientProperties.READ_TIMEOUT, readTimeout));
