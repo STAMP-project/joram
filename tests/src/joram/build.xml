@@ -374,6 +374,7 @@
     <antcall target="perf.test47"/>
     <antcall target="perf.test54"/>
     <antcall target="perf.asynctest"/>
+		<antcall target="rest.client9"/>
   </target>
 
   <target name="tests.noreg"
