@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -2478,13 +2478,13 @@ public class Session implements javax.jms.Session, SessionMBean {
     }
     
     if (recover) {
+      recover = false;
       // The session has been recovered by the
       // listener thread.
       if (autoAck) {
         denyMessage(mcl.getTargetName(), msgId, mcl.getQueueMode(), true);
       } else {
         doRecover();
-        recover = false;
       }
     } else {
       if (autoAck) {
