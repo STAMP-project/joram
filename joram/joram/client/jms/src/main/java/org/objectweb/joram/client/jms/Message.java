@@ -532,15 +532,10 @@ public class Message implements javax.jms.Message {
    * 
    * @return the correlation ID for the message as an array of bytes.
    *
-   * @exception MessageFormatException  In case of a problem while retrieving
-   *              the field. 
+   * @exception JMSException  Actually never thrown.
    */
   public final byte[] getJMSCorrelationIDAsBytes() throws JMSException {
-    try {
-      return ConversionHelper.toBytes(momMsg.correlationId);
-    } catch (MessageValueException mE) {
-      throw new MessageFormatException(mE.getMessage());
-    }
+    return momMsg.getJMSCorrelationIDAsBytes();
   }
   
   /**
@@ -553,8 +548,8 @@ public class Message implements javax.jms.Message {
    *
    * @exception JMSException  Actually never thrown.
    */
-  public final void setJMSCorrelationIDAsBytes(byte[] correlationID) {
-    momMsg.correlationId = ConversionHelper.toString(correlationID);
+  public final void setJMSCorrelationIDAsBytes(byte[] correlationID) throws JMSException {
+    momMsg.setJMSCorrelationIDAsBytes(correlationID);
   }
 
   /**

@@ -264,6 +264,29 @@ public final class Message implements Cloneable, Serializable, Streamable, Encod
   /** The correlation identifier field. */
   public transient String correlationId = null;
  
+  /**
+   * Gets the correlation ID as an array of bytes for the message.
+   * 
+   * @return the correlation ID for the message as an array of bytes.
+   */
+  public final byte[] getJMSCorrelationIDAsBytes() {
+    if (correlationId != null)
+      return correlationId.getBytes();
+    return null;
+  }
+  
+  /**
+   * Sets the correlation ID as an array of bytes for the message.
+   * 
+   * @param correlationID the message ID value as an array of bytes. 
+   */
+  public final void setJMSCorrelationIDAsBytes(byte[] correlationID) {
+    if (correlationID != null)
+      this.correlationId = new String(correlationID);
+    else
+      this.correlationId = null;
+  }
+
   /** The number of delivery attempts for this message. */
   public transient  int deliveryCount = 0;
 
