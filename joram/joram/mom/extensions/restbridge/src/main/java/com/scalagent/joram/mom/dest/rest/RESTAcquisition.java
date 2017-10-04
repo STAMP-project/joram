@@ -218,9 +218,9 @@ public class RESTAcquisition implements AcquisitionHandler {
       }
     
     if (jsonMessageHeader.containsKey("CorrelationIDAsBytes")) {
-      // TODO "CorrelationIDAsBytes"
-      if (logger.isLoggable(BasicLevel.WARN))
-        logger.log(BasicLevel.WARN, "-- TODO CorrelationIDAsBytes");
+      message.setJMSCorrelationIDAsBytes((byte[]) jsonMessageHeader.get("CorrelationIDAsBytes"));
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "-- CorrelationIDAsBytes = " + jsonMessageHeader.get("CorrelationIDAsBytes"));
     }
     
     if (jsonMessageHeader.containsKey("Destination")) {
