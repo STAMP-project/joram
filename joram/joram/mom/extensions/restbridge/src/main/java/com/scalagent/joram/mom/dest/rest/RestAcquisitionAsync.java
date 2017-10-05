@@ -740,17 +740,18 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
   }
 
   private void closeConsumer() {
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, "RestAcquisitionAsync.closeConsumer():");
+    
     if (uriCloseConsumer != null) {
       try {
         Response response = client.target(uriCloseConsumer).request().accept(MediaType.TEXT_PLAIN).delete();
         if (logger.isLoggable(BasicLevel.DEBUG))
-          logger.log(BasicLevel.DEBUG, "RestDistribution.closeConsumer(): -> " + response.getStatus());
+          logger.log(BasicLevel.DEBUG, "RestAcquisitionAsync.closeConsumer(): -> " + response.getStatus());
       } catch (Exception exc) {
-        logger.log(BasicLevel.ERROR, "RestDistribution.closeConsumer()", exc);
+        logger.log(BasicLevel.WARN, "RestAcquisitionAsync.closeConsumer()", exc);
         return;
       } finally {
-        // TODO (AF): To remove.
-        logger.log(BasicLevel.ERROR, "RestDistribution.closeConsumer()", new Exception());
         uriCloseConsumer = null;
       }
     }    
@@ -852,7 +853,8 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
     
     @Override
     public synchronized void stop() {
-      logger.log(BasicLevel.ERROR, "RestAcquisitionAsync.Daemon.stop()", new Exception());
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "RestAcquisitionAsync.Daemon.stop()", new Exception());
       super.stop();
     }
 
