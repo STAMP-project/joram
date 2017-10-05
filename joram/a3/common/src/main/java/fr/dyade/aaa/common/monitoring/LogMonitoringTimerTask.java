@@ -198,8 +198,6 @@ public class LogMonitoringTimerTask extends MonitoringTimerTask {
    * @param mbean The name of the related mbean.
    * @param att   The name of the related attribute.
    * @param value The value of the related attribute.
-   * 
-   * @see fr.dyade.aaa.common.monitoring.MonitoringTimerTask#addRecord(javax.management.ObjectName, java.lang.String, java.lang.Object)
    */
   protected void addRecord(String mbean, String att, Object value) {
     strbuf.append('(').append(mbean).append(':').append(att).append('=').append(value).append(')');
