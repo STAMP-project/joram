@@ -351,7 +351,6 @@ public class Strings {
    *
    * @param output	a buffer to print the object into
    * @param tab		the array to print
-   * @param type	the type of the array components
    */
   public static final void toStringArray(StringBuffer output, Object tab) {
     if (tab == null) {
@@ -397,8 +396,7 @@ public class Strings {
    * printed, with the <code>listBorder</code> leading and trailing elements.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * 
    * @see #listMax
    * @see #listBorder
@@ -417,8 +415,7 @@ public class Strings {
    * the list, whatever its size.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -463,8 +460,7 @@ public class Strings {
    * printed, with the <code>listBorder</code> leading and trailing elements.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * 
    * @see #listMax
    * @see #listBorder
@@ -483,8 +479,7 @@ public class Strings {
    * the list, whatever its size.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -529,8 +524,7 @@ public class Strings {
    * printed, with the <code>listBorder</code> leading and trailing elements.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * 
    * @see #listMax
    * @see #listBorder
@@ -549,8 +543,7 @@ public class Strings {
    * the list, whatever its size.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -595,8 +588,7 @@ public class Strings {
    * printed, with the <code>listBorder</code> leading and trailing elements.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * 
    * @see #listMax
    * @see #listBorder
@@ -615,8 +607,7 @@ public class Strings {
    * the list, whatever its size.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -661,8 +652,7 @@ public class Strings {
    * printed, with the <code>listBorder</code> leading and trailing elements.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * 
    * @see #listMax
    * @see #listBorder
@@ -681,8 +671,7 @@ public class Strings {
    * the list, whatever its size.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -727,8 +716,7 @@ public class Strings {
    * printed, with the <code>listBorder</code> leading and trailing elements.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * 
    * @see #listMax
    * @see #listBorder
@@ -747,8 +735,7 @@ public class Strings {
    * the list, whatever its size.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -793,8 +780,7 @@ public class Strings {
    * printed, with the <code>listBorder</code> leading and trailing elements.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * 
    * @see #listMax
    * @see #listBorder
@@ -813,8 +799,7 @@ public class Strings {
    * the list, whatever its size.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -860,8 +845,7 @@ public class Strings {
    * <p>
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * 
    * @see #listMax
    * @see #listBorder
@@ -881,8 +865,7 @@ public class Strings {
    * the list, whatever its size.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -928,8 +911,7 @@ public class Strings {
    * <p>
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * 
    * @see #listMax
    * @see #listBorder
@@ -949,8 +931,7 @@ public class Strings {
    * the list, whatever its size.
    *
    * @param output      a buffer to print the object into
-   * @param obj         the array to print
-   * @param type        the type of the array components
+   * @param tab         the array to print
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -997,7 +978,6 @@ public class Strings {
    *
    * @param output      a buffer to print the object into
    * @param list        the list of <code>Object</code> objects to print
-   * @param type        the type of the array components
    * 
    * @see #listMax
    * @see #listBorder
@@ -1018,7 +998,6 @@ public class Strings {
    *
    * @param output      a buffer to print the object into
    * @param list	the list of <code>Object</code> objects to print
-   * @param type        the type of the array components
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -1081,7 +1060,6 @@ public class Strings {
    *
    * @param output      a buffer to print the object into
    * @param set   the collection to print
-   * @param type        the type of the array components
    * 
    * @see #listMax
    * @see #listBorder
@@ -1102,7 +1080,6 @@ public class Strings {
    *
    * @param output      a buffer to print the object into
    * @param set		the collection to print
-   * @param type        the type of the array components
    * @param listMax     Controls the formatting of lists of objects.
    * @param listBorder  Controls the formatting of lists of objects.
    */
@@ -1131,7 +1108,7 @@ public class Strings {
    * Provides a string representation of an unordered Collection of objects.
    * Calls <code>toString(StringBuffer, ...)</code>.
    *
-   * @param list	the collection to print
+   * @param set	the collection to print
    * @return		a string representation of the list
    */
   public static final String toString(Collection<?> set) {
