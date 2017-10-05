@@ -79,6 +79,9 @@ public class BridgeRestTest6 extends TestCase implements MessageListener {
         AdminModule.executeXMLAdmin("joramAdmin.xml");
       else
         admin();
+
+      System.out.println("admin config ok");
+      Thread.sleep(1000);
       
       test();
     } catch (Throwable exc) {
@@ -118,9 +121,7 @@ public class BridgeRestTest6 extends TestCase implements MessageListener {
     Queue distQueue = new RestDistributionQueue()
         .setHost("localhost")
         .setPort(8989)
-        .setPeriod(1000)
         .setIdleTimeout(10)
-        .setBatch(true)
         .create(0, "distQueue", "foreignQueue");
     distQueue.setFreeWriting();
     System.out.println("joram distribution queue = " + distQueue);
@@ -140,9 +141,6 @@ public class BridgeRestTest6 extends TestCase implements MessageListener {
     jndiCtx.close();
 
     AdminModule.disconnect();
-
-    System.out.println("admin config ok");
-    Thread.sleep(1000);
   }
 
 //  public void test() throws Exception {
@@ -241,7 +239,7 @@ public class BridgeRestTest6 extends TestCase implements MessageListener {
       String current = "Message number #" + nbmsg;
       String txt = ((TextMessage) msg).getText();
       
-      System.out.println(txt);
+//      System.out.println(txt);
       if (! current.equals(txt)) {
         // Verify if it is a duplicate due to the server's failure.
         if ((previous == null) || (! previous.equals(txt))) {
