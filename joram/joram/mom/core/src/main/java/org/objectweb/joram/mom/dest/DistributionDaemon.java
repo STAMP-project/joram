@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2011 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2011 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -103,7 +103,8 @@ public class DistributionDaemon extends Daemon {
       	if (logger.isLoggable(BasicLevel.DEBUG))
           logger.log(BasicLevel.DEBUG, "DistributionDaemon run: distributeQueue.size() = " + distributeQueue.size());
       	// get the first message
-      	msg = (Message) distributeQueue.get();
+      	msg = (Message) distributeQueue.get(5000L);
+      	if (msg == null) continue;
       	
       	if (logger.isLoggable(BasicLevel.DEBUG))
           logger.log(BasicLevel.DEBUG, "DistributionDaemon run: distributeQueue.get() = " + msg.id);
@@ -116,7 +117,6 @@ public class DistributionDaemon extends Daemon {
       		distributeQueue.pop();
       		continue;
       	}
-      	
       } catch (InterruptedException exc) {
         if (logger.isLoggable(BasicLevel.DEBUG))
           logger.log(BasicLevel.DEBUG, "DistributionDaemon run()", exc);
@@ -145,28 +145,32 @@ public class DistributionDaemon extends Daemon {
       	// Increment the delivery count of failed message
       	incDeliveryCount(msg);
       	
+        if (!running) return;
+
       	canStop = true;
       	// the connection is down, wait a wakeup from DistributionQueue or DistributionTopic.
       	synchronized (this) {
-	        try {
-	        	if (logger.isLoggable(BasicLevel.DEBUG))
-	        		logger.log(BasicLevel.DEBUG, "DistributionDaemon run: wait.");
-	          wait();
-	          if (logger.isLoggable(BasicLevel.DEBUG))
-	        		logger.log(BasicLevel.DEBUG, "DistributionDaemon run: wakeup.");
-          } catch (InterruptedException e1) {
-          	if (logger.isLoggable(BasicLevel.DEBUG))
-          		logger.log(BasicLevel.DEBUG, "DistributionDaemon run wait InterruptedException.");
-          }
-        }
-			}
+      	  try {
+      	    if (logger.isLoggable(BasicLevel.DEBUG))
+      	      logger.log(BasicLevel.DEBUG, "DistributionDaemon run: wait.");
+      	    wait();
+      	    if (logger.isLoggable(BasicLevel.DEBUG))
+      	      logger.log(BasicLevel.DEBUG, "DistributionDaemon run: wakeup.");
+      	  } catch (InterruptedException e1) {
+      	    if (logger.isLoggable(BasicLevel.WARN))
+      	      logger.log(BasicLevel.WARN, "DistributionDaemon run wait InterruptedException.");
+      	  }
+      	}
+      }
     }
   }
 
 	@Override
-  protected void shutdown() {
+  protected synchronized void shutdown() {
 		if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "DistributionDaemon shutdown()");
+		notify();
+		close();
   }
 
 	@Override

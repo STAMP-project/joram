@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -147,7 +147,7 @@ public class DistributionTopic extends Topic {
       distributionModule.close();
     }
     if (distributionDaemon != null) {
-    	distributionDaemon.close();
+    	distributionDaemon.stop();
     }
   }
   

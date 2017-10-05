@@ -203,7 +203,7 @@ public class DistributionQueue extends Queue {
       distributionModule.close();
     }
     if (distributionDaemon != null) {
-    	distributionDaemon.close();
+    	distributionDaemon.stop();
     }
   }
 
