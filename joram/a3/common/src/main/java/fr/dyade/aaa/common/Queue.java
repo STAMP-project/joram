@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 BULL
  * Copyright (C) 1996 - 2000 INRIA
  *
@@ -100,6 +100,25 @@ public class Queue implements Serializable {
       throw new InterruptedException();
 
     return elements.get(0);
+  }
+  
+  /**
+   * Waits for an object to be pushed in the queue or a specified amount of time has elapsed.
+   * The first object is returned without removing it.
+   *
+   * @param timeout The maximum time to wait in milliseconds.
+   * @return  The object at the top of this queue. 
+   */
+  public synchronized Object get(long timeout) throws InterruptedException {
+    if (size() == 0 && !closed)
+      wait(timeout);
+    if (closed)
+      throw new InterruptedException();
+
+    if (size() > 0)
+      return elements.get(0);
+    
+    return null;
   }
 
   /**
