@@ -69,6 +69,7 @@
       <td>
       <p><a href="http://www.efluid.fr/">efluid SAS</a> is the main sponsor of the REST API plugins in Joram:</p>
         <ul>
+        	<li>Rest/JMS bridge destinations.</li>
         	<li>JMS 2.0 generic Rest API plugin.</li>
         	<li>Joram administration Rest API plugin.</li>
         	<li>JMX monitoring Rest API plugin.</li>

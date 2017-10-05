@@ -25,12 +25,14 @@
       		<li><code>joram-release-5.*-src.zip</code>, including JORAM sources;</li>
 	    	<li><code>joram-5.*-javadoc.jar</code>, including JORAM javadoc;</li>
       		<li><code>joram-jca-jonas-5.*.rar</code>, JCA Adapter for Jonas;</li>
+      		<li><code>joram-jca-ironjacamar-5.14.0.rar</code>, JCA Adapter for IronJacamar;</li>
       		<li><code>joram-jca-remote-5.*.rar</code>, the resource adapter for a collocated JORAM server within any J2EE compliant 
 	    	application server.</li>
       		<li><code>joram-jca-ra-5.*.rar</code>, the resource adapter for a collocated JORAM server within any J2EE compliant 
 	    	application server.</li>
       		<li><code>joram-release-5.*-raconfig.zip</code>, facilities enabling configuration of JCA rars.</li>
       		<li><code>joram-assembly-5.*-client.jar</code>, simple jar including all needed classes for a Joram client.</li>
+      		<li><code>joram-release-5.*-repositories.zip</code>, .</li>
 	    </ul>
  
 	    <p>The license agreement is displayed before the download can start.

@@ -20,10 +20,14 @@
 	  improving and/or developing JORAM is welcome.</p>
 	
 	  <p><a href="mailto:joram-team@ow2.org">Contact us</a></p>
-	
   </s1>
 
   <s1 name="Recently done">
+  	<s2 name="Bridge destinations using JMS Rest API">
+		<p>The last Joram release includes acquisition and distribution destinations based on the
+		generic JMS Rest API. It allows to bridge JMS servers over a simple Rest/HTTP interface.
+		</p>
+	</s2>
   	<s2 name="JMS 2.0 generic Rest API">
 		<p>The Joram JMS 2.0 generic Rest API allows you to leverage the features of Joram/JMS over a simple
 		Rest/HTTP interface. Messages are produced and consumed through simple HTTP messages, this allows any

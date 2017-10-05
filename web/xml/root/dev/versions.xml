@@ -11,6 +11,21 @@
   </properties>
 
 	<body>
+	  <s1 name="October 5 2017: JORAM 5.14.0 release is available.">
+        <p>Joram 5.14.0 is available in the SVN repository with tag JORAM_5_14_0.</p>
+        <s2 name="New features and improvements">
+        <ul>
+          <li>Performance improvements.</li>
+          <li>Implementation of a Rest/JMS bridge based on Joram generic Rest/JMS connector
+          available since Joram 5.12.0.</li>
+          <li>Bug fixes and improvements: JORAM-264, JORAM-265, JORAM-271, JORAM-272, JORAM-273,
+          JORAM-274, JORAM-279, JORAM-280.</li>
+        </ul>
+        </s2>
+        <p>The complete list of changes can be viewed in
+        <a href="http://websvn.ow2.org/log.php?repname=joram&amp;path=%2Ftrunk%2Fjoram%2F&amp;isdir=1&amp;">SVN history</a>.</p>
+     </s1>
+
 	 <s1 name="October 24, 2016: JORAM 5.13.0 release is available.">
         <p>Joram 5.13.0 is available in the SVN repository with tag JORAM_5_13_0.</p>
         <s2 name="New features and improvements">
