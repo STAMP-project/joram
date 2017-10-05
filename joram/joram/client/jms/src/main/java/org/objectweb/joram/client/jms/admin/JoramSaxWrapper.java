@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2005 - 2012 ScalAgent Distributed Technologies
+ * Copyright (C) 2005 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1097,12 +1097,21 @@ public class JoramSaxWrapper extends DefaultHandler {
                        rawName + ".create(" + serverId + "," + name + "," + foreign + "," + properties + ")");
           if (properties == null)
             properties = new Properties();
-          if (!properties.containsKey("acquisition.className"))
-            properties.setProperty("acquisition.className", RestAcquisitionQueue.RESTAcquisition);
+          if (!properties.containsKey(DestinationConstants.ACQUISITION_CLASS_NAME))
+            properties.setProperty(DestinationConstants.ACQUISITION_CLASS_NAME, RestAcquisitionQueue.RESTAcquisition);
           if (!properties.containsKey(DestinationConstants.DESTINATION_NAME_PROP))
             properties.setProperty(DestinationConstants.DESTINATION_NAME_PROP, foreign);
           if (properties.getProperty(DestinationConstants.DESTINATION_NAME_PROP) == null)
             throw new Exception("Remote destination cannot be null");
+          
+          if (!properties.containsKey(DestinationConstants.MEDIA_TYPE_JSON_PROP))
+            properties.setProperty(DestinationConstants.MEDIA_TYPE_JSON_PROP, "true");
+          if (!properties.containsKey(DestinationConstants.TIMEOUT_PROP))
+            properties.setProperty(DestinationConstants.TIMEOUT_PROP, "10000");
+          if (!properties.containsKey(DestinationConstants.IDLETIMEOUT_PROP))
+            properties.setProperty(DestinationConstants.IDLETIMEOUT_PROP, "60");
+          if (!properties.containsKey(DestinationConstants.ACQUISITION_PERIOD))
+            properties.setProperty(DestinationConstants.ACQUISITION_PERIOD, "-1");
           
           Queue queue = (Queue) getWrapper().createQueue(serverId, name, Queue.ACQUISITION_QUEUE, properties);
 
@@ -1126,6 +1135,15 @@ public class JoramSaxWrapper extends DefaultHandler {
             properties.setProperty(DestinationConstants.DESTINATION_NAME_PROP, foreign);
           if (properties.getProperty(DestinationConstants.DESTINATION_NAME_PROP) == null)
             throw new Exception("Remote destination cannot be null");
+          
+          if (!properties.containsKey(DestinationConstants.ASYNC_DISTRIBUTION_OPTION))
+            properties.setProperty(DestinationConstants.ASYNC_DISTRIBUTION_OPTION, "true");
+          if (!properties.containsKey(DestinationConstants.BATCH_DISTRIBUTION_OPTION))
+            properties.setProperty(DestinationConstants.BATCH_DISTRIBUTION_OPTION, "true");
+          if (!properties.containsKey(DestinationConstants.IDLETIMEOUT_PROP))
+            properties.setProperty(DestinationConstants.IDLETIMEOUT_PROP, "60");
+          if (!properties.containsKey("period"))
+            properties.setProperty("period", "1000");
           
           Queue queue = (Queue) getWrapper().createQueue(serverId, name, Queue.DISTRIBUTION_QUEUE, properties);
 
