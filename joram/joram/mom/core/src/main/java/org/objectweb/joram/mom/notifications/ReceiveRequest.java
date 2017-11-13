@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2006 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -22,6 +22,8 @@
  * Contributor(s): ScalAgent Distributed Technologies
  */
 package org.objectweb.joram.mom.notifications;
+
+import org.objectweb.joram.mom.proxies.UserAgent;
 
 import fr.dyade.aaa.agent.AgentId;
 import fr.dyade.aaa.common.encoding.Decoder;
@@ -129,13 +131,18 @@ public class ReceiveRequest extends AbstractRequestNot {
     if (timeOut > 0)
       this.expirationTime = startTime + timeOut;
   }
-
+  
   /**
    * Returns <code>false</code> if the request expired.
    *
    * @param currentTime	The current time to verify the expiration time.
    */
   public boolean isValid(long currentTime) {
+    // TODO (AF): May be we have to memorize the CCUID in order to avoid to create
+    // multiples instances.
+    if (! UserAgent.isValidCC(requester, getClientContext()))
+      // The client context is no longer valid (JORAM-281).
+      return false;
     if (timeOut > 0)
       return currentTime < expirationTime;
     return true;
@@ -231,5 +238,4 @@ public class ReceiveRequest extends AbstractRequestNot {
     }
     timeOut = decoder.decodeUnsignedLong();
   }
-  
 } 
