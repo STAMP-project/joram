@@ -34,8 +34,10 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -181,7 +183,6 @@ import fr.dyade.aaa.util.management.MXWrapper;
  * destinations replies to clients.
  */
 public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgentItf {
-
   /** define serialVersionUID for interoperability */
   private static final long serialVersionUID = 1L;
 
@@ -342,6 +343,24 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
    * <b>Value:</b> context
    */
   private Map<Integer, ClientContext> contexts;
+
+  /**
+   * Static collection referencing all valid context in the server.
+   * It allows to avoid to reply to request from closed context  (JORAM-281).
+   */
+  private static Set<CCUID> validCC = Collections.synchronizedSet(new HashSet<CCUID>());
+  
+  protected static void addValidCC(ClientContext cc) {
+    validCC.add(new CCUID(cc.getProxyId(), cc.getId()));
+  }
+  
+  protected static void removeValidCC(ClientContext cc) {
+    validCC.remove(new CCUID(cc.getProxyId(), cc.getId()));
+  }
+  
+  public static boolean isValidCC(AgentId ua, int ctxid) {
+    return validCC.contains(new CCUID(ua, ctxid));
+  }
 
   /**
    * Table holding the <code>ClientSubscription</code> instances.
@@ -1154,6 +1173,7 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
         cc.setProxyId(getId());
         cc.setProxyAgent(this);
         contexts.put(cc.getId(), cc);
+        addValidCC(cc);
       } catch (Exception exc) {
         logger.log(BasicLevel.ERROR, 
                    "ClientContext named [" + persistedClientNames[i] + "] could not be loaded", exc);
@@ -1646,6 +1666,7 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
     activeCtx.setProxyAgent(this);
     modifiedClient(activeCtx);
     contexts.put(new Integer(key), activeCtx);
+    addValidCC(activeCtx);
 
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "Connection " + key + " opened.");
@@ -2630,6 +2651,7 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
 
     // Finally, deleting the context:
     ClientContext cc = contexts.remove(new Integer(key));
+    removeValidCC(cc);
     cc.delete();
 
     activeCtx = null;
@@ -3698,7 +3720,7 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
     if(logger.isLoggable(BasicLevel.DEBUG)) {
       logger.log(BasicLevel.DEBUG,"Contexts:");
       for(Integer k : contexts.keySet()) {
-        logger.log(BasicLevel.DEBUG,k+" : "+contexts.get(k));
+        logger.log(BasicLevel.DEBUG, k + " : " + contexts.get(k));
       }
     }
 

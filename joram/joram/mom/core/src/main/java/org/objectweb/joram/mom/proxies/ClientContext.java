@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2003 - 2012 ScalAgent Distributed Technologies
+ * Copyright (C) 2003 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 2004 France Telecom R&D
  * Copyright (C) 2003 - 2004 Bull SA
  *
@@ -507,5 +507,42 @@ public class ClientContext implements java.io.Serializable, Encodable {
     }
 
   }
-  
+}
+
+class CCUID {
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ctxid;
+    result = prime * result + ((ua == null) ? 0 : ua.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    CCUID other = (CCUID) obj;
+    if (ctxid != other.ctxid)
+      return false;
+    if (ua == null) {
+      if (other.ua != null)
+        return false;
+    } else if (!ua.equals(other.ua))
+      return false;
+    return true;
+  }
+
+  AgentId ua = null;
+  int ctxid = -1;
+
+  CCUID(AgentId ua, int ctxid) {
+    this.ua = ua;
+    this.ctxid = ctxid;
+  }
 }
