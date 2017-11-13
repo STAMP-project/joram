@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2003 - 2007 ScalAgent Distributed Technologies
+ * Copyright (C) 2003 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,77 +33,76 @@ import org.objectweb.joram.client.jms.admin.AdminModule;
 import org.objectweb.joram.client.jms.admin.User;
 import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 
-
 /**
- * test queue.deleteMessage() , restart of server, and check there is no message
- *
+ * Tests queue.deleteMessage() , restart of server, and check there is no message.
  */
 public class Test49 extends BaseTest {
-    public static void main (String args[])  {
-	new Test49().run();
-    }
-    public void run(){
-	try {
-	    framework.TestCase.startAgentServer((short) 0);
-	    Thread.sleep(1000L);
-	  
-	    AdminModule.connect("root", "root", 60);
-	    User user = User.create("anonymous", "anonymous");
-	    Queue queue = Queue.create(0, "queue");
-	    queue.setFreeReading();
-	    queue.setFreeWriting();
-	    //       AdminModule.disconnect();
-	    ConnectionFactory cf = TcpConnectionFactory.create("localhost", 16010);
-	  
-	    Connection cnx = cf.createConnection();
-	  
-	    Session sess = cnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-	    MessageProducer prod = sess.createProducer(queue);
-	    cnx.start();
-	  
-	    for (int i=0; i<10; i++) {
-		Message msg = sess.createMessage();
-		msg.setIntProperty("Index", i);
-		prod.send( msg);
-	    }
-	  
-	    sess.close();
-	    cnx.close();
-	    
+  public static void main(String args[]) {
+    new Test49().run();
+  }
+
+  public void run() {
+    try {
+      framework.TestCase.startAgentServer((short) 0);
+      Thread.sleep(1000L);
+
+      AdminModule.connect("root", "root", 60);
+      User user = User.create("anonymous", "anonymous");
+      Queue queue = Queue.create(0, "queue");
+      queue.setFreeReading();
+      queue.setFreeWriting();
+      // AdminModule.disconnect();
+      ConnectionFactory cf = TcpConnectionFactory.create("localhost", 16010);
+
+      Connection cnx = cf.createConnection();
+
+      Session sess = cnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
+      MessageProducer prod = sess.createProducer(queue);
+      cnx.start();
+
+      for (int i = 0; i < 10; i++) {
+        Message msg = sess.createMessage();
+        msg.setIntProperty("Index", i);
+        prod.send(msg);
+      }
+
+      sess.close();
+      cnx.close();
+
 	    //System.out.println("before clear -> " + queue.getPendingMessages() +" should be 10");
-	    assertEquals(10, queue.getPendingMessages());
-	    String ids[] = queue.getMessageIds();
+      assertEquals(10, queue.getPendingMessages());
+      String ids[] = queue.getMessageIds();
 
-	    for (int i=0; i<ids.length; i++) {
-		queue.deleteMessage(ids[i]);
-	    }
+      for (int i = 0; i < ids.length; i++) {
+        queue.deleteMessage(ids[i]);
+      }
 	    //System.out.println("after clear -> " + queue.getPendingMessages() +" should be 0");
-	    assertEquals(0, queue.getPendingMessages());
-	    AdminModule.disconnect();
+      assertEquals(0, queue.getPendingMessages());
+      AdminModule.disconnect();
 
-	    Thread.sleep(1000L);
-	    System.out.println("Stop Server#0");
-	    framework.TestCase.stopAgentServer((short) 0);
-	    Thread.sleep(1000L);
-	    System.out.println("Start Server#0");
-	    framework.TestCase.startAgentServer((short) 0);
-	    Thread.sleep(1000L);
+      Thread.sleep(1000L);
+      System.out.println("Stop Server#0");
+      framework.TestCase.stopAgentServer((short) 0);
+      Thread.sleep(1000L);
+      System.out.println("Start Server#0");
+      framework.TestCase.startAgentServer((short) 0);
+      Thread.sleep(1000L);
 
-	    AdminModule.connect("root", "root", 60);
-	    queue = Queue.create(0, "queue");
+      AdminModule.connect("root", "root", 60);
+      queue = Queue.create(0, "queue");
 	    //System.out.println("after restart -> " + queue.getPendingMessages() +" should be 0");
-	    assertEquals(0, queue.getPendingMessages());
-	    AdminModule.disconnect();
+      assertEquals(0, queue.getPendingMessages());
+      AdminModule.disconnect();
 
-	    Thread.sleep(1000L);
-	 
-	} catch (Exception exc) {
-	    exc.printStackTrace();
-	    error(exc);
-	}finally{
-	    System.out.println("Stop Server#0");
-	    framework.TestCase.stopAgentServer((short) 0);  
-	    endTest();
-	}
+      Thread.sleep(1000L);
+
+    } catch (Exception exc) {
+      exc.printStackTrace();
+      error(exc);
+    } finally {
+      System.out.println("Stop Server#0");
+      framework.TestCase.stopAgentServer((short) 0);
+      endTest();
     }
+  }
 }

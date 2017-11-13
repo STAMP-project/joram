@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2003 - 2009 ScalAgent Distributed Technologies
+ * Copyright (C) 2003 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,52 +31,53 @@ import org.objectweb.joram.client.jms.admin.AdminModule;
 import fr.dyade.aaa.agent.AgentServer;
 
 /**
- *test getadminname
+ * test getadminname
  */
 public class Test35 extends BaseTest {
-    public final static String queueName = "myQueue";
-    public final static String topicName = "myTopic";
+  public final static String queueName = "myQueue";
+  public final static String topicName = "myTopic";
 
-    public static void main (String args[]) throws Exception {
-	new Test35().run();
+  public static void main(String args[]) throws Exception {
+    new Test35().run();
+  }
+
+  public void run() {
+    try {
+      startServer();
+
+      String baseclass = "joram.noreg.ColocatedBaseTest";
+      baseclass = System.getProperty("BaseClass", baseclass);
+
+      AdminModule.connect(createConnectionFactory(baseclass));
+
+      Queue queue = Queue.create(queueName);
+      Topic topic = Topic.create(topicName);
+
+      InitialContext jndi = new InitialContext();
+      jndi.rebind(queueName, queue);
+      jndi.rebind(topicName, topic);
+
+      // System.out.println(queue.getAdminName());
+      // System.out.println(topic.getAdminName());
+      assertEquals("myQueue", queue.getAdminName());
+      assertEquals("myTopic", topic.getAdminName());
+
+      Queue queue1 = (Queue) jndi.lookup(queueName);
+      Topic topic1 = (Topic) jndi.lookup(topicName);
+
+      // System.out.println(queue1.getAdminName());
+      // System.out.println(topic1.getAdminName());
+      assertEquals("myQueue", queue1.getAdminName());
+      assertEquals("myTopic", topic1.getAdminName());
+
+      AdminModule.disconnect();
+
+    } catch (Throwable exc) {
+      exc.printStackTrace();
+      error(exc);
+    } finally {
+      AgentServer.stop();
+      endTest();
     }
-    public void run(){
-	try{
-	    startServer();
-
-	    String baseclass = "joram.noreg.ColocatedBaseTest";
-	    baseclass = System.getProperty("BaseClass", baseclass);
-
-        AdminModule.connect(createConnectionFactory(baseclass));
-
-	    Queue queue = Queue.create(queueName);
-	    Topic topic = Topic.create(topicName);
-
-	    InitialContext jndi = new InitialContext();
-	    jndi.rebind(queueName, queue);
-	    jndi.rebind(topicName, topic);
-
-	    //System.out.println(queue.getAdminName());
-	    //System.out.println(topic.getAdminName());
-	    assertEquals("myQueue",queue.getAdminName());
-	    assertEquals("myTopic",topic.getAdminName());
-	    
-	    Queue queue1 = (Queue) jndi.lookup(queueName);
-	    Topic topic1 = (Topic) jndi.lookup(topicName);
-
-	    //System.out.println(queue1.getAdminName());
-	    //System.out.println(topic1.getAdminName());
-	    assertEquals("myQueue",queue1.getAdminName());
-	    assertEquals("myTopic",topic1.getAdminName());
-
-	    AdminModule.disconnect();
-
-	}catch(Throwable exc){
-	    exc.printStackTrace();
-	    error(exc);
-	}finally{
-	    AgentServer.stop();
-	    endTest();
-	}
-    }
+  }
 }

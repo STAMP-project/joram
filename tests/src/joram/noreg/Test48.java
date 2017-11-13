@@ -33,76 +33,75 @@ import org.objectweb.joram.client.jms.admin.AdminModule;
 import org.objectweb.joram.client.jms.admin.User;
 import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 
-
 /**
  * test queue.clear() , restart of server, and check there is no message
  *
  */
-
 public class Test48 extends BaseTest {
-    public static void main (String args[])  {
-	new Test48().run();
-    }
-    public void run(){
-	try {
-	    framework.TestCase.startAgentServer((short) 0);
-	    Thread.sleep(1000L);
+  public static void main(String args[]) {
+    new Test48().run();
+  }
 
-	    AdminModule.connect("root", "root", 60);
-	    User user = User.create("anonymous", "anonymous");
-	    Queue queue = Queue.create(0, "queue");
-	    queue.setFreeReading();
-	    queue.setFreeWriting();
-	    //       AdminModule.disconnect();
-	    ConnectionFactory cf = TcpConnectionFactory.create("localhost", 16010);
+  public void run() {
+    try {
+      framework.TestCase.startAgentServer((short) 0);
+      Thread.sleep(1000L);
 
-	    Connection cnx = cf.createConnection();
+      AdminModule.connect("root", "root", 60);
+      User user = User.create("anonymous", "anonymous");
+      Queue queue = Queue.create(0, "queue");
+      queue.setFreeReading();
+      queue.setFreeWriting();
+      // AdminModule.disconnect();
+      ConnectionFactory cf = TcpConnectionFactory.create("localhost", 16010);
 
-	    Session sess = cnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-	    MessageProducer prod = sess.createProducer(queue);
-	    cnx.start();
+      Connection cnx = cf.createConnection();
 
-	    for (int i=0; i<10; i++) {
-		Message msg = sess.createMessage();
-		msg.setIntProperty("Index", i);
-		prod.send( msg);
-	    }
+      Session sess = cnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
+      MessageProducer prod = sess.createProducer(queue);
+      cnx.start();
 
-	    sess.close();
-	    cnx.close();
+      for (int i = 0; i < 10; i++) {
+        Message msg = sess.createMessage();
+        msg.setIntProperty("Index", i);
+        prod.send(msg);
+      }
+
+      sess.close();
+      cnx.close();
 
 	    //System.out.println("before clear -> " + queue.getPendingMessages() + " should be 10");
-	    assertEquals(10,queue.getPendingMessages());
-	    queue.clear();
+      assertEquals(10, queue.getPendingMessages());
+      queue.clear();
 	    //System.out.println("after clear -> " + queue.getPendingMessages() +" should be 0");
-	    assertEquals(0,queue.getPendingMessages());
-	   
-	    AdminModule.disconnect();
+      assertEquals(0, queue.getPendingMessages());
 
-	    Thread.sleep(1000L);
-	    System.out.println("Stop Server#0");
-	    framework.TestCase.stopAgentServer((short) 0);
-	    Thread.sleep(1000L);
-	    System.out.println("Start Server#0");
-	    framework.TestCase.startAgentServer((short) 0);
-	    Thread.sleep(1000L);
+      AdminModule.disconnect();
 
-	    AdminModule.connect("root", "root", 60);
-	    queue = Queue.create(0, "queue");
+      Thread.sleep(1000L);
+      System.out.println("Stop Server#0");
+      framework.TestCase.stopAgentServer((short) 0);
+      Thread.sleep(1000L);
+      System.out.println("Start Server#0");
+      framework.TestCase.startAgentServer((short) 0);
+      Thread.sleep(1000L);
+
+      AdminModule.connect("root", "root", 60);
+      queue = Queue.create(0, "queue");
 	    // System.out.println("after restart -> " + queue.getPendingMessages() +" should be 0");
-	    assertEquals(0,queue.getPendingMessages());
-	    
-	    AdminModule.disconnect();
+      assertEquals(0, queue.getPendingMessages());
 
-	    Thread.sleep(1000L);
-	   
-	} catch (Exception exc) {
-	    exc.printStackTrace();
-	    error(exc);
-	}finally{
-	     System.out.println("Stop Server#0");
-	    framework.TestCase.stopAgentServer((short) 0);
-	    endTest();
-	}
+      AdminModule.disconnect();
+
+      Thread.sleep(1000L);
+
+    } catch (Exception exc) {
+      exc.printStackTrace();
+      error(exc);
+    } finally {
+      System.out.println("Stop Server#0");
+      framework.TestCase.stopAgentServer((short) 0);
+      endTest();
     }
+  }
 }
