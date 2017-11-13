@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2003 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2003 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,12 +37,8 @@ import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 
 
 /**
- *test user.deleteMessage(), restart of server, and check there is no message
- *
- *
+ * Tests user.deleteMessage(), restart of server, and check there is no message.
  */
-
-
 public class Test51 extends framework.TestCase {
   public static void main (String args[])  {
       new Test51().run();
