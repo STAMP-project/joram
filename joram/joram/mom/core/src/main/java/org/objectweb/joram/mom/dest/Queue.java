@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -299,7 +299,7 @@ public class Queue extends Destination implements QueueMBean {
     int index = 0;
     while (index < requests.size()) {
       if (! ((ReceiveRequest) requests.get(index)).isValid(currentTime)) {
-        // Request expired: removing it
+        // Request expired or context closed: removing it
         requests.remove(index);
         // It's not really necessary to save its state, in case of failure
         // a similar work will be done at restart.
