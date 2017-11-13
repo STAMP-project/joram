@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2003 - 2007 ScalAgent Distributed Technologies
+ * Copyright (C) 2003 - 2017 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,7 @@ import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 import fr.dyade.aaa.agent.AgentServer;
 
 /**
- *
+ * Test queue creation through Session.createQueue JMS API method.
  */
 public class Test56 extends BaseTest{
     public static void main (String args[]) {
