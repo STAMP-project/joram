@@ -447,12 +447,17 @@ public final class AgentId implements Serializable, Encodable {
   }
 
   /**
-   * 
-   * @return	<code>true</code> if this id is equals to NullId;
-   *	<code>false</code> otherwise.
+   * @return	<code>true</code> if this id is equals to NullId; <code>false</code> otherwise.
    */
   public final boolean isNullId() {
     return (stamp == NullIdStamp);
+  }
+
+  /**
+   * @return  <code>true</code> if this the 2 agents are colocated; <code>false</code> otherwise.
+   */
+  public final boolean isLocal() {
+    return (to == AgentServer.getServerId());
   }
 
   /**
