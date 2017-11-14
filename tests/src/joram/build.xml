@@ -311,6 +311,9 @@
     <antcall target="client.ClientTest28"/>
     <antcall target="client.ClientTest29"/>
   	<antcall target="client.ClientTestAsyncSend"/>
+  	<antcall target="client.ClientTest30"/>
+  	<antcall target="client.ClientTest31"/>
+  	<antcall target="client.ClientTest32"/>
   </target>
 
   <target name="tests.connection"
@@ -413,10 +416,13 @@
     <antcall target="noreg.test50"/>
     <antcall target="noreg.test51"/>
     <antcall target="noreg.test56"/>
+  	<antcall target="noreg.test57"/>
     <antcall target="noreg.test58"/>
     <antcall target="noreg.test59"/>
     <antcall target="noreg.test60"/>
     <antcall target="noreg.test61"/>
+  	<antcall target="noreg.test62"/>
+    <antcall target="noreg.test63"/>
   </target>
 
   <target name="tests.xa"
@@ -2178,6 +2184,42 @@
       <param name="a3conf" value="client/a3servers.xml"/>
       <param name="jvmargs" value="-DNbRound=100"/>
       <param name="testid" value="client.ClientTest29"/>
+      <param name="args" value=""/>
+    </antcall>
+  </target>
+
+  <target name="client.ClientTest30" depends="init.a3props,compile"
+          description=" --> Test message consumption after connection closes (JORAM-281).">
+    <antcall target="test.run" inheritAll="true">
+      <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+      <param name="className" value="joram.client.ClientTest30"/>
+      <param name="jndiconf" value="client/jndi.properties"/>
+      <param name="a3conf" value="client/a3servers.xml"/>
+      <param name="testid" value="client.ClientTest30"/>
+      <param name="args" value=""/>
+    </antcall>
+  </target>
+
+  <target name="client.ClientTest31" depends="init.a3props,compile"
+          description=" --> Test message consumption after connection closes (JORAM-281).">
+    <antcall target="test.run" inheritAll="true">
+      <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+      <param name="className" value="joram.client.ClientTest31"/>
+      <param name="jndiconf" value="client/jndi.properties"/>
+      <param name="a3conf" value="client/a3servers.xml"/>
+      <param name="testid" value="client.ClientTest31"/>
+      <param name="args" value=""/>
+    </antcall>
+  </target>
+
+  <target name="client.ClientTest32" depends="init.a3props,compile"
+          description=" --> Test message consumption after connection closes (JORAM-281).">
+    <antcall target="test.run" inheritAll="true">
+      <param name="transaction" value="fr.dyade.aaa.util.NullTransaction"/>
+      <param name="className" value="joram.client.ClientTest32"/>
+      <param name="jndiconf" value="client/jndi.properties"/>
+      <param name="a3conf" value="client/a3servers.xml"/>
+      <param name="testid" value="client.ClientTest32"/>
       <param name="args" value=""/>
     </antcall>
   </target>
