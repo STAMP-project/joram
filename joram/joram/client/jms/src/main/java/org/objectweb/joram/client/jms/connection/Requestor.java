@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@ import javax.jms.JMSSecurityException;
 import org.objectweb.joram.shared.client.AbstractJmsReply;
 import org.objectweb.joram.shared.client.AbstractJmsRequest;
 import org.objectweb.joram.shared.client.ConsumerMessages;
+import org.objectweb.joram.shared.client.ConsumerReceiveRequest;
 import org.objectweb.joram.shared.client.MomExceptionReply;
 import org.objectweb.joram.shared.client.ProducerMessages;
 import org.objectweb.util.monolog.api.BasicLevel;
@@ -212,7 +213,7 @@ public class Requestor implements ReplyListener, ErrorListener {
         mtpx.abortRequest(requestId);
         return null;
       } else if (status == Status.INIT) {
-        // Means that the wait ended with a notify from start method .
+        // Means that the wait ended with a notify from start method.
         // Abort the request.
         mtpx.abortRequest(requestId);
         // re-send a synchronous request
@@ -221,7 +222,17 @@ public class Requestor implements ReplyListener, ErrorListener {
         if (logger.isLoggable(BasicLevel.DEBUG))
           logger.log(BasicLevel.DEBUG, " -> deny " + reply);
         if (reply instanceof ConsumerMessages) {
+          // The consumer is closed, denies the received messages
           mtpx.deny((ConsumerMessages)reply);
+        } else if ((reply == null) &&
+            (request instanceof ConsumerReceiveRequest)) {
+          // The request is aborted, we shall try to deny the receive request (JORAM-281).
+          ConsumerReceiveRequest crr = (ConsumerReceiveRequest) request;
+          if ((crr.getTimeToLive() <= 0) && (crr.getQueueMode())) {
+            // If the connection is alive we should try to deny the request
+            logger.log(BasicLevel.DEBUG, " -> deny request " + request.getRequestId());
+            mtpx.denyRequest(crr);
+          }
         }
         return null;
       } else if (status == Status.DONE) {

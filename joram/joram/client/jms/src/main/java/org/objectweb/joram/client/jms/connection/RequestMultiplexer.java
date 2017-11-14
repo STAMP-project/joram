@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -42,6 +42,8 @@ import org.objectweb.joram.shared.client.AbstractJmsReply;
 import org.objectweb.joram.shared.client.AbstractJmsRequest;
 import org.objectweb.joram.shared.client.CommitRequest;
 import org.objectweb.joram.shared.client.ConsumerMessages;
+import org.objectweb.joram.shared.client.ConsumerReceiveRequest;
+import org.objectweb.joram.shared.client.ConsumerUnsetListRequest;
 import org.objectweb.joram.shared.client.MomExceptionReply;
 import org.objectweb.joram.shared.client.PingRequest;
 import org.objectweb.joram.shared.client.ProducerMessages;
@@ -399,8 +401,7 @@ public class RequestMultiplexer {
       logger.log(BasicLevel.DEBUG, "RequestMultiplexer.doAbortRequest(" + requestId + ')');
     
     if (status == Status.CLOSE) return null;
-    return (ReplyListener)requestsTable.remove(
-      new Integer(requestId));
+    return (ReplyListener)requestsTable.remove(new Integer(requestId));
   }
 
   /**
@@ -455,6 +456,7 @@ public class RequestMultiplexer {
     // Else nothing to do.
   }
 
+  // Denies received messages.
   public void deny(ConsumerMessages messages) {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "RequestMultiplexer.deny(" + messages + ')');
@@ -471,7 +473,26 @@ public class RequestMultiplexer {
       sendRequest(deny);
     } catch (JMSException exc) {
       if (logger.isLoggable(BasicLevel.DEBUG))
-        logger.log(BasicLevel.DEBUG, "", exc);
+        logger.log(BasicLevel.DEBUG, "Connection is closed", exc);
+      // Connection failure
+      // Nothing to do
+    }
+  }
+
+  // Denies aborted request.
+  public void denyRequest(ConsumerReceiveRequest request) {
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, "RequestMultiplexer.denyRequest(" + request.getRequestId() + ')');
+
+    ConsumerUnsetListRequest unsetLR = new ConsumerUnsetListRequest(request.getQueueMode());
+    unsetLR.setTarget(request.getTarget());
+    unsetLR.setCancelledRequestId(request.getRequestId());
+
+    try {
+      sendRequest(unsetLR);
+    } catch (JMSException exc) {
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "Connection is closed", exc);
       // Connection failure
       // Nothing to do
     }
