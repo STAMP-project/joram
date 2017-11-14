@@ -359,7 +359,10 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
   }
   
   public static boolean isValidCC(AgentId ua, int ctxid) {
-    return validCC.contains(new CCUID(ua, ctxid));
+    if ((ua != null) && ua.isLocal())
+        return validCC.contains(new CCUID(ua, ctxid));
+    // If the requested UserAgent is not local we consider the context as active.
+    return true;
   }
 
   /**
