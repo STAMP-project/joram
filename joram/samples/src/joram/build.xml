@@ -52,7 +52,7 @@
     <mkdir dir="${obj.dir}/joram"/>
     <javac srcdir="${src.dir}"
            destdir="${obj.dir}/joram"
-           source="1.5" target="1.5" debug="true"
+           source="1.7" target="1.7" debug="true"
            deprecation="${deprecation}"
            optimize="${optimize}"
            nowarn="${nowarn}"
