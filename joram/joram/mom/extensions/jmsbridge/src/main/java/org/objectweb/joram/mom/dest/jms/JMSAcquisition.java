@@ -144,8 +144,8 @@ public class JMSAcquisition implements AcquisitionDaemon {
           if (logger.isLoggable(BasicLevel.DEBUG))
             logger.log(BasicLevel.DEBUG, "JMS session closed: " + listener.session);
         } catch (JMSException exc) {
-          if (logger.isLoggable(BasicLevel.DEBUG)) {
-            logger.log(BasicLevel.DEBUG, "Error while stopping JmsAcquisition.", exc);
+          if (logger.isLoggable(BasicLevel.INFO)) {
+            logger.log(BasicLevel.INFO, "Error while stopping JmsAcquisition.", exc);
           }
         }
         // Remove ExceptionListener from JMSModule
@@ -281,6 +281,8 @@ public class JMSAcquisition implements AcquisitionDaemon {
       }
     }
 
+    private boolean closing = false;
+    
     /** The daemon's loop. */
     public void run() {
       if (logmon.isLoggable(BasicLevel.DEBUG)) {
@@ -313,12 +315,17 @@ public class JMSAcquisition implements AcquisitionDaemon {
             logmon.log(BasicLevel.DEBUG, "update connections");
           }
 
-          synchronized (modules) {
-            if (modules.size() == 0) stop();
+          // The ConnectionHandler is closing, modules can be locked by removeUpdateListener method.
+          if (! closing) {
+            synchronized (modules) {
+              if (modules.size() == 0) stop();
 
-            for (JMSAcquisition listener : modules) {
-              listener.updateConnections();
+              for (JMSAcquisition listener : modules) {
+                listener.updateConnections();
+              }
             }
+          } else {
+            break;
           }
         }
       } finally {
@@ -346,9 +353,15 @@ public class JMSAcquisition implements AcquisitionDaemon {
     }
 
     protected void removeUpdateListener(JMSAcquisition module) {
-      synchronized (modules) {
-        modules.remove(module);
-        if (modules.size() == 0) stop();
+      // The closing field avoid a potential deadlock with daemon during stop.
+      closing = true;
+      try {
+        synchronized (modules) {
+          modules.remove(module);
+          if (modules.size() == 0) stop();
+        }
+      } finally {
+        closing = false;
       }
     }
   }
