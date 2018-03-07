@@ -520,6 +520,8 @@
     <antcall target="bridge.jms.test19x"/>
     <antcall target="bridge.jms.test20x"/>
     <antcall target="bridge.jms.test21x"/>
+    <antcall target="bridge.jms.test22x"/>
+    <antcall target="bridge.jms.test23x"/>
   </target>
 	
   <target name="tests.schedqueue"
@@ -5297,6 +5299,16 @@
       <param name="jndiconf" value="bridgejms/jndi.properties"/>
       <param name="a3conf" value="bridgejms/a3servers.xml"/>
       <param name="jvmargs" value="-Dasync=false"/>
+    </antcall>
+  </target>
+
+  <target name="bridge.jms.test23x" depends="init.a3props,compile"
+          description=" --> Test a loopback bridge acquisition">
+    <antcall target="test.run" inheritAll="true">
+      <param name="testid" value="bridge.jms.test23x"/>
+      <param name="className" value="joram.bridgejms.BridgeTest23x"/>
+      <param name="jndiconf" value="bridgejms/jndi.properties"/>
+      <param name="a3conf" value="bridgejms/a3servers23.xml"/>
     </antcall>
   </target>
 
