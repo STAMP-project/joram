@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -161,11 +161,10 @@ public class ReliableTcpConnection {
     if (getStatus() != CONNECT) 
       throw new IOException("Connection closed");
     try {      
-      synchronized (outputLock) {        
+      synchronized (outputLock) {
         doSend(outputCounter, inputCounter, request);
         if (!noAckedQueue) {
-          addPendingMessage(new TcpMessage(
-              outputCounter, request));
+          addPendingMessage(new TcpMessage(outputCounter, request));
         }
         outputCounter++;
       }
@@ -277,6 +276,7 @@ public class ReliableTcpConnection {
 
         if (logger.isLoggable(BasicLevel.DEBUG))
           logger.log(BasicLevel.DEBUG, " -> id = " + messageId);
+        
         if (!noAckedQueue) {
           ackPendingMessages(ackId);
           if (obj != null) {
@@ -293,9 +293,11 @@ public class ReliableTcpConnection {
             if (messageId > inputCounter) {
               inputCounter = messageId;
               return obj;
-            } else if (logger.isLoggable(BasicLevel.DEBUG))
-              logger.log(BasicLevel.DEBUG,
-                  " -> already received message: " + messageId + " " + obj);
+            } else {
+              logger.log(BasicLevel.WARN, " -> already received message: " + messageId + " " + obj);
+              // This should never happened, close the connection.
+              throw new IOException("Duplicate  message: " + messageId);
+            }
           }
         } else {
           if (obj != null) {
