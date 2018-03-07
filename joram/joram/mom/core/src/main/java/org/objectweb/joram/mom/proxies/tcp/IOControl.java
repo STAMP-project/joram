@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2004 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2018 ScalAgent Distributed Technologies
  * Copyright (C) 2004 France Telecom R&D
  *
  * This library is free software; you can redistribute it and/or
@@ -168,7 +168,8 @@ public class IOControl {
           }
           return new ProxyMessage(messageId, ackId, obj);
         }
-        logger.log(BasicLevel.DEBUG, "IOControl.receive: already received message: " + messageId + " -> " + obj);
+        // TODO (AF): May be we have either to ack anew the message, or to close the connection.
+        logger.log(BasicLevel.WARN, "IOControl.receive: already received message: " + messageId + " -> " + obj);
       }
     } catch (InterruptedException exc) {
       if (logger.isLoggable(BasicLevel.DEBUG))
