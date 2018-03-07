@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2018 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -1658,6 +1659,7 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "AdminTopic.invokeStaticMethod(" + prop + ")");
 
+    boolean async = Boolean.parseBoolean(prop.getProperty(AdminCommandConstant.INVOKE_ASYNC));
     String className = prop.getProperty(AdminCommandConstant.INVOKE_CLASS_NAME);
     if (className == null) {
       throw new IllegalArgumentException("Class name property must be specified to invoke method.");
@@ -1670,7 +1672,7 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
     int i = 0;
     String paramType;
     List paramClasses = new ArrayList();
-    List paramValues = new ArrayList();
+    final List paramValues = new ArrayList();
     while ((paramType = prop.getProperty(AdminCommandConstant.INVOKE_METHOD_ARG + i)) != null) {
       String paramValue = prop.getProperty(AdminCommandConstant.INVOKE_METHOD_ARG_VALUE + i);
       if (paramType.equals(Integer.TYPE.getName())) {
@@ -1761,12 +1763,26 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
     }
 
     Class<?> clazz = Class.forName(className);
-    Method method = clazz.getMethod(methodName,
+    final Method method = clazz.getMethod(methodName,
         (Class[]) paramClasses.toArray(new Class[paramClasses.size()]));
     if (! Modifier.isStatic(method.getModifiers()))
       throw new IllegalArgumentException("Specified method must be static: " + method);
 
-    return method.invoke(null, paramValues.toArray());
+    if (async) {
+      Thread thread = new Thread() {
+        public void run() {
+          try {
+            method.invoke(null, paramValues.toArray());
+          } catch (Exception exc) {
+            logger.log(BasicLevel.WARN, "AdminTopic.invokeStaticMethod: async invocation", exc);
+          }
+        }
+      };
+      thread.start();
+      return null;
+    } else {
+      return method.invoke(null, paramValues.toArray());
+    }
   }
 
   /** 

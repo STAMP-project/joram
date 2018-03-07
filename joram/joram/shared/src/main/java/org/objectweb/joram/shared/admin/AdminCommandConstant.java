@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 - 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,6 +72,9 @@ public class AdminCommandConstant {
 
   /** Used by AdminTopic to invoke a static method */
   public static final String INVOKE_METHOD_NAME = "jms_joram_invoke_method";
+
+  /** Used by AdminTopic to invoke a static method */
+  public static final String INVOKE_ASYNC = "jms_joram_invoke_async";
 
   /** Used by AdminTopic to invoke a static method */
   public static final String INVOKE_METHOD_ARG = "jms_joram_invoke_arg";

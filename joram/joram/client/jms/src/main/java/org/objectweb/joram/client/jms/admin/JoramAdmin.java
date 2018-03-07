@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2005 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2005 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -976,6 +976,12 @@ public class JoramAdmin implements AdminItf, JoramAdminMBean {
     return wrapper.invokeStaticServerMethod(serverId, className, methodName, parameterTypes, args);
   }
 
+  public String invokeStaticServerMethod(int serverId, String className,
+      String methodName, Class<?>[] parameterTypes, Object[] args, boolean async)
+      throws ConnectException, AdminException {
+    return wrapper.invokeStaticServerMethod(serverId, className, methodName, parameterTypes, args, async);
+  }
+
   public String addAMQPBridgeConnection(int serverId, String urls)
       throws ConnectException, AdminException {
     return wrapper.addAMQPBridgeConnection(serverId, urls);
@@ -994,5 +1000,10 @@ public class JoramAdmin implements AdminItf, JoramAdminMBean {
   public String deleteJMSPBridgeConnection(int serverId, String names)
       throws ConnectException, AdminException {
     return wrapper.deleteJMSPBridgeConnection(serverId, names);
+  }
+
+  public String deleteJMSPBridgeConnection(int serverId, String names, boolean async)
+      throws ConnectException, AdminException {
+    return wrapper.deleteJMSPBridgeConnection(serverId, names, async);
   }
 }

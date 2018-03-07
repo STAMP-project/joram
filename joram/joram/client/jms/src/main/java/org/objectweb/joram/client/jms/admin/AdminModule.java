@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2004 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2018 ScalAgent Distributed Technologies
  * Copyright (C) 2004 Bull SA
  *
  * This library is free software; you can redistribute it and/or
@@ -1570,6 +1570,30 @@ public final class AdminModule {
 
   /**
    * Invokes the specified static method with the specified parameters on the
+   * local server. The parameters types of the invoked method must be java
+   * primitive types, the java objects wrapping them or String type.
+   * The method can be invoked either asynchronously or not by the server depending
+   * of the parameter async.
+   * 
+   * @param className the name of the class holding the static method
+   * @param methodName the name of the invoked method
+   * @param parameterTypes the list of parameters
+   * @param args the arguments used for the method call
+   * @param async if true the method is invoked asynchronously by the server and the result is lost.
+   * @return the result of the invoked method after applying the toString method.
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   */
+  public static String invokeStaticServerMethod(String className,
+                                                String methodName,
+                                                Class<?>[] parameterTypes,
+                                                Object[] args,
+                                                boolean async) throws ConnectException, AdminException {
+    return invokeStaticServerMethod(getLocalServerId(), className, methodName, parameterTypes, args, async);
+  }
+
+  /**
+   * Invokes the specified static method with the specified parameters on the
    * chosen server. The parameters types of the invoked method must be java
    * primitive types, the java objects wrapping them or String type.
    * 
@@ -1590,7 +1614,36 @@ public final class AdminModule {
     if (wrapper == null)
       throw new ConnectException("Administration connection is closed.");
 
-   return wrapper.invokeStaticServerMethod(serverId, className, methodName, parameterTypes, args);
+    return wrapper.invokeStaticServerMethod(serverId, className, methodName, parameterTypes, args);
+  }
+
+  /**
+   * Invokes the specified static method with the specified parameters on the
+   * chosen server. The parameters types of the invoked method must be java
+   * primitive types, the java objects wrapping them or String type.
+   * The method can be invoked either asynchronously or not by the server depending
+   * of the parameter async.
+   * 
+   * @param serverId the identifier of the server.
+   * @param className the name of the class holding the static method
+   * @param methodName the name of the invoked method
+   * @param parameterTypes the list of parameters
+   * @param args the arguments used for the method call
+   * @param async if true the method is invoked asynchronously by the server and the result is lost.
+   * @return the result of the invoked method after applying the toString method
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   */
+  public static String invokeStaticServerMethod(int serverId,
+                                                String className,
+                                                String methodName,
+                                                Class<?>[] parameterTypes,
+                                                Object[] args,
+                                                boolean async) throws ConnectException, AdminException {
+    if (wrapper == null)
+      throw new ConnectException("Administration connection is closed.");
+
+    return wrapper.invokeStaticServerMethod(serverId, className, methodName, parameterTypes, args, async);
   }
   
   /**
@@ -1659,5 +1712,21 @@ public final class AdminModule {
   	if (wrapper == null)
       throw new ConnectException("Administration connection is closed.");
   	return wrapper.deleteJMSPBridgeConnection(serverId, names);
+  }
+  
+  /**
+   * Removes the live connection to the specified AMQP server.
+   * 
+   * @param serverId the serverId
+   * @param names the name identifying the server or list of name separate by space
+   * @param async invoke asynchronously
+   * @return the result of the method
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   */
+  public static String deleteJMSPBridgeConnection(int serverId, String names, boolean async) throws ConnectException, AdminException {
+    if (wrapper == null)
+      throw new ConnectException("Administration connection is closed.");
+    return wrapper.deleteJMSPBridgeConnection(serverId, names, async);
   }
 }

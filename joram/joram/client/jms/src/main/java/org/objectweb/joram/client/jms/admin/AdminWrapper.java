@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2009 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2009 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1160,6 +1160,7 @@ public class AdminWrapper implements AdminItf {
    * Invokes the specified static method with the specified parameters on the
    * chosen server. The parameters types of the invoked method must be java
    * primitive types, the java objects wrapping them or String type.
+   * The method is invoked synchronously by the server and the result is returned.
    * 
    * @param serverId the identifier of the server.
    * @param className the name of the class holding the static method
@@ -1172,6 +1173,29 @@ public class AdminWrapper implements AdminItf {
    */
   public String invokeStaticServerMethod(int serverId, String className, String methodName,
       Class<?>[] parameterTypes, Object[] args) throws ConnectException, AdminException {
+    return invokeStaticServerMethod(serverId, className, methodName, parameterTypes, args, false);
+  }
+  
+  
+  /**
+   * Invokes the specified static method with the specified parameters on the
+   * chosen server. The parameters types of the invoked method must be java
+   * primitive types, the java objects wrapping them or String type.
+   * The method can be invoked either asynchronously or not by the server depending
+   * of the parameter async.
+   * 
+   * @param serverId the identifier of the server.
+   * @param className the name of the class holding the static method
+   * @param methodName the name of the invoked method
+   * @param parameterTypes the list of parameters
+   * @param args the arguments used for the method call
+   * @param async if true the method is invoked asynchronously by the server and the result is lost.
+   * @return the result of the invoked method after applying the toString method
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   */
+  public String invokeStaticServerMethod(int serverId, String className, String methodName,
+      Class<?>[] parameterTypes, Object[] args, boolean async) throws ConnectException, AdminException {
 
     if (parameterTypes == null && (args != null && args.length > 0)) {
       throw new AdminException("Parameter types array is null while args array is not null or empty.");
@@ -1185,6 +1209,7 @@ public class AdminWrapper implements AdminItf {
     Properties props = new Properties();
     props.setProperty(AdminCommandConstant.INVOKE_CLASS_NAME, className);
     props.setProperty(AdminCommandConstant.INVOKE_METHOD_NAME, methodName);
+    props.setProperty(AdminCommandConstant.INVOKE_ASYNC, "" + async);
     if (parameterTypes != null) {
       for (int i = 0; i < parameterTypes.length; i++) {
         props.setProperty(AdminCommandConstant.INVOKE_METHOD_ARG + i, parameterTypes[i].getName());
@@ -1280,5 +1305,24 @@ public class AdminWrapper implements AdminItf {
   			"deleteServer",
   			new Class[] { String.class },
   			new Object[] { names });
+  }
+  
+  /**
+   * Removes the live connection to the specified JMS server.
+   * 
+   * @param serverId the serverId
+   * @param names the name identifying the server or list of name separate by space
+   * @param async invoke asynchronously
+   * @return the result of the method
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   */
+  public String deleteJMSPBridgeConnection(int serverId, String names, boolean async) throws ConnectException, AdminException {
+    return invokeStaticServerMethod(
+        serverId,
+        "org.objectweb.joram.mom.dest.jms.JMSConnectionService",
+        "deleteServer",
+        new Class[] { String.class },
+        new Object[] { names }, async);
   }
 }
