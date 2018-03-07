@@ -1790,6 +1790,18 @@
     </antcall>
   </target>
 
+  <target name="admin.test9" depends="init.a3props,compile"
+          description=" --> test admin configuration">
+    <antcall target="test.run" inheritAll="true">
+      <param name="className" value="joram.admin.AdminTest9"/>
+      <param name="testid" value="admin.test9"/>
+      <param name="jndiconf" value="admin/jndi.properties"/>
+      <param name="a3conf" value="admin/a3servers1.xml"/>
+      <param name="jvmargs" value=""/>
+      <param name="args" value=""/>
+    </antcall>
+  </target>
+
   <!-- fin test admin -->
 
   <!-- test client -->
