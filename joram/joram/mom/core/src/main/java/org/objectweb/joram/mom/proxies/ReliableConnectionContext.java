@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2006 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2006 - 2018 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -123,15 +123,17 @@ public class ReliableConnectionContext implements ConnectionContext, Serializabl
     return queueWorker;
   }
   
-  public void pushReply(AbstractJmsReply reply) {
+  public synchronized void pushReply(AbstractJmsReply reply) {
+    // Be careful, outputCounter must be handled with synchronization as pushReply can be call by
+    // different thread (Engine and AsyncWriter thread using Notification callbacks).
+    // May be it shoul be handled by the AckedQueue as the rank of the message in the queue (and
+    // in the stream).
     ProxyMessage msg = new ProxyMessage(outputCounter, inputCounter, reply);
     if (noAckedQueue) {
       add(msg);
     } else {
       queue.push(msg);
-      if (!noAckedQueue) {
-        outputCounter++;
-      }
+      outputCounter++;
     }
   }
 
