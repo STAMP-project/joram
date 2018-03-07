@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -120,9 +120,11 @@ public class TcpConnection implements TcpConnectionMBean, ProxyMessageSender {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "TcpConnection.start()");
     try {
+      // TODO (AF): Cleans this code, a part of the initialization below should be done
+      // in the constructor.
       if (ctx.isNoAckedQueue()) {
-        ioctrl.setNoAckedQueue(ctx.isNoAckedQueue());
-        //ctx.getQueueWorker().ioctrl = ioctrl;
+        ioctrl.setNoAckedQueue(ctx.isNoAckedQueue()); // Always true!!
+        // ctx.getQueueWorker().ioctrl = ioctrl;
         // ctx.getQueueWorker().tcpConnection= this;
         ctx.getQueueWorker().sender = this;
       } else {
