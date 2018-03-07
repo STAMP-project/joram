@@ -67,7 +67,7 @@ public class BridgeTest8x extends TestCase {
       System.out.println("servers start");
       startAgentServer((short)0, new String[]{"-DTransaction.UseLockFile=false"});
       startAgentServer((short)1, new String[]{"-DTransaction.UseLockFile=false"});
-      Thread.sleep(1000);
+      Thread.sleep(5000);
 
       {
         // Administration code
