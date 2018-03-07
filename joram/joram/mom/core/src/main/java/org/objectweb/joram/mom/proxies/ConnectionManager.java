@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2004 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2018 ScalAgent Distributed Technologies
  * Copyright (C) 2004 France-Telecom R&D
  *
  * This library is free software; you can redistribute it and/or
@@ -182,8 +182,7 @@ public class ConnectionManager implements ConnectionManagerMBean {
           ctx.pushReply(new MomExceptionReply(req.getRequestId(), exc));
         } else if (error instanceof UnknownAgentException) {
           UnknownAgentException uae = (UnknownAgentException) error;
-          DestinationException exc = new DestinationException("Destination "
-              + uae.getUnknownAgentId() + " does not exist.");
+          DestinationException exc = new DestinationException("Destination " + uae.getUnknownAgentId() + " does not exist.");
           ctx.pushReply(new MomExceptionReply(req.getRequestId(), exc));
         } else {
           if (logger.isLoggable(BasicLevel.WARN))
@@ -192,6 +191,8 @@ public class ConnectionManager implements ConnectionManagerMBean {
       }
       
       public void done() {
+        // Be careful, this code could be executed in another thread that the engine so
+        // the pushReply method must be synchronized.
         ctx.pushReply(new ServerReply(req.getRequestId()));
       }
     });
