@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2018 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -1313,6 +1313,8 @@ public abstract class Destination extends Agent implements DestinationMBean {
     }
   }
   
+  // Encodable interface
+
   public int getEncodedSize() throws Exception {
     int encodedSize = super.getEncodedSize();
     encodedSize += BOOLEAN_ENCODED_SIZE;
@@ -1328,7 +1330,7 @@ public abstract class Destination extends Agent implements DestinationMBean {
     if (dmqId != null) {
       encodedSize += dmqId.getEncodedSize();
     }
-    encodedSize += LONG_ENCODED_SIZE * 5;
+    encodedSize += LONG_ENCODED_SIZE * 4;
     
     encodedSize += BOOLEAN_ENCODED_SIZE;
     if (interceptorsProp != null) {
