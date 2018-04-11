@@ -11,6 +11,18 @@
   </properties>
 
 	<body>
+	  <s1 name="April 13 2018: JORAM 5.15.0 release is available.">
+        <p>Joram 5.15.0 is available in the SVN repository with tag JORAM_5_15_0.</p>
+        <s2 name="New features and improvements">
+        <ul>
+          <li>Bug fixes and improvements: JORAM-281, JORAM-282, JORAM-271, JORAM-284, JORAM-285,
+        JORAM-286, JORAM-287, JORAM-288.</li>
+        </ul>
+        </s2>
+        <p>The complete list of changes can be viewed in
+        <a href="http://websvn.ow2.org/log.php?repname=joram&amp;path=%2Ftrunk%2Fjoram%2F&amp;isdir=1&amp;">SVN history</a>.</p>
+      </s1>
+
 	  <s1 name="October 5 2017: JORAM 5.14.0 release is available.">
         <p>Joram 5.14.0 is available in the SVN repository with tag JORAM_5_14_0.</p>
         <s2 name="New features and improvements">
