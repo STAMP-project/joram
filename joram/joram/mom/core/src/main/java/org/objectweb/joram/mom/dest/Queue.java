@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2018 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -1933,13 +1933,15 @@ public class Queue extends Destination implements QueueMBean {
 		return stats;
 	}
 	
+	// Encodable interface
+	
 	public int getEncodableClassId() {
     return JoramHelper.QUEUE_CLASS_ID;
   }
   
   public int getEncodedSize() throws Exception {
     int encodedSize = super.getEncodedSize();
-    encodedSize += INT_ENCODED_SIZE * 4;
+    encodedSize += INT_ENCODED_SIZE * 5;
     encodedSize += LONG_ENCODED_SIZE;
     for (ReceiveRequest request : requests) {
       encodedSize += request.getEncodedSize();
