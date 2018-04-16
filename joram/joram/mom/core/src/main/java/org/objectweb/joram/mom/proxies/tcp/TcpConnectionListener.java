@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2004 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2018 ScalAgent Distributed Technologies
  * Copyright (C) 2004 France Telecom R&D
  *
  * This library is free software; you can redistribute it and/or
@@ -128,7 +128,9 @@ public class TcpConnectionListener extends Daemon {
       canStop = true;
       try {
         acceptConnection();
-      } catch (Exception exc) {}
+      } catch (Exception exc) {
+        logger.log(BasicLevel.INFO, "TcpConnectionListener.run()", exc);
+      }
     }
   }
 
