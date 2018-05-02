@@ -1,0 +1,334 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta content="en" http-equiv="Content-Language">
+<title>JORAM - Getting started</title>
+<meta name="Robots" content="noindex, follow">
+<meta content="JORAM team" name="author">
+<meta content="joram-team@ow2.org" name="email">
+<link type="text/css" href="../common.css" rel="stylesheet" id="stylesheet">
+<link type="image/x-icon" href="../images/favicon.ico" rel="icon">
+<link type="image/x-icon" href="../images/favicon.ico" rel="shortcut icon">
+</head>
+<body bgcolor="white">
+<table cellpadding="0" cellspacing="0" width="100%" border="0">
+<tr>
+<td colspan="2"><img alt=" " height="15" width="1" src="../images/pix.gif"></td>
+</tr>
+<tr>
+<td align="center" colspan="2"><span style="font-size: 22px; font-weight: bold;">JORAM - Getting started</span></td>
+</tr>
+<tr>
+<td valign="top" width="15"><img alt=" " height="1" width="15" src="../images/pix.gif"></td><td class="contenu" valign="top">
+<h1>Getting Started with Joram</h1>
+
+    
+<p>The minimum to get and launch a Joram server from scratch.</p>
+    
+	    
+<h2>Pre-Installation Requirements</h2>
+	    
+        
+<h3>Hardware:</h3>
+        
+<ul>
+          
+<li>22Mb of free disk space for the binary distribution (17 Mb of documentation).</li>
+          
+<li>18Mb of free disk space for the source distribution (30 Mb to build the distribution).</li>
+        
+</ul>
+
+        
+<h3>Operating Systems:</h3>
+        
+<p>Joram will run on any platform that supports Java 2 runtime environment, in particular:</p>
+        
+<ul>
+          
+<li>Windows 7, Windows XP SP3, Windows 2000.</li>
+          
+<li>Ubuntu Linux, CentOS Linux, Debian Linux.</li>
+        
+</ul>
+      
+
+	    
+<h2>Installation of a binary distribution</h2>
+        
+<p>Installing Joram is simple:</p>
+        
+<ul>
+          
+<li>Obtain the latest Joram release from <a href="../download/index.html">Download</a> page:
+          joram-release-5.x.y.zip.</li>
+          
+<li>Expand the files into a directory:
+            <ul>
+              
+<li>using unzip for unix users:<br>
+              
+<code>unzip joram-release-5.x.y.zip</code>,</li>
+              
+<li>using <a href="http://www.7-zip.org">7-Zip</a> utility for Windows users.</li>
+            
+</ul>
+          
+</li>
+        
+</ul>
+        
+<p>Joram is now ready to work.</p>
+      
+
+	    
+<h2>Running a server using the scripts</h2>
+        
+<p>You can launch a Joram server using the commands provided with Joram::</p>
+        
+<ul>
+          
+<li>Fix environment variables:
+            <ul>
+              
+<li>Set JAVA_HOME to the directory where JDK is installed.</li>
+              
+<li>Set JORAM_HOME to the directory that you installed Joram.</li>
+            
+</ul>
+          
+</li>
+          
+<li>Change directory to JORAM_HOME.</li>
+          
+<li>Change directory to the samples/bin directory.</li>
+          
+<li>Execute either the single_server.sh (linux) or single_server.bat (windows).</li>
+        
+</ul>
+        
+<p>Congratulations, you are running the default configuration!</p>
+      
+
+	    
+<h2>Stopping the Joram server</h2>
+        
+<p>Simply hit ^C, Joram is based on top of an atomic engine so you can violently stop it without damage.</p>
+        
+<p>You can also stop it using a JMX console or the administration API.</p>
+      
+
+    
+<h1>Running a sample using ant</h1>
+      
+<p>Once you have downloaded and installed Joram (see above), you can try to run one of the multiples
+      examples provided in the distribution. The sources of these examples are located under the
+      <code>samples/src/joram</code> directory.</p>
+      
+<p>You need <a href="http://ant.apache.org/">Ant 1.6.5</a> or greater in order to run this tutorial.</p>
+        
+	    
+<h2>Building the samples</h2>
+        
+<p>go to the samples/src/joram directory. First compile all the samples, simply typing:</p>
+        
+<ul>
+          
+<li>
+<code>ant clean compile</code>
+</li>
+          
+<li>It creates a samples/classes/joram directory holding the compiled classes.</li>
+          
+<li>For removing it, type <code>ant clean</code>.</li>
+        
+</ul>
+      
+
+	    
+<h2>Running the classic sample</h2>
+	      
+<p>For example to launch the classic example (see also <a href="tutorials/classic/classic.htm">tutorial</a>).</p>
+        
+<ul>
+          
+<li>Launch the Joram server:
+            <ul>
+              
+<li>
+<code>ant reset single_server</code>
+</li>
+              
+<li>The server is launched in the samples/run created directory.<br>
+              The <code>reset</code> ant target can be used to remove all out-of-date data.</li>
+              
+<li>Be careful, this command doesn't return while the server is running.</li>
+            
+</ul>
+          
+</li>
+          
+<li>Run the administration code, creating ConnectionFactory, Topic and Queue objects:
+            <ul>
+              
+<li>
+<code>ant classic_admin</code>
+</li>
+              
+<li>Each administered objects is bind in JNDI, and you may use a JMX console to
+              observe the configuration.</li>
+            
+</ul>
+          
+</li>
+          
+<li>Then run the messages producers and consumers. There is several scenarios depending
+          of the messaging domain used; using the point-to-point messaging:
+            <ul>
+              
+<li>
+<code>ant sender</code>: sends 10 messages to the defined queue,</li>
+              
+<li>
+<code>ant browser</code>: allows to look messages on queue, then</li>
+              
+<li>
+<code>ant receiver</code>: consumes 10 messages from the queue.</li>
+            
+</ul>
+          
+</li>
+          
+<li>Now you can stop the Joram server, typing a ^C in the corresponding window.</li>
+        
+</ul>
+      
+
+	    
+<h2>Other samples</h2>
+	    
+        
+<h3>Simple demonstrations</h3>
+	      
+<p>There is many examples in the <code>sample</code> directory:</p>
+	      
+<ul>
+	        
+<li>the chat sample provides a simple implementation of a chat,</li>
+	        
+<li>the distributed sample demonstrates the use of multiples servers,</li>
+	        
+<li>And the dotcom demonstration simulates what could be a commercial
+	        transaction involving many participants.</li>
+	      
+</ul>
+
+        
+<h3>Specialized destinations</h3>
+	      
+<p>Other samples demonstrates the use of particular functionalities of Joram:</p>
+	      
+<ul>
+	        
+<li>Dead message queues,</li>
+	        
+<li>Hierarchical topics,</li>
+	        
+<li>clustered queues and topics (see <a href="tutorials/clusterq/clusterQ.htm">tutorial</a>),</li>
+	        
+<li>FtpQueue and mail destinations,</li>
+	        
+<li>Scheduler queues,</li>
+	        
+<li>Monitoring topics and topics (see <a href="tutorials/monitoring/monitoring.htm">tutorial</a>),</li>
+	        
+<li>Collector queues and topics,</li>
+	        
+<li>JMS Bridge destinations (see <a href="tutorials/bridge/bridge.htm">tutorial</a>).</li>
+	      
+</ul>
+      	      
+	      
+<h3>Enhanced behavior</h3>
+	      
+<p>Last samples demonstrates particular functionalities of Joram:</p>
+	      
+<ul>
+	        
+<li>JCA Connector,</li>
+	        
+<li>JAAS enhancements,</li>
+	        
+<li>High-Availability,</li>
+	        
+<li>Soap connectivity, etc.</li>
+	      
+</ul>
+
+        
+<p>For more informations about these samples, see the Joram <a href="../doc/index.html">Documentation</a>.</p>
+      
+
+    
+<h1>Building Joram from of a source distribution</h1>
+      
+<p>Building Joram is simple:</p>
+      
+<ul>
+        
+<li>Obtain the latest Joram source distribution from <a href="../download/index.html">Download</a> page:
+        joram-release-5.x.y-src.zip.</li>
+        
+<li>Expand the files into a directory:
+          <ul>
+            
+<li>using unzip for unix users:<br>
+            
+<code>unzip joram-release-5.x.y-src.zip</code>,</li>
+            
+<li>using <a href="http://www.7-zip.org">7-Zip</a> utility for Windows users.</li>
+          
+</ul>
+        
+</li>
+        
+<li>Change to <code>joram-5.x.y</code> created directory.</li>
+        
+<li>Launch maven through <code>mvn install</code> command.</li>
+      
+</ul>
+      
+<p>Joram is now ready to work.</p>
+    
+<h1>Checking out from SVN and building</h1>
+      
+<p>Make sure you have SVN (subversion) installed; if not download it from the
+      <a href="http://subversion.tigris.org/">subversion</a> site:</p>
+<ul>
+        
+<li>
+<code>svn checkout svn://svn.forge.objectweb.org/svnroot/joram/trunk/joram</code>
+</li>
+        
+<li>Change to <code>joram</code> created directory.</li>
+        
+<li>Launch maven through <code>mvn install</code> command.</li>
+      
+</ul>
+      
+<p>Joram is now ready to work.</p>
+      
+<p>Additionnals informations about svn are available
+      <a href="http://forge.ow2.org/plugins/scmsvn/index.php?group_id=4">here</a>.</p>
+    
+</td>
+</tr>
+<tr>
+<td valign="top" width="15"><img alt=" " height="1" width="15" src="../images/pix.gif"></td><td valign="top"><img alt=" " height="1" width="465" src="../images/pix.gif"><address>Copyright &copy; 1999-2018, <a href="http://www.ow2.org/">OW2 Consortium</a> | <a href="http://joram.ow2.io/contacts.html">Contact</a> | <a href="https://www.ow2.org/view/About/Contacts">Webmaster</a> | Last modified at 2018-05-02 09:13 AM</address>
+</td>
+</tr>
+</table>
+</body>
+</html>

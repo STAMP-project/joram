@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta content="en" http-equiv="Content-Language">
+<title>JORAM - JORAM road map</title>
+<meta name="Robots" content="noindex, follow">
+<meta content="JORAM team" name="author">
+<meta content="joram-team@ow2.org" name="email">
+<link type="text/css" href="../common.css" rel="stylesheet" id="stylesheet">
+<link type="image/x-icon" href="../images/favicon.ico" rel="icon">
+<link type="image/x-icon" href="../images/favicon.ico" rel="shortcut icon">
+</head>
+<body bgcolor="white">
+<table cellpadding="0" cellspacing="0" width="100%" border="0">
+<tr>
+<td colspan="2"><img alt=" " height="15" width="1" src="../images/pix.gif"></td>
+</tr>
+<tr>
+<td align="center" colspan="2"><span style="font-size: 22px; font-weight: bold;">JORAM - JORAM road map</span></td>
+</tr>
+<tr>
+<td valign="top" width="15"><img alt=" " height="1" width="15" src="../images/pix.gif"></td><td class="contenu" valign="top">
+<h1>Road Map</h1>
+    
+<p>These is an informal plan for the next Joram releases.</p>
+	
+	  
+<p>This is not a fixed set of features, they are all subject to change based on
+	  user needs or ideas. If you have ideas, share them, any input or personal view for
+	  improving and/or developing JORAM is welcome.</p>
+	
+	  
+<p>
+<a href="mailto:joram-team@ow2.org">Contact us</a>
+</p>
+  
+<h1>Recently done</h1>
+  	
+<h2>Bridge destinations using JMS Rest API</h2>
+		
+<p>The last Joram release includes acquisition and distribution destinations based on the
+		generic JMS Rest API. It allows to bridge JMS servers over a simple Rest/HTTP interface.
+		</p>
+	
+  	
+<h2>JMS 2.0 generic Rest API</h2>
+		
+<p>The Joram JMS 2.0 generic Rest API allows you to leverage the features of Joram/JMS over a simple
+		Rest/HTTP interface. Messages are produced and consumed through simple HTTP messages, this allows any
+		web capable device to publish or consume messages using a regular HTTP Post or Get request.
+		</p>
+	
+  	
+<h2>Joram administration Rest API</h2>
+		
+<p>The Joram Administration Rest API allows you to use several administration features of Joram over a simple
+		Rest/HTTP interface. For example this allows any web capable device to create User or Destination using a regular
+		HTTP Post or Get request.
+		</p>
+  	
+  	
+<h2>JMX monitoring Rest API</h2>
+		
+<p>The Joram generic JMX Rest API allows you to expose the JMX Mbeans of the Joram server over a simple Rest/HTTP
+		interface. For example this allows any web capable device to get and show Mbean's attributes using a regular HTTP
+		request.
+		</p>
+  	
+  
+<h1>Work in progress</h1>
+
+		
+<h2>OSGi support and administration tool</h2>
+    
+<p>Joram is now designed with an OSGi<sup>TM</sup> based services architecture, this new architecture
+    will allow to provide numerous new administration features:</p>
+    
+<ul>
+      
+<li>Web 2.0 administration console,</li>
+      
+<li>Command Line Interface, etc.</li>
+    
+</ul>
+    
+<p>A Joram's architecture designer is already available as Eclipse plugin, currently it allows architecture
+    design and production of configuration files. In near future, it will allow to configure, deploy, monitor and
+    control large Joram's configuration.</p>
+    
+    
+		
+<h2>A Web 2.0 administration console for Joram.</h2>
+    
+<p>The goal of this project is to implement a graphical user interface to manage the Joram provider
+    and access Joram administration and monitoring from Web browsers. This Web console would be implemented
+    with recent Web 2.0 technologies like Google Web Toolkit (GWT).</p>
+    
+<p>First release of this Web console is expected for end of second quarter of year 2010.</p>
+    
+    
+    
+<h2>AMQP</h2>
+    
+<p>Thank's to third party users, the Joram team should announce soon the support of AMQP in Joram.
+    The Advanced Message Queuing Protocol (AMQP) is an open standard application layer protocol for messaging
+		middleware, an AMQP messaging infrastructure will be open, platform agnostic and interoperable. Defining
+		an AMQP entry point for the Joram server will allow the use of the MOM through multiples clients, languages
+		and platform.</p>
+		
+<p>An implementation of AMQP v0.9.1 is already available, a work will be planned when AMQP 1.0 will be
+		announced.</p>
+    
+
+  
+<h1>Extensions planned</h1>
+  
+		
+<h2>A Shell bundle dedicated to Joram administration.</h2>
+    
+<p>Since release 5.3 Joram is now designed with an OSGi based services architecture to provide a
+    dynamically adaptable messaging server.</p>
+		
+<p>The OSGi Alliance has defined a specification for "Command line interface" (known as RFC 147)
+		allowing creation of extensible shell service.</p>
+		
+<p>The goal of this project is to provide a dedicated Command Line Interface (CLI) for Joram provider.
+		This CLI will define command for Joram administration and monitoring tasks, it should provide multiple
+		user interfaces: textual, graphical, etc.</p>
+    
+
+		
+<h2>Joram access with the SAM framework.</h2>
+		
+<p>The main objective of the SAM extension is to open up the messaging infrastructure to the
+		PHP scripting environment by providing an API that allows the most common and simple messaging
+		operations to be accomplished with a minimal investment.</p>
+		
+<p>We aim to offer a JORAM connection factory for SAM allowing a simple and convenient use of
+		JORAM with PHP scripts. </p>
+    
+
+  
+<h1>In project..</h1>
+    
+		
+<h2>An Hyperic MQ plugin for Joram.</h2>
+    
+<p>Hyperic HQ is a popular open source monitoring software designed to manage web applications and
+		infrastructure. Hyperic defines a plugin framework as the basis for providing resource-specific
+		functionality (monitoring and control features for each managed resource type are provided by a
+		plugin).</p>
+		
+<p>Hyperic is shipped with over 70 resource plugins, we aim to define a Joram plugin allowing the
+		discovery of Joram's servers, monitoring and alert, as well as diagnostic.</p>
+    
+  
+		
+<h2>Deploying JMS components on Google Android.</h2>
+    
+<p>Android is a software stack for mobile devices, the Android SDK provides the tools and APIs necessary to
+		develop Java applications that run on Android-powered devices. Joram defines a specific client library allowing
+		J2ME applications to access the JORAM platform in a JMS 1.1 "way". The goal of this project is to define an
+		Android component allowing the use of Joram/JMS API on Android-powered devices.</p>
+    
+    
+    
+<h2>Security model</h2>
+    
+<p>This project aims to define a new security model for Joram with authentication based on JAAS LoginModule
+    and User/Role access control rights.</p>
+    
+    
+  
+<h1>Call for contributions</h1>
+
+		
+<p>If you have interest for any subject around Joram, you are welcome in the team.</p>
+		
+    
+<h2>Tutorials and documentation</h2>
+    
+<p>If you wish to contribute a translation, feel free to contact us.</p>
+    
+
+  
+</td>
+</tr>
+<tr>
+<td valign="top" width="15"><img alt=" " height="1" width="15" src="../images/pix.gif"></td><td valign="top"><img alt=" " height="1" width="465" src="../images/pix.gif"><address>Copyright &copy; 1999-2018, <a href="http://www.ow2.org/">OW2 Consortium</a> | <a href="http://joram.ow2.io/contacts.html">Contact</a> | <a href="https://www.ow2.org/view/About/Contacts">Webmaster</a> | Last modified at 2018-05-02 09:13 AM</address>
+</td>
+</tr>
+</table>
+</body>
+</html>

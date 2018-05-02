@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta content="en" http-equiv="Content-Language">
+<title>JORAM - Specification</title>
+<meta name="Robots" content="noindex, follow">
+<meta content="JORAM team" name="author">
+<meta content="joram-team@ow2.org" name="email">
+<link type="text/css" href="./common.css" rel="stylesheet" id="stylesheet">
+<link type="image/x-icon" href="./images/favicon.ico" rel="icon">
+<link type="image/x-icon" href="./images/favicon.ico" rel="shortcut icon">
+</head>
+<body bgcolor="white">
+<table cellpadding="0" cellspacing="0" width="100%" border="0">
+<tr>
+<td colspan="2"><img alt=" " height="15" width="1" src="./images/pix.gif"></td>
+</tr>
+<tr>
+<td align="center" colspan="2"><span style="font-size: 22px; font-weight: bold;">JORAM - Specification</span></td>
+</tr>
+<tr>
+<td valign="top" width="15"><img alt=" " height="1" width="15" src="./images/pix.gif"></td><td class="contenu" valign="top">
+<h1>JORAM: Java (TM) Open Reliable Asynchronous Messaging</h1>
+
+    
+<table border="0" cellpadding="5" cellspacing="0" summary="">
+<tr>
+<td rowspan="2" colspan="1" valign="top" align="left">
+	      <img src="images/joram.png" alt="JORAM Logo" height="140" width="300" border="0" hspace="2" align="middle">
+      </td><td rowspan="1" colspan="1" valign="top" align="center"></td><td rowspan="1" colspan="1" valign="top" align="right"><script type="text/javascript" src="http://www.ohloh.net/p/4238/widgets/project_thin_badge.js"></script></td>
+</tr>
+<tr>
+<td rowspan="1" colspan="1" valign="top" align="center"></td><td rowspan="1" colspan="1" valign="top" align="left">
+	    	
+<p>
+<strong>JORAM</strong> is an open source Java implementation of JMS (Java Message Service) API specification.</p>
+	    	
+<p>JORAM is a mature project started in 1999, it is released under the LGPL license since May 2000.<br>It provides
+	    	a production ready distributed MOM already used within many critical operational applications.</p>
+	    
+</td>
+</tr>
+</table>
+
+      
+<h2>Presentation</h2>
+      
+      
+<p>
+<strong>JORAM</strong> incorporates a 100% pure Java implementation of <strong>JMS</strong>
+      (Java Message Service API released by Sun Microsystem, Inc.). It provides access to a MOM
+      (Message Oriented Middleware), built on top of the <a href="http://www.scalagent.com/">ScalAgent D.T.</a>
+      agents based distributed platform.</p>
+      
+<p> JORAM is an <strong>open source</strong> software released under the <strong>LGPL</strong> license.</p>
+      
+      
+
+      
+<h2>Specification</h2>
+
+        
+<p>JORAM provides full support to <strong>JMS 1.1</strong> and <strong>JMS 2.0</strong>:</p>
+        
+<ul>
+          
+<li>Unified interfaces for the Point-to-Point (PTP) and
+            Publish/Subscribe (Pub/Sub) messaging models</li>
+          
+<li>
+<strong>AND</strong> still the semantically specific PTP and
+            Pub/Sub interfaces</li>
+          
+<li>Full backward compatibility with JMS 1.0.2b compliant
+            applications</li>
+          
+<li>Local, TCP, SSL and SOAP (HTTP/XML) client-server communication protocols</li>
+          
+<li>Message persistence and guarantee of delivery</li>
+          
+<li>Hierarchical topics</li>
+          
+<li>Message selection</li>
+          
+<li>Message prioritization</li>
+          
+<li>A JCA Resource Adapter</li>
+        
+</ul>
+        
+        
+<p>JORAM also includes the following extra-features:</p>
+        
+<ul>
+          
+<li>A persistent, reliable and distributed JNDI server</li>
+          
+<li>A configurable dead message queue</li>
+          
+<li>Load balancing through clustered topics and queues</li>
+          
+<li>Monitoring methods</li>
+          
+<li>A bridge feature allowing to link JORAM to any JMS compliant messaging platform</li>
+          
+<li>kJoram: a client libraries allowing J2ME applications to access the JORAM platform in a JMS 1.1 "way"</li>
+          
+<li>Xoram: a client libraries allowing C or C++ applications to access the JORAM platform in a JMS 1.1 "way"</li>
+          
+<li>An implementation of the current specification of AMQP</li>
+          
+<li>High Availability provides the active replication of Joram servers and underlying agent servers,
+          as well as replicated JORAM clients. It transparently handles network handover and server failover.
+          This version currently relies on the use of  JGroups.</li>
+          
+<li>Dynamic Configuration provides facilities to remotely add and remove Joram servers dynamically
+          through the Administration API of JORAM. This great feature, combined with updated JMX implementation,
+          initiates a new set of  management facilities in JORAM.</li>
+        
+</ul>
+        
+        
+<p>JORAM now includes Rest API:</p>
+        
+<ul>
+          
+<li>A generic JMS 2.0 Rest API plugin.</li>
+          
+<li>An administration Rest API plugin.</li>
+          
+<li>A generic JMX monitoring Rest API plugin.</li>
+        
+</ul>
+        
+        
+<p>For a complete list please refer to <a href="features.html">the features description</a> or
+        documentation.</p>
+        
+      
+
+      
+<h2>Getting Involved</h2>
+	
+      
+<p>Any input or personal view for improving and/or developing JORAM is welcome. JORAM, as an
+      <strong>open source</strong> project, also welcomes <strong>external contributions</strong>.
+      Interested? Contact <a href="mailto:joram-team@ow2.org">us</a> or check the
+      <a href="dev/corner.html">developer's corner</a>.</p>
+
+      
+      
+<h2>Statistics by Ohloh</h2>
+        
+<table border="0" cellpadding="5" cellspacing="0" summary="">
+<tr>
+<td rowspan="1" colspan="1" valign="top" align="left"><script type="text/javascript" src="http://www.ohloh.net/p/4238/widgets/project_basic_stats.js"></script></td><td rowspan="1" colspan="1" valign="top" align="left"></td><td rowspan="1" colspan="1" valign="top" align="left"><script type="text/javascript" src="http://www.ohloh.net/p/4238/widgets/project_languages.js"></script></td>
+</tr>
+</table>
+      
+        
+    
+</td>
+</tr>
+<tr>
+<td valign="top" width="15"><img alt=" " height="1" width="15" src="./images/pix.gif"></td><td valign="top"><img alt=" " height="1" width="465" src="./images/pix.gif"><address>Copyright &copy; 1999-2018, <a href="http://www.ow2.org/">OW2 Consortium</a> | <a href="http://joram.ow2.io/contacts.html">Contact</a> | <a href="https://www.ow2.org/view/About/Contacts">Webmaster</a> | Last modified at 2018-05-02 09:13 AM</address>
+</td>
+</tr>
+</table>
+</body>
+</html>

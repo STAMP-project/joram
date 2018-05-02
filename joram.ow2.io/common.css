@@ -1,0 +1,554 @@
+/* 	bleu fonc� #433C7B
+	bleu moyen #9999CC
+	bleu clair #E8EAF0
+	
+	orange fonc� #E06712
+	orange clair #F3C3A1 */
+
+
+/* Styles d'interface */
+/*Liens de la barre de navigation*/
+
+
+.bodysearch
+{
+        background-color: #FFFFFF;
+        color: #000000;
+        background-image: 
+	url(http://www.objectweb.org/media/interface/bodysearch.gif);
+        background-repeat: no-repeat;
+        margin: 0;
+}
+body
+{
+	background-color: #FFFFFF;
+	margin: 0;
+}
+
+.barre
+{
+        background-color: transparent;
+        color: #FFFFFF;
+        font-family: Verdana, Arial, sans-serif;
+        font-size: 13px;
+        line-height: 20px;
+        font-weight: bold;
+        text-decoration: none;
+        padding: 2px;
+}
+
+.barre:hover
+{
+	color: #FFFFFF;
+	background-color: #0099CC;
+        font-family: Verdana, Arial, sans-serif;
+        font-size: 13px;
+        line-height: 20px;
+        font-weight: bold;
+        text-decoration: none;
+}
+
+.barreinactif
+{
+        background-color: #E06712;
+        color: #FFFFFF;
+        font-family: Verdana, Arial, sans-serif;
+        font-size: 13px;
+        line-height: 20px;
+        font-weight: bold;
+        text-decoration: none;
+        padding: 2px;
+}
+
+.barreinactif:visited
+{
+        background-color: #E06712;
+        color: #FFFFFF;
+        font-family: Verdana, Arial, sans-serif;
+        font-size: 13px;
+        line-height: 20px;
+        font-weight: bold;
+        text-decoration: none;
+        padding: 2px;
+}
+
+.barreinactif:hover
+{
+        background-color: #E06712;
+        color: #AAAAAA;
+        font-family: Verdana, Arial, sans-serif;
+        font-size: 13px;
+        line-height: 20px;
+        font-weight: bold;
+        text-decoration: none;
+        padding: 2px;
+}
+
+/*Liens des menus*/
+.OW2menutitre
+{
+	color: #FF6600;
+	background-color: transparent;	
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: bold;
+	text-decoration: none;
+	border-bottom: 1px solid #0099CC;
+	width: 100%;
+}
+
+.OW2menu
+{
+	color: #0099CC;
+	background-color: transparent;	
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 10px;
+	line-height: 15px;
+	font-weight: normal;
+	text-decoration: none;
+	padding: 1px;
+	border: 1px dashed #0099CC;
+	width: 90%;
+}
+
+.menu:hover
+{
+	color: #FF6600;
+	text-decoration: none;
+}
+
+.menuinactif
+{
+	color: #FFFFFF;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 10px;
+	line-height: 15px;
+	font-weight: normal;
+	text-decoration: none;
+	padding: 1px;
+	background-color: #E06712;
+}
+
+.menuinactif:active
+{
+	background-color: #E06611;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+.menuinactif:visited
+{
+	color: #FFFFFF;
+	text-decoration: none;
+	background-color: #433C7B;
+	padding: 1px;
+}
+
+.menuinactif:hover
+{
+	color: #FFFFFF;
+	background-color: #433C7B;
+	text-decoration: none;
+}
+
+/*Classes de formatage des gloses*/
+.glose
+{
+	color: #000000;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 9px;
+	line-height: 13px;
+	font-weight: normal;
+	margin: 0px 20px 3px 0px;
+	padding: 0px 0px 0px 3px;
+	list-style-type: disc;
+	list-style-position: inside;
+}
+.lienglose
+{
+	color: #433C7B;
+	text-decoration:none;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	list-style-type: disc;
+	list-style-position: inside;
+}
+
+.lienglose:visited
+{
+	color: #9898CB;
+	text-decoration: none;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	list-style-type: disc;
+	list-style-position: inside;
+}
+
+.lienglose:hover
+{
+	color: #E06611;
+	text-decoration: underline;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	list-style-type: disc;
+	list-style-position: inside;
+}
+
+.lienglose:active
+{
+	color: #FFFFFF;
+	background-color: #E06611;
+	text-decoration: none;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	list-style-type: disc;
+	list-style-position: inside;
+}
+
+/*Classes de formatage documentaire */
+/*et redefinitions d'elements html*/
+
+
+select, input { font-size: 10px; }
+
+form
+{
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 3px 0px;
+}
+
+.contenu { padding: 0px 30px 0px 0px; }
+
+
+h1
+{
+	color: #FF6600;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 2em;
+	line-height: 1.1em;
+	font-weight: bold;
+	border-bottom: 1px solid #0099CC;
+	margin-top: 5px;
+}
+
+h2
+{
+	color: #0099CC;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 1.6em;
+	line-height: 1.4em;
+	font-weight: normal;
+	border-bottom: 1px solid #0099CC;
+	margin: 20px 0px 15px;
+
+}
+
+h3
+{
+	color: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 1.2em;
+	line-height: 1.7em;
+	font-weight: normal;
+	border-bottom: 1px solid #000000;
+	margin: 20px 0px 15px;
+
+}
+h4
+{
+	color: #99C;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	line-height: 24px;
+	font-weight: normal;
+	border-color: #E8EAF0;
+	border-width: 0 0 2px 0;
+	border-style: none none solid none;
+	margin: 10px 0px 5px 0px;
+
+}
+h5
+{
+	color: #E06611;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	line-height: 24px;
+	font-weight: normal;
+	border-color: #E8EAF0;
+	border-width: 0 0 2px 0;
+	border-style: none none solid none;
+	margin: 10px 0px 5px 0px;
+
+}
+h6
+{
+	color: #99C;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	line-height: 22px;
+	font-weight: normal;
+	border-color: #E8EAF0;
+	border-width: 0 0 2px 0;
+	border-style: none none solid none;
+	margin: 10px 0px 5px 0px;
+
+}
+
+td
+{
+	color: black;
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+p
+{
+	color: black;
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: normal;
+	margin: 10px 10px 5px 0px;
+}
+
+p.error
+{
+	color: red;
+}
+
+/*a
+{
+	color: #3F3975;
+	background-color: transparent;
+	text-decoration: underline;
+}
+
+a:visited
+{
+	color: #9898CB;
+	background-color: transparent;
+	text-decoration: underline;
+}
+
+a:hover
+{
+	color: #E06611;
+	background-color: transparent;
+	text-decoration: underline;
+}
+
+a:active
+{
+	color: black;
+	background-color: transparent;
+	text-decoration: underline;
+}*/
+
+blockquote
+{
+	color: black;
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 11px;
+	line-height: 15px;
+	font-weight: normal;
+	margin: 20px 0px 5px 0px;
+}
+
+.resume
+{
+	color: black;
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 14px;
+	line-height: 17px;
+	font-weight: bold;
+	margin: 10px 10px 5px 0px;
+}
+
+.note
+{
+	color: black;
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 11px;
+	line-height: 15px;
+	font-weight: normal;
+	background-color: #E8EAF0;
+	border-color: #99C;
+	border-width: 1px;
+	border-style: solid;
+	padding: 5px;
+
+}
+ul, ol, dl
+{
+	color: black;
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: normal;
+}
+dt
+{
+	color: black;
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 12px;
+	line-height: 16px;
+	font-weight: bold;
+}
+dd
+{
+	color: black;
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: normal;
+	margin: 0px 0px 0px 20px
+}
+address
+{
+	color: black;
+	font-family: Arial, Helvetica, sans-serif;
+	font-style: normal;
+	font-size: 10px;
+	line-height: 16px;
+	border-width: 4px 0 0 0;
+	border-style: solid none none none;
+	border-color: #FF6600;
+	margin: 30px 0px 20px 0px;
+	padding: 10px 0px 0px 0px;
+	
+}
+code, pre
+{
+	color: #433C7B;
+}
+
+
+/* Tableaux */
+
+.tableau
+{
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 10px;
+	line-height: 15px;
+	font-weight: normal;
+	background-color: #E8EAF0;
+	border-color: #99C;
+	border-width: 1px;
+	border-style: solid;
+	padding: 5px;
+}
+th
+{
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 14px;
+	line-height: 15px;
+	color: #433C7B;
+	font-weight: bold;
+	background-color: #E8EAF0;
+	padding: 2px;
+}
+.tableautitres
+{
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 13px;
+	line-height: 15px;
+	color: #FFFFFF;
+	font-weight: bold;
+	background-color: #433C7B;
+	padding: 2px;
+}
+.normal
+{
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 10px;
+	line-height: 15px;
+	color: black;
+	font-weight: normal;
+	background-color: white;
+	padding: 2px;
+}
+.alt1
+{
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 10px;
+	line-height: 15px;
+	color: black;
+	font-weight: normal;
+	background-color: #CCC;
+	padding: 2px;
+}
+.alt2
+{
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 10px;
+	line-height: 15px;
+	color: black;
+	font-weight: normal;
+	background-color: #E8EAF0;
+	padding: 2px;
+}
+
+.PhorumBodyArea
+{
+    font-family: Verdana, Arial, Clean, Helvetica, sans-serif;
+    font-size: 12px;
+    width: 500px;
+}
+
+.PhorumListTable
+{
+    border-style : solid;
+    border-color : Black;
+    border-width : 1px;
+}
+
+.PhorumListRow
+{
+    font-family: Verdana, Arial, Clean, Helvetica, sans-serif;
+    font-size: 12px;
+    height: 21px;
+}
+
+.PhorumListHeader
+{
+    font-family: Verdana, Arial, Clean, Helvetica, sans-serif;
+    font-size : 14px;
+    font-weight : bold;
+    height: 24px;
+}
+
+.PhorumForumTitle
+{
+    font-family: Verdana, Arial, Clean, Helvetica, sans-serif;
+    font-size : 24px;
+    font-weight: bold;
+}
+
+.PhorumTableHeader
+{
+    font-family: Verdana, Arial, Clean, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.PhorumNav
+{
+    font-family: Geneva, Verdana, MS Sans Serif , Clean, sans-serif;
+    font-size: 10px;
+}
+
+.PhorumNewFlag
+{
+    font-family: Geneva, Verdana, MS Sans Serif , Clean, sans-serif;
+    font-size: 10px;
+    color: Red;
+}
+
+.PhorumMessage
+{
+    font-family: Courier New, Geneva, Courier, Clean;
+    font-size: 12px;
+}
+
