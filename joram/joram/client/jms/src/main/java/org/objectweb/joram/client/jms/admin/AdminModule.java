@@ -1705,8 +1705,44 @@ public final class AdminModule {
    * @param serverId the serverId
    * @param names the name identifying the server or list of name separate by space
    * @return the result of the method
+   * 
    * @throws ConnectException If the connection fails.
    * @throws AdminException If the invocation can't be done or fails
+   */
+  public static String deleteJMSBridgeConnection(int serverId, String names) throws ConnectException, AdminException {
+    if (wrapper == null)
+      throw new ConnectException("Administration connection is closed.");
+    return wrapper.deleteJMSBridgeConnection(serverId, names);
+  }
+  
+  /**
+   * Removes the live connection to the specified AMQP server.
+   * 
+   * @param serverId the serverId
+   * @param names the name identifying the server or list of name separate by space
+   * @param async invoke asynchronously
+   * @return the result of the method
+   * 
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   */
+  public static String deleteJMSBridgeConnection(int serverId, String names, boolean async) throws ConnectException, AdminException {
+    if (wrapper == null)
+      throw new ConnectException("Administration connection is closed.");
+    return wrapper.deleteJMSBridgeConnection(serverId, names, async);
+  }
+
+  /**
+   * Removes the live connection to the specified AMQP server.
+   * 
+   * @param serverId the serverId
+   * @param names the name identifying the server or list of name separate by space
+   * @return the result of the method
+   * 
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   * 
+   * @deprecated
    */
   public static String deleteJMSPBridgeConnection(int serverId, String names) throws ConnectException, AdminException {
   	if (wrapper == null)
@@ -1721,8 +1757,11 @@ public final class AdminModule {
    * @param names the name identifying the server or list of name separate by space
    * @param async invoke asynchronously
    * @return the result of the method
+   * 
    * @throws ConnectException If the connection fails.
    * @throws AdminException If the invocation can't be done or fails
+   * 
+   * @deprecated
    */
   public static String deleteJMSPBridgeConnection(int serverId, String names, boolean async) throws ConnectException, AdminException {
     if (wrapper == null)

@@ -844,8 +844,50 @@ public interface AdminItf {
    * @param serverId the serverId
    * @param names the name identifying the server or list of name separate by space
    * @return the result of the method
+   * 
    * @throws ConnectException If the connection fails.
    * @throws AdminException If the invocation can't be done or fails
    */
+  public String deleteJMSBridgeConnection(int serverId, String names) throws ConnectException, AdminException;
+  
+  /**
+   * Removes the live connection to the specified JMS server (Use deleteJMSBridgeConnection instead).
+   * 
+   * @param serverId the serverId
+   * @param names the name identifying the server or list of name separate by space
+   * @return the result of the method
+   * 
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   * 
+   * @deprecated Use deleteJMSBridgeConnection instead.
+   */
   public String deleteJMSPBridgeConnection(int serverId, String names) throws ConnectException, AdminException;
+  
+  /**
+   * Removes the live connection to the specified JMS server.
+   * 
+   * @param serverId the serverId
+   * @param names the name identifying the server or list of name separate by space
+   * @param async invoke asynchronously
+   * @return the result of the method
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   */
+  public String deleteJMSBridgeConnection(int serverId, String names, boolean async) throws ConnectException, AdminException;
+  
+  /**
+   * Removes the live connection to the specified JMS server (Use deleteJMSBridgeConnection instead).
+   * 
+   * @param serverId the serverId
+   * @param names the name identifying the server or list of name separate by space
+   * @param async invoke asynchronously
+   * @return the result of the method
+   * 
+   * @throws ConnectException If the connection fails.
+   * @throws AdminException If the invocation can't be done or fails
+   * 
+   * @deprecated Use deleteJMSBridgeConnection instead.
+   */
+  public String deleteJMSPBridgeConnection(int serverId, String names, boolean async) throws ConnectException, AdminException;
 }

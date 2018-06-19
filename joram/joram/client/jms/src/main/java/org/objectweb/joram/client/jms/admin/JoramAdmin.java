@@ -982,26 +982,45 @@ public class JoramAdmin implements AdminItf, JoramAdminMBean {
     return wrapper.invokeStaticServerMethod(serverId, className, methodName, parameterTypes, args, async);
   }
 
+  @Override
   public String addAMQPBridgeConnection(int serverId, String urls)
       throws ConnectException, AdminException {
     return wrapper.addAMQPBridgeConnection(serverId, urls);
   }
 
+  @Override
   public String deleteAMQPBridgeConnection(int serverId, String names)
       throws ConnectException, AdminException {
     return wrapper.deleteAMQPBridgeConnection(serverId, names);
   }
 
+  @Override
   public String addJMSBridgeConnection(int serverId, String urls)
       throws ConnectException, AdminException {
     return wrapper.addJMSBridgeConnection(serverId, urls);
   }
 
+  @Override
+  public String deleteJMSBridgeConnection(int serverId, String names)
+      throws ConnectException, AdminException {
+    return wrapper.deleteJMSBridgeConnection(serverId, names);
+  }
+  
+  @Override
+  public String deleteJMSBridgeConnection(int serverId, String names, boolean async)
+      throws ConnectException, AdminException {
+    return wrapper.deleteJMSBridgeConnection(serverId, names, async);
+  }
+
+  /** @deprecated */
+  @Override
   public String deleteJMSPBridgeConnection(int serverId, String names)
       throws ConnectException, AdminException {
     return wrapper.deleteJMSPBridgeConnection(serverId, names);
   }
 
+  /** @deprecated */
+  @Override
   public String deleteJMSPBridgeConnection(int serverId, String names, boolean async)
       throws ConnectException, AdminException {
     return wrapper.deleteJMSPBridgeConnection(serverId, names, async);
