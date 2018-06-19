@@ -33,7 +33,7 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -172,7 +172,7 @@ public class ClientRESTTextPerf extends TestCase {
   
   public void createQueue(String queueName) throws Exception {
     URI uri = target.path("admin").path("queue").path(queueName).getUri();
-    String encodedUserPassword = DatatypeConverter.printBase64Binary("admin:admin".getBytes());
+    String encodedUserPassword = Base64.getEncoder().encodeToString("admin:admin".getBytes());
     // Create a queue
     Response response = client.target(uri).queryParam("bind", true).request().header("Authorization", encodedUserPassword).accept(MediaType.TEXT_PLAIN).get();
     if (response.getStatus() != Response.Status.CREATED.getStatusCode())
@@ -181,7 +181,7 @@ public class ClientRESTTextPerf extends TestCase {
   
   public void deleteQueue(String queueName) throws Exception {
     URI uri = target.path("admin").path("queue").path(queueName).getUri();
-    String encodedUserPassword = DatatypeConverter.printBase64Binary("admin:admin".getBytes());
+    String encodedUserPassword = Base64.getEncoder().encodeToString("admin:admin".getBytes());
     // Create a queue
     Response response = client.target(uri).request().header("Authorization", encodedUserPassword).accept(MediaType.TEXT_PLAIN).delete();
     if (response.getStatus() != Response.Status.OK.getStatusCode())

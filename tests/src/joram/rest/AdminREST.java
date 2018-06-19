@@ -30,7 +30,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -59,7 +59,8 @@ public class AdminREST extends TestCase {
 
       URI uri = target.path("queue").path("myQueue").getUri();
 
-      String encodedUserPassword = DatatypeConverter.printBase64Binary("admin:admin".getBytes());
+//      String encodedUserPassword = DatatypeConverter.printBase64Binary("admin:admin".getBytes());
+      String encodedUserPassword = Base64.getEncoder().encodeToString("admin:admin".getBytes());
 
       // Create a queue
       Response response = client.target(uri).request().header("Authorization", encodedUserPassword).accept(MediaType.TEXT_PLAIN).get();

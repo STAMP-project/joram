@@ -31,7 +31,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -57,7 +57,7 @@ public class JmxREST extends TestCase {
       Client client = ClientBuilder.newClient(config);
       WebTarget target = client.target(Helper.getBaseJmsURI());
 
-      String encodedUserPassword = DatatypeConverter.printBase64Binary("admin:admin".getBytes());
+      String encodedUserPassword = Base64.getEncoder().encodeToString("admin:admin".getBytes());
 
       Gson gson = new GsonBuilder().create();
       URI uri = target.path("jmx").getUri();
