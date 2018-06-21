@@ -154,6 +154,14 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
       logger.log(BasicLevel.DEBUG, "JMSModule.stopLiveConnection()");
     }
 
+    // Waits for end of initialization if needed (JORAM-290)
+    while (getStatus() <= STARTING) {
+      logger.log(BasicLevel.WARN, "JMSModule.stopLiveConnection: Wait for StartupDaemon");
+      try {
+        Thread.sleep(1000L);
+      } catch (InterruptedException exc) {}
+    }
+    
     if (cnx != null) {
       try {
         cnx.setExceptionListener(null);
@@ -353,11 +361,32 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
     return cnx != null && !reconnectionDaemon.isRunning();
   }
 
+  private int status = UNKNOWN;
+  
+  public final static int UNKNOWN = -1;
+  public final static int STARTING = 0;
+  public final static int OK = 1;
+  public final static int FAILING = 2;
+
+  public int getStatus() {
+    if (status <= STARTING)
+      return status;
+    else if (isConnectionOpen())
+      return OK;
+    else
+      return FAILING;
+  }
+  
   public String getState() {
-    if (isConnectionOpen()) {
+    switch (getStatus()) {
+    case STARTING:
+      return "STARTING";
+    case OK:
       return "OK";
+    case FAILING:
+      return "FAILING";
     }
-    return "FAILING";
+    return "UNKNOWN";
   }
 
   private String getMBeanName() {
@@ -386,6 +415,7 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
 
     /** The daemon's loop. */
     public void run() {
+      status = STARTING;
       if (logmon.isLoggable(BasicLevel.DEBUG)) {
         logmon.log(BasicLevel.DEBUG, "run()");
       }
@@ -398,6 +428,7 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
         }
         try {
           doConnect();
+          status = OK;
           if (logmon.isLoggable(BasicLevel.INFO)) {
             logmon.log(BasicLevel.INFO,
                        "StartupDaemon: " + name + " connected using " + cnxFactName + " ConnectionFactory.");
@@ -473,6 +504,9 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
           logmon.log(BasicLevel.DEBUG, "Exception:: notUsableMessage=" + notUsableMessage, exc);
         }
       } finally {
+        // Removes the STARTING status if the connection is not established.
+        if (status != OK)
+          status = FAILING;
         finish();
       }
     }
