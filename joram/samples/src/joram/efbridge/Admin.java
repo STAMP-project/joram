@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2014 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2014 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,13 +44,13 @@ public class Admin {
     
     User.create("anonymous", "anonymous");
 
-    // Creating a Queue Distribution bridge on server 1:
-    Queue distq = JMSDistributionQueue.create(1, "queue");
+    // Creating a Queue Distribution bridge on bridge server
+    Queue distq = JMSDistributionQueue.create("queue");
     distq.setFreeWriting();
     System.out.println("joram distribution queue = " + distq);
 
-    // Creating a Queue Acquisition bridge on server 1:
-    Queue acqq = JMSAcquisitionQueue.create(1, "queue");
+    // Creating a Queue Acquisition bridge on bridge server
+    Queue acqq = JMSAcquisitionQueue.create("queue");
     acqq.setFreeReading();
     System.out.println("joram acquisition queue = " + acqq);
     

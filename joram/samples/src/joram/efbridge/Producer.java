@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2014 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2014 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,6 @@ import javax.jms.TextMessage;
 public class Producer {
 
   public static void main(String[] args) throws Exception {
-
     Properties jndiProps = new Properties();
     jndiProps.setProperty("java.naming.factory.initial", "fr.dyade.aaa.jndi2.client.NamingContextFactory");
     jndiProps.setProperty("java.naming.factory.host", "localhost");
@@ -61,7 +60,6 @@ public class Producer {
     }
 
     bridgeSess.commit();
-
     bridgeCnx.close();
   }
 }
