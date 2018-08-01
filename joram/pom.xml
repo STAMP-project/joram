@@ -198,13 +198,13 @@
     <commons-dbcp.version>1.2.2</commons-dbcp.version>
     <mysql-connector-java.version>5.1.6</mysql-connector-java.version>
     <connector.version>1.0.3</connector.version>
-    <felix.main.version>5.6.10</felix.main.version>
-    <felix.shell.version>1.4.2</felix.shell.version>
-    <felix.remote.version>1.1.2</felix.remote.version>
+    <felix.main.version>6.0.0</felix.main.version>
+    <felix.shell.version>1.4.3</felix.shell.version>
+    <felix.remote.version>1.2.0</felix.remote.version>
     <felix.tui.version>1.4.1</felix.tui.version>
-    <felix.gogo.runtime.version>0.16.2</felix.gogo.runtime.version>
-    <felix.gogo.command.version>0.16.0</felix.gogo.command.version>
-    <felix.gogo.shell.version>0.12.0</felix.gogo.shell.version>
+    <felix.gogo.runtime.version>1.1.0</felix.gogo.runtime.version>
+    <felix.gogo.command.version>1.0.2</felix.gogo.command.version>
+    <felix.gogo.shell.version>1.1.0</felix.gogo.shell.version>
     <maven.bundle.plugin.version>2.3.7</maven.bundle.plugin.version>
     <!-- to prevent [WARNING] Using platform encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -212,7 +212,7 @@
     <commons-io.version>1.4</commons-io.version>
     <ow2-util-substitution.version>2.0.0</ow2-util-substitution.version>
     <junit.version>4.6</junit.version>
-    <jersey.version>2.22.2</jersey.version>
+    <jersey.version>2.27</jersey.version>
     <jetty.version>8.1.16.v20140903</jetty.version>
     <gson.version>2.5</gson.version>
     <geronimo-servlet_3.0_spec.version>1.0</geronimo-servlet_3.0_spec.version>
@@ -351,6 +351,16 @@
     		<groupId>org.glassfish.jersey.containers</groupId>
     		<artifactId>jersey-container-servlet-core</artifactId>
     		<version>${jersey.version}</version>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.glassfish.jersey.core</groupId>
+	    	<artifactId>jersey-common</artifactId>
+	    	<version>${jersey.version}</version>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.glassfish.jersey.inject</groupId>
+	    	<artifactId>jersey-hk2</artifactId>
+	    	<version>${jersey.version}</version>
 	    </dependency>
     	<dependency>
     		<groupId>org.eclipse.jetty</groupId>
