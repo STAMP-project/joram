@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -246,7 +246,6 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
     try {
       jndiCtx = getInitialContext();
       return jndiCtx.lookup(jndiName);
-
     } catch (Exception exc) {
       throw exc;
     } finally {
