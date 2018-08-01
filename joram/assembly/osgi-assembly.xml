@@ -65,7 +65,6 @@
       </includes>
       <excludes>
         <exclude>org.codehaus.stomp:stompconnect</exclude>
-        <exclude>org.apache.felix:org.apache.felix.bundlerepository</exclude>
         <exclude>com.rabbitmq:amqp-client</exclude>
         <exclude>org.objectweb.joram:jftp</exclude>
       </excludes>
