@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C)  2007 ScalAgent Distributed Technologies
+ * Copyright (C)  2007 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -89,8 +89,7 @@ public class Test_Q_M extends TestCase {
 	} catch (Throwable exc) {
 	    exc.printStackTrace();
 	    error(exc);
-	}
-	finally {
+	} finally {
 	    System.out.println("Server stop ");
 	    stopAgentServer((short)0);
 	    endTest(); 
