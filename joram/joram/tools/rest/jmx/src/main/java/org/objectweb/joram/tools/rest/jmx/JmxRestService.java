@@ -29,6 +29,7 @@ import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -59,7 +60,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.DatatypeConverter;
 
 import org.objectweb.util.monolog.api.BasicLevel;
 import org.objectweb.util.monolog.api.Logger;
@@ -631,7 +631,7 @@ public class JmxRestService implements ContainerRequestFilter {
     final String encodedUserPassword = authorization.get(0).replaceFirst(AUTHENTICATION_SCHEME + " ", "");
 
     // decode username and password
-    String usernameAndPassword = new String(DatatypeConverter.parseBase64Binary(encodedUserPassword));
+    String usernameAndPassword = new String(Base64.getDecoder().decode(encodedUserPassword));
     final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
     String username = null;
     String password = null;

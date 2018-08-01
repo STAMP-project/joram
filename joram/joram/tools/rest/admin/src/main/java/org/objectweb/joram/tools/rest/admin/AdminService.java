@@ -25,6 +25,7 @@ package org.objectweb.joram.tools.rest.admin;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -52,7 +53,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.DatatypeConverter;
 
 import org.objectweb.joram.client.jms.Destination;
 import org.objectweb.joram.client.jms.admin.AdminException;
@@ -760,7 +760,7 @@ public class AdminService implements ContainerRequestFilter {
     final String encodedUserPassword = authorization.get(0).replaceFirst(AUTHENTICATION_SCHEME + " ", "");
 
     // decode username and password
-    String usernameAndPassword = new String(DatatypeConverter.parseBase64Binary(encodedUserPassword));
+    String usernameAndPassword = new String(Base64.getDecoder().decode(encodedUserPassword));
     final StringTokenizer tokenizer = new StringTokenizer(usernameAndPassword, ":");
     String username = null;
     String password = null;
