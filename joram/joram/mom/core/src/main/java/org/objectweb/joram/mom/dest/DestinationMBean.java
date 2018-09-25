@@ -43,6 +43,16 @@ public interface DestinationMBean extends AgentMBean {
    * @return the unique identifier of the destination.
    */
   String getDestinationId();
+  
+  /**
+   * Returns the type of this destination: Queue or Topic.
+   * 
+   * @return the type of this destination.
+   * @see org.objectweb.joram.shared.DestinationConstants#TOPIC_TYPE
+   * @see org.objectweb.joram.shared.DestinationConstants#QUEUE_TYPE
+   * @see org.objectweb.joram.shared.DestinationConstants#TEMPORARY
+   */
+  byte getType();
 
   /**
    * Tests if this destination is free for reading.

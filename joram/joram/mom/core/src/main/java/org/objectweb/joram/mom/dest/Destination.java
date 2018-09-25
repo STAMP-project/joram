@@ -146,6 +146,7 @@ public abstract class Destination extends Agent implements DestinationMBean {
    * @return the type of this destination.
    * @see org.objectweb.joram.shared.DestinationConstants#TOPIC_TYPE
    * @see org.objectweb.joram.shared.DestinationConstants#QUEUE_TYPE
+   * @see org.objectweb.joram.shared.DestinationConstants#TEMPORARY
    */
   public abstract byte getType();
 
