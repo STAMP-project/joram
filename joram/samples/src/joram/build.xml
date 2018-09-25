@@ -237,7 +237,7 @@
   </target>
 
   <!-- **************************************************
-       * Bridge tests based on real client configuration
+       * Bridge tests based on real client configuration #1
        ************************************************** -->
   
   <!-- EF Bridge server -->
@@ -285,6 +285,48 @@
   <target name="efbridge_consumer" depends="init"
     description="--> Runs the EF bridge sample consumer">
     <java classname="efbridge.Consumer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
+
+  <!-- **************************************************
+       * Bridge tests based on real client configuration #2
+       ************************************************** -->
+  
+  <!-- SEIP Bridge server, /!\ the configuration file is inherited from efbridge -->
+  <target name="seipbridge_server" depends="simple_init"
+          description="--> Starts the SEIP bridge server">
+    <antcall target="server">
+      <param name="sid" value="1"/>
+      <param name="a3.conf" value="${conf.dir}/efbridge_a3servers.xml"/>
+      <param name="osgi.conf" value="${conf.dir}/config_bridge.properties"/>    	
+    </antcall>
+  </target>
+	
+  <!-- Setup the central server configuration -->
+  <target name="seipbridge_admin" depends="simple_init"
+          description="--> Runs the SEIP bridge sample administration">
+    <java classname="seipbridge.Admin"
+      failonerror="no" fork="yes"
+      dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
+
+  <!-- Runs the efbridge producer -->
+  <target name="seipbridge_producer" depends="init"
+    description="--> Runs the SEIP bridge sample producer">
+    <java classname="seipbridge.Producer" failonerror="no" fork="yes"
+          dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+    </java>
+  </target>
+
+  <!-- Runs the efbridge consumer -->
+  <target name="seipbridge_consumer" depends="init"
+    description="--> Runs the SEIP bridge sample consumer">
+    <java classname="seipbridge.Consumer" failonerror="no" fork="yes"
           dir="${run.dir}">
       <classpath path="${project.class.path}"/>
     </java>
