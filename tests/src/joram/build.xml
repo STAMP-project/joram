@@ -3571,12 +3571,12 @@
   <target name="init.test6Mprops">
     <property name="Destination" value="org.objectweb.joram.client.jms.Queue"/>
     <property name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
-    <property name="SyncOnWrite" value="true" />
+    <property name="SyncOnWrite" value="false" />
     <property name="engine" value="fr.dyade.aaa.agent.Engine"/>
     <property name="MsgTransient" value="false"/>
     <property name="SubDurable" value="true"/>
     <property name="Transacted" value="false"/>
-    <property name="NbRound" value="25"/>
+    <property name="NbRound" value="10"/>
     <property name="NbMsgPerRound" value="1000"/>
     <property name="NbSender" value="10"/>
     <property name="NbReceiver" value="1"/>
