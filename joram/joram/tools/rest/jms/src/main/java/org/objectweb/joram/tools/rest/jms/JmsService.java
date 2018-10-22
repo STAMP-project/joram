@@ -48,9 +48,10 @@ import fr.dyade.aaa.common.Debug;
 
 @Path("/"+ JmsService.JMS)
 public class JmsService {
-
   public static Logger logger = Debug.getLogger(JmsService.class.getName());
+  
   private final Helper helper = Helper.getInstance();
+  
   public static final String JMS = "jms";
   public static final String JMS_CREATE_PROD = "create-producer";
   public static final String JMS_CREATE_CONS = "create-consumer";

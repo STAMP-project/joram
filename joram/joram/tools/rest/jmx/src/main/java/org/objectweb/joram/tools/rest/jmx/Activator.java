@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -66,6 +66,7 @@ public class Activator implements BundleActivator {
       jerseyServletParams.put("javax.ws.rs.Application", JmxJerseyApplication.class.getName());
       if (logger.isLoggable(BasicLevel.INFO))
         logger.log(BasicLevel.INFO, "start: REGISTERING SERVLETS " + servletAlias);
+      // register the servlet
       httpService.registerServlet(servletAlias, new ServletContainer(), jerseyServletParams, null);
       
     } finally {
