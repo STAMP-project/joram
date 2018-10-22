@@ -20,7 +20,7 @@
 
 <JoramAdmin>
   
-  <TcpAdminModule host="localhost" port="16011" name="root" password="root">
+  <TcpAdminModule host="localhost" port="16011" login="root" password="root">
     <property name="connectingTimer" value="60"/>
   </TcpAdminModule>
   
