@@ -109,6 +109,9 @@ public final class AdminModule {
    */
   public static void main(String[] args) {
     try {
+      if (args.length != 1) {
+        System.err.println("usage: java ... org.objectweb.joram.client.jms.admin.AdminModule <path of XML script file>");
+      }
       executeXMLAdmin(args[0]);
     } catch (Exception exc) {
       exc.printStackTrace();
