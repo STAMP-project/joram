@@ -77,9 +77,8 @@ public class Activator implements BundleActivator {
       if (logger.isLoggable(BasicLevel.INFO))
         logger.log(BasicLevel.INFO, "start: REGISTERING SERVLETS " + servletAlias);
       
-      HttpContext httpContext = null;
       // register the servlet
-      httpService.registerServlet(servletAlias, new ServletContainer(), jerseyServletParams, httpContext);
+      httpService.registerServlet(servletAlias, new ServletContainer(), jerseyServletParams, null);
 
       int period = Helper.DFLT_CLEANER_PERIOD;
       String value = bundleContext.getProperty(Helper.BUNDLE_CLEANER_PERIOD_PROP);
