@@ -1160,6 +1160,10 @@ public class Queue extends Destination implements QueueMBean {
    * Method specifically processing a <code>ClientMessages</code> instance.
    * <p>
    * This method stores the messages and launches a delivery sequence.
+   * 
+   * This method is used when ClientMessages comes from a JMS client and/or LB notification in
+   * ClusterQueue (May be we should use addClienMessages). It is also used in old deprecated
+   * JMS bridge.
    */
   protected void doClientMessages(AgentId from, ClientMessages not, boolean throwsExceptionOnFullDest) throws AccessException {
     receiving = true;
@@ -1849,6 +1853,8 @@ public class Queue extends Destination implements QueueMBean {
 
   /**
    * Adds the client messages in the queue.
+   * This method is used when messages does not come from a JMS Client, for example
+   * for AcquisitionQueue, AliasQueue and AliasInQueue.
    * 
    * @param clientMsgs client message notification.
    * @param throwsExceptionOnFullDest true, can throws an exception on sending message on full destination
