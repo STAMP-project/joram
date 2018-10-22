@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ package org.objectweb.joram.tools.rest.admin;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -63,6 +64,8 @@ import org.objectweb.util.monolog.api.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import javax.servlet.http.HttpServletRequest;
 
 import fr.dyade.aaa.common.Debug;
 
@@ -287,7 +290,7 @@ public class AdminService implements ContainerRequestFilter {
   @GET
   @Path("/queue")
   @Produces({MediaType.TEXT_PLAIN})
-  public String listQueue(
+  public synchronized String listQueue(
       @Context HttpHeaders headers,
       @QueryParam("server-id") int serverId,
       @Context UriInfo uriInfo) throws ConnectException, AdminException {
@@ -403,7 +406,7 @@ public class AdminService implements ContainerRequestFilter {
   @GET
   @Path("/topic")
   @Produces({MediaType.TEXT_PLAIN})
-  public String listTopic(
+  public synchronized String listTopic(
       @Context HttpHeaders headers,
       @QueryParam("server-id") int serverId,
       @Context UriInfo uriInfo) throws ConnectException, AdminException {
@@ -729,15 +732,31 @@ public class AdminService implements ContainerRequestFilter {
     return builder.build();
   }
   
-  @Override
-  public void filter(ContainerRequestContext requestContext)
-      throws IOException {
+  @Context
+  private HttpServletRequest httpServletRequest;
 
+  @Override
+  public void filter(ContainerRequestContext requestContext) throws IOException {
     if (!helper.authenticationRequired()) {
-      if (logger.isLoggable(BasicLevel.DEBUG))
-        logger.log(BasicLevel.DEBUG, "no authentication.");
-      // no authentication
+      if (logger.isLoggable(BasicLevel.INFO))
+        logger.log(BasicLevel.INFO, "no authentication.");
       return;
+    }
+    
+    if (httpServletRequest != null) {
+      // JSR-315/JSR-339 compliant server
+      String remoteIpAddress = httpServletRequest.getRemoteAddr();
+      if (remoteIpAddress != null) {
+        if (! helper.checkIpAllowed(remoteIpAddress)){
+          Response response = Response.status(Response.Status.UNAUTHORIZED)
+              .header("WWW-Authenticate", "Basic realm=\"executives\"")
+              .entity("You cannot access this resource (IP not allowed)").build();
+          requestContext.abortWith(response);
+          return;
+        }
+      }
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "request from: " + remoteIpAddress);
     }
     
     // request headers

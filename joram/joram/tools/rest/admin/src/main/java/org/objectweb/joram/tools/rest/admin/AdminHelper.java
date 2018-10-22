@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,11 @@
 package org.objectweb.joram.tools.rest.admin;
 
 import java.net.ConnectException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -45,23 +48,31 @@ import org.osgi.framework.BundleContext;
 import fr.dyade.aaa.common.Debug;
 
 public class AdminHelper {
+  public static Logger logger = Debug.getLogger(AdminHelper.class.getName());
 
   public static final String BUNDLE_JNDI_FACTORY_INITIAL_PROP = "rest.jndi.factory.initial";
   public static final String BUNDLE_JNDI_FACTORY_HOST_PROP = "rest.jndi.factory.host";
   public static final String BUNDLE_JNDI_FACTORY_PORT_PROP = "rest.jndi.factory.port";
+  
   public static final String BUNDLE_REST_ADMIN_ROOT = "rest.admin.root";
   public static final String BUNDLE_REST_ADMIN_PASS = "rest.admin.password";
+  public static final String BUNDLE_REST_ADMIN_IP_ALLOWED = "rest.admin.ipallowed";
   
-  public static Logger logger = Debug.getLogger(AdminHelper.class.getName());
+  // Singleton
   private static AdminHelper helper = null;
+  
   private InitialContext ictx;
   private BundleContext bundleContext;
   private Properties jndiProps;
   private JoramAdmin joramAdmin;
   private Connection cnx;
+  
   private String restAdminRoot;
   private String restAdminPass;
-
+  
+  private String restAdminIPAllowed;
+  private IPFilter ipfilter;
+  
   private AdminHelper() {  }
   
   static public AdminHelper getInstance() {
@@ -82,6 +93,25 @@ public class AdminHelper {
    */
   public String getRestAdminPass() {
     return restAdminPass;
+  }
+
+  /**
+   * @return the restAdminIPAllowed
+   */
+  public String getRestAdminIPAllowed() {
+    return restAdminIPAllowed;
+  }
+
+  /**
+   * Check if the addr is authorized (all local address is authorized).
+   * 
+   * @param addr The ip address to check
+   * @return true if authorized
+   * @throws UnknownHostException
+   * @throws SocketException
+   */
+  public boolean checkIpAllowed(String addr) {
+    return ipfilter.checkIpAllowed(addr);
   }
 
   public boolean authenticationRequired() {
@@ -117,12 +147,17 @@ public class AdminHelper {
   public JoramAdmin getJoramAdmin() {
     return joramAdmin;
   }
-  
+
   public void init(BundleContext bundleContext) throws Exception {
     this.bundleContext = bundleContext;
     
     restAdminRoot = bundleContext.getProperty(BUNDLE_REST_ADMIN_ROOT);
     restAdminPass = bundleContext.getProperty(BUNDLE_REST_ADMIN_PASS);
+    
+    restAdminIPAllowed = bundleContext.getProperty(BUNDLE_REST_ADMIN_IP_ALLOWED);
+    if (logger.isLoggable(BasicLevel.INFO))
+      logger.log(BasicLevel.INFO, "IPFilter allowedList = " + restAdminIPAllowed);
+    ipfilter = new IPFilter(restAdminIPAllowed);
     
     String name = "dlft-admin";
 
@@ -253,4 +288,5 @@ public class AdminHelper {
   public int getLocalServerId() throws ConnectException, AdminException {
     return joramAdmin.getLocalServerId();
   }
+  
 }
