@@ -299,7 +299,7 @@
           description="--> Starts the SEIP bridge server">
     <antcall target="server">
       <param name="sid" value="1"/>
-      <param name="a3.conf" value="${conf.dir}/efbridge_a3servers.xml"/>
+      <param name="a3.conf" value="${conf.dir}/seipbridge_a3servers.xml"/>
       <param name="osgi.conf" value="${conf.dir}/config_bridge.properties"/>    	
     </antcall>
   </target>
