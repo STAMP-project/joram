@@ -22,20 +22,30 @@
  */
 package org.objectweb.joram.tools.rest.jmx;
 
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
+import org.objectweb.util.monolog.api.BasicLevel;
 import org.objectweb.util.monolog.api.Logger;
 import org.osgi.framework.BundleContext;
 
 import fr.dyade.aaa.common.Debug;
 
 public class JmxHelper {
+  public static Logger logger = Debug.getLogger(JmxHelper.class.getName());
 
   public static final String BUNDLE_REST_JMX_ROOT = "rest.jmx.root";
   public static final String BUNDLE_REST_JMX_PASS = "rest.jmx.password";
+  public static final String BUNDLE_REST_JMX_IP_ALLOWED = "rest.jmx.ipallowed";
   
-  public static Logger logger = Debug.getLogger(JmxHelper.class.getName());
+  // Singleton
   private static JmxHelper helper = null;
+  
   private String restJmxRoot;
   private String restJmxPass;
+  
+  private String restJmxIPAllowed;
+  private IPFilter ipfilter;
 
   private JmxHelper() { }
   
@@ -59,6 +69,25 @@ public class JmxHelper {
     return restJmxPass;
   }
 
+  /**
+   * @return the restJmxIPAllowed
+   */
+  public String getRestJmxIPAllowed() {
+    return restJmxIPAllowed;
+  }
+
+  /**
+   * Check if the addr is authorized (all local address is authorized).
+   * 
+   * @param addr The ip address to check
+   * @return true if authorized
+   * @throws UnknownHostException
+   * @throws SocketException
+   */
+  public boolean checkIPAddress(String addr) {
+    return ipfilter.checkIpAllowed(addr);
+  }
+
   public boolean authenticationRequired() {
     return restJmxRoot != null && !restJmxRoot.isEmpty() &&
         restJmxPass != null && !restJmxPass.isEmpty();
@@ -67,5 +96,10 @@ public class JmxHelper {
   public void init(BundleContext bundleContext) throws Exception {
     restJmxRoot = bundleContext.getProperty(BUNDLE_REST_JMX_ROOT);
     restJmxPass = bundleContext.getProperty(BUNDLE_REST_JMX_PASS);
+ 
+    restJmxIPAllowed = bundleContext.getProperty(BUNDLE_REST_JMX_IP_ALLOWED);
+    if (logger.isLoggable(BasicLevel.INFO))
+      logger.log(BasicLevel.INFO, "IPFilter allowedList = " + restJmxIPAllowed);
+    ipfilter = new IPFilter(restJmxIPAllowed);
   }
 }

@@ -66,16 +66,18 @@ import org.objectweb.util.monolog.api.Logger;
 
 import com.google.gson.stream.JsonWriter;
 
+import javax.servlet.http.HttpServletRequest;
+
 import fr.dyade.aaa.common.Debug;
 
 @Path("/")
 @Singleton
 public class JmxRestService implements ContainerRequestFilter {
+  public static Logger logger = Debug.getLogger(JmxRestService.class.getName());
 
   private static final String AUTHORIZATION_PROPERTY = "Authorization";
   private static final String AUTHENTICATION_SCHEME = "Basic";
   
-  public static Logger logger = Debug.getLogger(JmxRestService.class.getName());
   static MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
   private final JmxHelper helper = JmxHelper.getInstance();
   
@@ -599,18 +601,33 @@ public class JmxRestService implements ContainerRequestFilter {
     }
     return null;
   }
+  
+  @Context
+  private HttpServletRequest httpServletRequest;
 
   @Override
-  public void filter(ContainerRequestContext requestContext)
-      throws IOException {
-
+  public void filter(ContainerRequestContext requestContext) throws IOException {
     if (!helper.authenticationRequired()) {
-      if (logger.isLoggable(BasicLevel.DEBUG))
-        logger.log(BasicLevel.DEBUG, "no authentication.");
-      // no authentication
+      if (logger.isLoggable(BasicLevel.INFO))
+        logger.log(BasicLevel.INFO, "no authentication.");
       return;
     }
-    
+
+    if (httpServletRequest != null) {
+      // JSR-315/JSR-339 compliant server
+      String remoteIpAddress = httpServletRequest.getRemoteAddr();
+      if (remoteIpAddress != null) {
+        if (! helper.checkIPAddress(remoteIpAddress)) {
+          Response response = Response.status(Response.Status.UNAUTHORIZED)
+              .header("WWW-Authenticate", "Basic realm=\"executives\"")
+              .entity("You cannot access this resource (IP not allowed)").build();
+          requestContext.abortWith(response);
+          return;
+        }
+      }
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "request from: " + remoteIpAddress);
+    }
     // request headers
     final MultivaluedMap<String, String> headers = requestContext.getHeaders();
     // authorization header
