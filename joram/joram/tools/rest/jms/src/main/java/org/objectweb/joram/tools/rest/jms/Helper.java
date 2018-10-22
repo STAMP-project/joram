@@ -47,7 +47,8 @@ import org.osgi.framework.BundleContext;
 import fr.dyade.aaa.common.Debug;
 
 public class Helper {
-
+  public static Logger logger = Debug.getLogger(Helper.class.getName());
+  
   private static final String BYTES_CLASS_NAME = byte[].class.getName();
   public static final String BUNDLE_CF_PROP = "rest.jms.connectionFactory";
   public static final String BUNDLE_JNDI_FACTORY_INITIAL_PROP = "rest.jndi.factory.initial";
@@ -56,12 +57,16 @@ public class Helper {
   public static final String BUNDLE_IDLE_TIMEOUT_PROP = "rest.idle.timeout";
   public static final String BUNDLE_CLEANER_PERIOD_PROP = "rest.cleaner.period";
   
+  public static final String BUNDLE_JMS_USER = "rest.jms.user";
+  public static final String BUNDLE_JMS_PASS = "rest.jms.password";
+  public static final String BUNDLE_JMS_IP_ALLOWED = "rest.jms.ipallowed";
+
   public static final int DFLT_CLEANER_PERIOD = 15;
   
-  public static Logger logger = Debug.getLogger(Helper.class.getName());
-  
   private static final AtomicLong counter = new AtomicLong(1);
+  // Singleton
   private static Helper helper = null;
+  
   private InitialContext ictx;
   private HashMap<String, RestClientContext> restClientCtxs;
   private HashMap<String, SessionContext> sessionCtxs;
@@ -69,6 +74,12 @@ public class Helper {
   private long globalIdleTimeout = 0;
   private Properties jndiProps;
   
+  private String restUser;
+  private String restPass;
+  
+  private String IPAllowed;
+  private IPFilter ipfilter;
+
   private Helper() {
     restClientCtxs = new HashMap<String, RestClientContext>();
     sessionCtxs = new HashMap<String, SessionContext>();
@@ -80,7 +91,29 @@ public class Helper {
     return helper;
   }
   
+  /**
+   * @return the restJmxRoot
+   */
+  public String getRestUser() {
+    return restUser;
+  }
+
+  /**
+   * @return the restJmxPass
+   */
+  public String getRestPass() {
+    return restPass;
+  }
+
   public void setGlobalProperties(BundleContext bundleContext) throws NamingException {
+    restUser = bundleContext.getProperty(BUNDLE_JMS_USER);
+    restPass = bundleContext.getProperty(BUNDLE_JMS_PASS);
+    
+    IPAllowed = bundleContext.getProperty(BUNDLE_JMS_IP_ALLOWED);
+    if (logger.isLoggable(BasicLevel.INFO))
+      logger.log(BasicLevel.INFO, "IPFilter allowedList = " + IPAllowed);
+    ipfilter = new IPFilter(IPAllowed);
+    
     // set the connection factory
     setConnectionFactoryName(bundleContext.getProperty(BUNDLE_CF_PROP));
     
@@ -119,6 +152,30 @@ public class Helper {
     }
   }
   
+  /**
+   * @return the IPAllowed
+   */
+  public String getIPAllowed() {
+    return IPAllowed;
+  }
+
+  /**
+   * Check if the addr is authorized (all local address is authorized).
+   * 
+   * @param addr The ip address to check
+   * @return true if authorized
+   * @throws UnknownHostException
+   * @throws SocketException
+   */
+  public boolean checkIPAddress(String addr) {
+    return ipfilter.checkIpAllowed(addr);
+  }
+  
+  public boolean authenticationRequired() {
+    return restUser != null && !restUser.isEmpty() &&
+        restPass != null && !restPass.isEmpty();
+  }
+
   /**
    * @return the restClientCtxs
    */
