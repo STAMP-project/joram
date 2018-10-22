@@ -136,7 +136,7 @@ public class RedeliveryDelay_Q extends TestCase implements javax.jms.MessageList
     // Wait to receive the message.
     Thread.sleep(10000L);
 
-    assertTrue("The rollback or recover message not received after the redelivery delay", time > 5000);
+    assertTrue("The rollback or recover message not received after the redelivery delay", time >= 5000);
 
     context.close();
     prodCtx.close();
