@@ -26,6 +26,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.jms.BytesMessage;
 
 /**
  * Implements the <code>javax.jms.MessageListener</code> interface.
@@ -40,7 +41,14 @@ public class MsgListener implements MessageListener {
   public void onMessage(Message msg) {
     try {
       if (msg instanceof TextMessage)
-        System.out.println(who + " receive on acquisition queue: " + ((TextMessage) msg).getText());
+        System.out.println(who + " receive on mqs queue: " + ((TextMessage) msg).getText());
+      else if (msg instanceof BytesMessage) {
+        BytesMessage m = (BytesMessage) msg;
+        int len = (int) m.getBodyLength();
+        byte[] payload = new byte[len];
+        len = m.readBytes(payload);
+        System.out.println(who + " receive on mqs queue [" + len + ", " + payload.length + "]: " + new String(payload));
+      }
     }
     catch (JMSException exc) {
       System.err.println("Exception in listener: " + exc);

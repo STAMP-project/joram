@@ -27,6 +27,7 @@ import java.util.Properties;
 import javax.jms.ConnectionFactory;
 
 import org.objectweb.joram.client.jms.Queue;
+import org.objectweb.joram.client.jms.Topic;
 import org.objectweb.joram.client.jms.admin.AdminModule;
 import org.objectweb.joram.client.jms.admin.JMSAcquisitionQueue;
 import org.objectweb.joram.client.jms.admin.JMSDistributionQueue;
@@ -35,24 +36,52 @@ import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 
 public class Admin {
   public static void main(String[] args) throws Exception {
+    centralAdmin();
+    bridgeAdmin();
+  }
+  
+  static void centralAdmin() throws Exception {
+    System.out.println();
+    System.out.println("Central administration...");
+
+    ConnectionFactory cf = TcpConnectionFactory.create("localhost", 16010);
+    AdminModule.connect(cf, "root", "root");
+    
+    User.create("anonymous", "anonymous");
+
+    Queue queue = Queue.create("mqs_dest");
+    queue.setFreeReading();
+    queue.setFreeWriting();
+
+    Properties jndiProps = new Properties();
+    jndiProps.setProperty("java.naming.factory.initial", "fr.dyade.aaa.jndi2.client.NamingContextFactory");
+    jndiProps.setProperty("java.naming.factory.host", "localhost");
+    jndiProps.setProperty("java.naming.factory.port", "16401");
+    
+    javax.naming.Context jndiCtx = new javax.naming.InitialContext(jndiProps);
+    jndiCtx.bind("mqs_cf", cf);
+    jndiCtx.bind("mqs_dest", queue);
+    jndiCtx.close();
+
+    AdminModule.disconnect();
+    System.out.println("Admin closed.");
+  }
+  
+  static void bridgeAdmin() throws Exception {
     System.out.println();
     System.out.println("Bridge administration...");
 
     ConnectionFactory bridgeCF = TcpConnectionFactory.create("localhost", 16011);
-
     AdminModule.connect(bridgeCF, "root", "root");
     
     User.create("anonymous", "anonymous");
 
     // Creating a Queue Distribution bridge on bridge server
-    Queue distq = JMSDistributionQueue.create(0, "distQ", "mqs_dest");
+    Properties queueProps = new Properties();
+    queueProps.setProperty("distribution.async", "true");
+    Queue distq = JMSDistributionQueue.create(1, "distQ", "mqs_dest", queueProps);
     distq.setFreeWriting();
     System.out.println("joram distribution queue = " + distq);
-
-    // Creating a Queue Acquisition bridge on bridge server
-    Queue acqq = JMSAcquisitionQueue.create(0, "acqQ", "mqs_dest");
-    acqq.setFreeReading();
-    System.out.println("joram acquisition queue = " + acqq);
     
     // bind foreign destination and connectionFactory
     Properties jndiProps = new Properties();
@@ -62,7 +91,6 @@ public class Admin {
  
     javax.naming.Context jndiCtx = new javax.naming.InitialContext(jndiProps);
     jndiCtx.rebind("distq", distq);
-    jndiCtx.rebind("acqq", acqq);
     jndiCtx.rebind("bridgeCF", bridgeCF);
     jndiCtx.close();
 

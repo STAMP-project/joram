@@ -29,7 +29,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.BytesMessage;
 
 /**
  * Produces messages on the foreign destination.
@@ -48,18 +48,18 @@ public class Producer {
     jndiCtx.close();
 
     Connection bridgeCnx = bridgeCF.createConnection();
-    Session bridgeSess = bridgeCnx.createSession(true, 0);
+    Session bridgeSess = bridgeCnx.createSession();
     MessageProducer bridgeProducer = bridgeSess.createProducer(bridgeDest);
 
-    TextMessage msg = bridgeSess.createTextMessage();
+    BytesMessage msg = bridgeSess.createBytesMessage();
 
     for (int i = 1; i < 11; i++) {
-      msg.setText("Joram message number " + i + " sent through distribution bridge queue.");
-      System.out.println("send msg = " + msg.getText());
+      String str = "Joram message number " + i + " sent through distribution bridge queue.";
+      msg.writeBytes(str.getBytes());
+      System.out.println("send msg = " + str);
       bridgeProducer.send(msg);
     }
 
-    bridgeSess.commit();
     bridgeCnx.close();
   }
 }

@@ -43,14 +43,14 @@ public class Consumer {
     jndiProps.setProperty("java.naming.factory.port", "16401");
  
     javax.naming.Context jndiCtx = new javax.naming.InitialContext(jndiProps);
-    Destination bridgeDest = (Destination) jndiCtx.lookup("acqq");
-    ConnectionFactory bridgeCF = (ConnectionFactory) jndiCtx.lookup("bridgeCF");
+    Destination mqdest = (Destination) jndiCtx.lookup("mqs_dest");
+    ConnectionFactory bridgeCF = (ConnectionFactory) jndiCtx.lookup("mqs_cf");
     jndiCtx.close();
 
     Connection bridgeCnx = bridgeCF.createConnection();
     Session bridgeSess = bridgeCnx.createSession(false, Session.AUTO_ACKNOWLEDGE);
-    MessageConsumer bridgeCons = bridgeSess.createConsumer(bridgeDest);
-    bridgeCons.setMessageListener(new MsgListener("bridge"));
+    MessageConsumer bridgeCons = bridgeSess.createConsumer(mqdest);
+    bridgeCons.setMessageListener(new MsgListener("MQS"));
     bridgeCnx.start();  
     
     System.in.read();
