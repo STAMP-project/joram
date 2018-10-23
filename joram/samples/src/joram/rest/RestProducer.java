@@ -32,8 +32,8 @@ public class RestProducer {
   RestProducer(String uri, String dest) {
     URI base = UriBuilder.fromUri(uri).build();
     client = ClientBuilder.newClient(new ClientConfig());
-    WebTarget target = client.target(base);
     
+    WebTarget target = client.target(base);
     System.out.println("Use Rest/JMS interface: " + target.getUri());
 
     // lookup the destination
@@ -47,6 +47,7 @@ public class RestProducer {
 //      .queryParam("name", "prod1")
         .getUri();
 
+    
     // Create the producer
     response = client.target(uriCreateProd)
         .request()

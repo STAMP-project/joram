@@ -11,6 +11,8 @@ public class Consumer {
 
   public static void main(String[] args) {
     String queueName = System.getProperty("queue");
+    if ((queueName == null) || queueName.isEmpty())
+      queueName = "queue";
 
     RestConsumer cons = new RestConsumer("http://localhost:8989/joram/", queueName);
 //  cons.debug = true;

@@ -37,7 +37,7 @@ public class RestConsumer {
     System.out.println("Use Rest/JMS interface: " + target.getUri());
 
     // lookup the destination
-    Builder builder = target.path("jndi").path("queue").request();
+    Builder builder = target.path("jndi").path(dest).request();
     Response response = builder.accept(MediaType.TEXT_PLAIN).head();
     
     System.out.println("Lookup \"" + dest + "\" -> " + response.getStatus());

@@ -6,6 +6,8 @@ public class Producer {
 
   public static void main(String[] args) {
     String queueName = System.getProperty("queue");
+    if ((queueName == null) || queueName.isEmpty())
+      queueName = "queue";
     
     RestProducer prod = new RestProducer("http://localhost:8989/joram/", queueName);
 //    prod.debug = true;
