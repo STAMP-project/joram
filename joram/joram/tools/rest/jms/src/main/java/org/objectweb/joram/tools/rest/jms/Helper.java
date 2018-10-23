@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.jms.ConnectionFactory;
@@ -63,6 +64,7 @@ public class Helper {
 
   public static final int DFLT_CLEANER_PERIOD = 15;
   
+  private Random rand = new Random();
   private static final AtomicLong counter = new AtomicLong(1);
   // Singleton
   private static Helper helper = null;
@@ -642,11 +644,11 @@ public class Helper {
   }
   
   public String createProducerId() {
-    return "prod" + counter.getAndIncrement();
+    return "prod_" + Math.abs(rand.nextLong()) + "_" + counter.getAndIncrement();
   }
   
   public String createConsumerId() {
-    return "cons" + counter.getAndIncrement();
+    return "cons_" + Math.abs(rand.nextLong()) + "_" + counter.getAndIncrement();
   }
   
   public SessionContext getSessionCtx(String name) {
