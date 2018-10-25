@@ -305,6 +305,21 @@
       <groupId>org.ow2.util.substitution</groupId>
       <artifactId>substitution</artifactId>
     </dependency>
+
+	<!-- https://mvnrepository.com/artifact/javax.activation/activation
+	     This artifact is a bundle version of activation 1.1. Be careful, it needs mulesoft
+	     repository: https://repository.mulesoft.org/nexus/content/repositories/public -->
+	<dependency>
+		<groupId>javax.activation</groupId>
+		<artifactId>activation</artifactId>
+		<version>1.1-osgi</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+	<dependency>
+		<groupId>javax.xml.bind</groupId>
+		<artifactId>jaxb-api</artifactId>
+		<version>2.3.1</version>
+	</dependency>
     
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>

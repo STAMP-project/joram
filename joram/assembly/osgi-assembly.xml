@@ -54,6 +54,8 @@
         <include>org.ow2.joram:shell-jndi</include>
         <include>org.ow2.joram:shell-a3</include>
         <include>org.ow2.util.substitution:substitution</include>
+        <include>javax.activation:activation</include>
+        <include>javax.xml.bind:jaxb-api</include>
         <include>org.glassfish.jersey.core:jersey-server</include>
         <include>org.glassfish.jersey.containers:jersey-container-servlet-core</include>
         <include>org.eclipse.jetty:jetty-server</include>
