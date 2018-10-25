@@ -45,7 +45,7 @@ public class TestDmq6 extends TestCase {
       System.out.println("server start");
       startAgentServer((short)0);
 
-      Thread.sleep(5000);
+      Thread.sleep(10000);
       AdminModule.connect("localhost", 2560,"root", "root", 60);
       System.out.println("admin ok");
 

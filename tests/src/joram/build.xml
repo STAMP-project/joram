@@ -3014,7 +3014,7 @@
       </antcall>
 
       <sequential>
-        <sleep seconds="1"/>
+        <sleep seconds="5"/>
         <parallel>
           <antcall target="test.start" inheritAll="true">
             <param name="className" value="joram.perfs.Test5"/>
