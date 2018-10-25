@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>joram-tools-rest-admin</artifactId>
@@ -31,7 +33,7 @@
 							org.objectweb.util.monolog,
 							org.objectweb.util.monolog.api,
 							org.eclipse.jetty.server</Import-Package>
-							<!-- TODO remove DynamicImport-Package -->
+						<!-- TODO remove DynamicImport-Package -->
 						<DynamicImport-Package>*</DynamicImport-Package>
 					</instructions>
 				</configuration>
@@ -40,6 +42,23 @@
 	</build>
 
 	<dependencies>
+		<!--  Could be commented? - begin -->
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<!--  Could be commented? - end -->
 		<dependency>
 			<groupId>org.ow2.spec.ee</groupId>
 			<artifactId>ow2-jms-2.0-spec</artifactId>
@@ -50,18 +69,21 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-      <groupId>org.ow2.joram</groupId>
-      <artifactId>jndi-client</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+			<groupId>org.ow2.joram</groupId>
+			<artifactId>jndi-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!--  Could be commented? - begin -->
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-server</artifactId>
 		</dependency>
+		<!--  Could be commented? - end -->
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet-core</artifactId>
 		</dependency>
+		<!--  Could be commented? - begin -->
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-common</artifactId>
@@ -70,6 +92,7 @@
 			<groupId>org.glassfish.jersey.inject</groupId>
 			<artifactId>jersey-hk2</artifactId>
 		</dependency>
+		<!--  Could be commented? - end -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
@@ -79,8 +102,8 @@
 			<artifactId>jetty-servlet</artifactId>
 		</dependency>
 		<dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-    </dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
 	</dependencies>
 </project>
