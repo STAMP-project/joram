@@ -159,11 +159,20 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.8.0</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
+          <!-- Needs Java 10/11 JDK
+          <release>10</release> -->
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>6.2</version> <!-- Use newer version of ASM -->
+          </dependency>
+        </dependencies>
       </plugin>
       
 	  <plugin>
@@ -198,14 +207,14 @@
     <commons-dbcp.version>1.2.2</commons-dbcp.version>
     <mysql-connector-java.version>5.1.6</mysql-connector-java.version>
     <connector.version>1.0.3</connector.version>
-    <felix.main.version>6.0.0</felix.main.version>
+    <felix.main.version>6.0.1</felix.main.version>
     <felix.shell.version>1.4.3</felix.shell.version>
     <felix.remote.version>1.2.0</felix.remote.version>
     <felix.tui.version>1.4.1</felix.tui.version>
     <felix.gogo.runtime.version>1.1.0</felix.gogo.runtime.version>
     <felix.gogo.command.version>1.0.2</felix.gogo.command.version>
     <felix.gogo.shell.version>1.1.0</felix.gogo.shell.version>
-    <maven.bundle.plugin.version>2.3.7</maven.bundle.plugin.version>
+    <maven.bundle.plugin.version>4.0.0</maven.bundle.plugin.version>
     <!-- to prevent [WARNING] Using platform encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <stomp.version>1.0</stomp.version>
