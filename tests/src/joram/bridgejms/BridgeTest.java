@@ -49,7 +49,7 @@ public class BridgeTest extends TestCase {
       System.out.println("servers start");
       startAgentServer((short)0, new String[]{"-DTransaction.UseLockFile=false"});
       startAgentServer((short)1, new String[]{"-DTransaction.UseLockFile=false"});
-      Thread.sleep(8000);
+      Thread.sleep(10000);
       // admin();
 
       javax.naming.Context jndiCtx = new javax.naming.InitialContext();  

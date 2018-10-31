@@ -59,7 +59,7 @@ public class BridgeTest8 extends TestCase {
       System.out.println("servers start");
       startAgentServer((short)0, new String[]{"-DTransaction.UseLockFile=false"});
       startAgentServer((short)1, new String[]{"-DTransaction.UseLockFile=false"});
-      Thread.sleep(1000);
+      Thread.sleep(60000);
 
       try{
         AdminModule.connect("root", "root", 60);

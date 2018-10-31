@@ -54,7 +54,7 @@ public class BridgeTest3 extends TestCase {
       System.out.println("servers start");
       startAgentServer((short)0, new String[]{"-DTransaction.UseLockFile=false"});
       startAgentServer((short)1, new String[]{"-DTransaction.UseLockFile=false"});
-      Thread.sleep(8000);
+      Thread.sleep(10000);
 
       boolean async = Boolean.getBoolean("async");
 

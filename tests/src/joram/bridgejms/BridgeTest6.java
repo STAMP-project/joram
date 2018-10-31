@@ -48,7 +48,7 @@ public class BridgeTest6 extends TestCase {
       startAgentServer((short)0);
 
       startAgentServer((short)1);
-      Thread.sleep(8000);
+      Thread.sleep(10000);
       System.out.println("admin config ok");
 
       javax.naming.Context jndiCtx = new javax.naming.InitialContext();

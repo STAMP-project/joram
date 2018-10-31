@@ -77,7 +77,7 @@ public class BridgeTest2 extends TestCase {
       startAgentServer((short)0, new String[]{"-DTransaction.UseLockFile=false"});
       startAgentServer((short)1, new String[]{"-DTransaction.UseLockFile=false"});
       //admin();
-      Thread.sleep(8000);
+      Thread.sleep(10000);
 
       javax.naming.Context jndiCtx = new javax.naming.InitialContext();
       Destination joramDest = (Destination) jndiCtx.lookup("joramTopic");
