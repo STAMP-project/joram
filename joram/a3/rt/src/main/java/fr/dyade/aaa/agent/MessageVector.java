@@ -551,10 +551,13 @@ final class MessageVector implements MessageQueue {
   public String report() {
     StringBuffer strbuf = new StringBuffer();
     strbuf.append("waiting=").append(size()).append('\n');
-    for (Enumeration<Class> e = counters.keys(); e.hasMoreElements();){ 
-      Class clazz = e.nextElement();
-      Counter counter = counters.get(clazz);
-      strbuf.append(clazz.getName()).append('=').append(counter.live).append('/').append(counter.total).append('\n');
+    if ((size() != 0) && (counters != null)) {
+      for (Enumeration<Class> e = counters.keys(); e.hasMoreElements();){ 
+        Class clazz = e.nextElement();
+        Counter counter = counters.get(clazz);
+        if (counter != null)
+          strbuf.append(clazz.getName()).append('=').append(counter.live).append('/').append(counter.total).append('\n');
+      }
     }
     return strbuf.toString();
   }
