@@ -143,7 +143,7 @@ public interface DestinationMBean extends AgentMBean {
 
   /**
    * Returns the number of erroneous messages forwarded to the DMQ since
-   * creation time of this destination..
+   * creation time of this destination.
    *
    * @return the number of erroneous messages forwarded to the DMQ.
    */
