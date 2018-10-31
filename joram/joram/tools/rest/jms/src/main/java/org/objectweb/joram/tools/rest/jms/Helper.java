@@ -94,14 +94,14 @@ public class Helper {
   }
   
   /**
-   * @return the restJmxRoot
+   * @return the Rest/Jms user
    */
   public String getRestUser() {
     return restUser;
   }
 
   /**
-   * @return the restJmxPass
+   * @return the Rest/Jms password
    */
   public String getRestPass() {
     return restPass;
