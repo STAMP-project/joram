@@ -439,10 +439,10 @@
   <target name="tests.bridge.jms" description=" --> launch all bridge tests">
     <property name="SCAdminClass" value="framework.SCAdminOSGi"/>
     <property name="isOSGi" value="true"/>
-    <antcall target="tests.bridge.jms.old"/>
-    <antcall target="tests.bridge.jms.old.auto"/>
-    <antcall target="tests.bridge.jms.old.xa"/>
-    <antcall target="tests.bridge.jms.old.auto.xa"/>
+    <!--antcall target="tests.bridge.jms.old"/ -->
+    <!--antcall target="tests.bridge.jms.old.auto"/ -->
+    <!--antcall target="tests.bridge.jms.old.xa"/ -->
+    <!--antcall target="tests.bridge.jms.old.auto.xa"/ -->
     <antcall target="tests.bridge.jms.new"/>
   </target>
 
@@ -492,12 +492,15 @@
     <antcall target="bridge.jms.admintest1xB"/>
     <antcall target="bridge.jms.admintest2xA"/>
     <antcall target="bridge.jms.admintest2xB"/>
+    <!-- TODO (AF): The tests below use bridge.jms.test target and should be modified in order to avoid time dependency
+         BEGIN -->
     <antcall target="bridge.jms.test1x"/>
     <antcall target="bridge.jms.test2x"/>
     <antcall target="bridge.jms.test3x"/>
     <antcall target="bridge.jms.test4x"/>
     <antcall target="bridge.jms.test5x"/>
     <antcall target="bridge.jms.test6x"/>
+    <!-- END -->
     <antcall target="bridge.jms.test7"/>
     <antcall target="bridge.jms.test8x"/>
     <antcall target="bridge.jms.test9x"/>
@@ -4615,6 +4618,8 @@
     <parallel>
       <antcall target="test.run" inheritAll="true"/>
 
+      <!-- TODO (AF): The tests using this target should be modified in order to avoid this time dependency -->
+    	
       <sequential>
         <sleep seconds="4"/>
         <java classname="${adminClassName}" failonerror="no" fork="yes" dir="${test.dir}">
@@ -7149,6 +7154,8 @@
     <antcall target="jms2.deliveryDelay_T2"/>
     <antcall target="jms2.deliveryDelay_T3"/>
     <antcall target="jms2.redeliveryDelay"/>
+    <antcall target="jms2.queueDeliveryDelay"/>
+    <antcall target="jms2.queuePause"/>
   </target>
 
   <target name="jms2.test0" depends="init.a3props,compile"
@@ -7451,7 +7458,7 @@
       <param name="args" value="0 C"/>
     </antcall>
     </target>
-  
+ 
   <target name="jms2.redeliveryDelay_Q_T" depends="init.a3props,compile"
             description=" --> Test redelivery delay with a queue (transacted)">
     <antcall target="test.run" inheritAll="true">
@@ -7605,8 +7612,44 @@
       <param name="jvmargs" value=""/>
       <param name="args" value="2 C"/>
     </antcall>
-    </target>
-	
+  </target>
+	  
+  <target name="jms2.queueDeliveryDelay"
+	      description=" --> launch all jms2.queueDeliveryDelay tests">
+	<antcall target="jms2.queueDeliveryDelay1"/>
+  </target>
+
+  <target name="jms2.queueDeliveryDelay1" depends="init.a3props,compile"
+          description=" --> Test queue delivery delay">
+	<antcall target="test.run" inheritAll="true">
+	  <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
+	  <param name="testid" value="jms2.queueDeliveryDelay1"/>
+	  <param name="className" value="joram.jms2.QueueDeliveryDelay"/>
+	  <param name="jndiconf" value="jms2/jndi.properties"/>
+	  <param name="a3conf" value="jms2/a3servers1.xml"/>
+	  <param name="jvmargs" value=""/>
+	  <param name="args" value=""/>
+	</antcall>
+  </target>
+	  
+  <target name="jms2.queuePause"
+	      description=" --> launch all jms2.queuePause tests">
+	<antcall target="jms2.queuePause1"/>
+  </target>
+	   
+  <target name="jms2.queuePause1" depends="init.a3props,compile"
+       description=" --> Test queue pause">
+	<antcall target="test.run" inheritAll="true">
+	  <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
+	  <param name="testid" value="jms2.queuePause1"/>
+	  <param name="className" value="joram.jms2.QueuePause"/>
+	  <param name="jndiconf" value="jms2/jndi.properties"/>
+	  <param name="a3conf" value="jms2/a3servers1.xml"/>
+	  <param name="jvmargs" value=""/>
+	  <param name="args" value=""/>
+	</antcall>
+  </target>
+
   <target name="medical.test1" depends="compile"
           description=" --> Medical use-case">
     <delete dir="${test.dir}" failonerror="false" performGCOnFailedDelete="true"/>
