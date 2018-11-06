@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2018 ScalAgent Distributed Technologies
  * Copyright (C) 2012 Universite Joseph Fourier
  * Copyright (C) 2004 Bull SA
  * Copyright (C) 1996 - 2000 Dyade
@@ -33,8 +33,10 @@ import javax.jms.JMSException;
 
 import org.objectweb.joram.client.jms.admin.AdminException;
 import org.objectweb.joram.client.jms.admin.AdminModule;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.admin.AddRemoteDestination;
 import org.objectweb.joram.shared.admin.AdminCommandConstant;
+import org.objectweb.joram.shared.admin.AdminReply;
 import org.objectweb.joram.shared.admin.ClearQueue;
 import org.objectweb.joram.shared.admin.ClusterAdd;
 import org.objectweb.joram.shared.admin.ClusterLeave;
@@ -71,8 +73,11 @@ import org.objectweb.joram.shared.admin.SetThresholdRequest;
 public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
 	/** define serialVersionUID for interoperability */
 	private static final long serialVersionUID = 1L;
-	
-  public static final String REDELIVERY_DELAY = "redeliveryDelay";
+
+	/** Property allowing to fix RedeliveryDelay */
+  public static final String REDELIVERY_DELAY = DestinationConstants.REDELIVERY_DELAY;
+  /** Property allowing to fix DeliveryDelay */
+  public static final String DELIVERY_DELAY = DestinationConstants.DELIVERY_DELAY;
 
 	public Queue() {
 		super(QUEUE_TYPE);
@@ -150,7 +155,7 @@ public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
 	 * @exception AdminException  If the request fails.
 	 */
 	public static Queue create(int serverId) throws ConnectException, AdminException {
-		return create(serverId, null, "org.objectweb.joram.mom.dest.Queue", null);
+		return create(serverId, null, null, null);
 	}
 
 	/**
@@ -169,10 +174,7 @@ public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
 	 * @exception AdminException  If the request fails.
 	 */
 	public static Queue create(String name) throws ConnectException, AdminException {
-		return create(AdminModule.getLocalServerId(),
-				name,
-				"org.objectweb.joram.mom.dest.Queue",
-				null);
+		return create(AdminModule.getLocalServerId(), name, null, null);
 	}
 
 	/**
@@ -192,9 +194,8 @@ public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
 	 * @exception ConnectException  If the admin connection is closed or broken.
 	 * @exception AdminException  If the request fails.
 	 */
-	public static Queue create(int serverId,
-			String name) throws ConnectException, AdminException {
-		return create(serverId, name, "org.objectweb.joram.mom.dest.Queue", null);
+	public static Queue create(int serverId, String name) throws ConnectException, AdminException {
+		return create(serverId, name, null, null);
 	}
 
 	/**
@@ -212,9 +213,8 @@ public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
 	 * @exception ConnectException  If the admin connection is closed or broken.
 	 * @exception AdminException  If the request fails.
 	 */
-	public static Queue create(int serverId,
-			Properties prop) throws ConnectException, AdminException {
-		return create(serverId, "org.objectweb.joram.mom.dest.Queue", prop);
+	public static Queue create(int serverId, Properties prop) throws ConnectException, AdminException {
+		return create(serverId, null, prop);
 	}
 
 	/**
@@ -233,8 +233,8 @@ public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
 	 * @exception AdminException  If the request fails.
 	 */
 	public static Queue create(int serverId,
-			String className,
-			Properties prop) throws ConnectException, AdminException {
+	                           String className,
+	                           Properties prop) throws ConnectException, AdminException {
 		return create(serverId, null, className, prop);
 	}
 
@@ -258,12 +258,13 @@ public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
 	 * @exception AdminException  If the request fails.
 	 */
 	public static Queue create(int serverId,
-			String name,
-			String className,
-			Properties prop) throws ConnectException, AdminException {
-		Queue queue = new Queue();
-		queue.doCreate(serverId, name, className, prop, queue, QUEUE_TYPE);
-		return queue;
+	                           String name,
+	                           String className,
+	                           Properties prop) throws ConnectException, AdminException {
+	  Queue queue = new Queue();
+    if (className == null) className = "org.objectweb.joram.mom.dest.Queue";
+	  queue.doCreate(serverId, name, className, prop, queue, QUEUE_TYPE);
+	  return queue;
 	}
 
 	/**
@@ -675,7 +676,7 @@ public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
   /**
    * Set redeliveryDelay attribute.
    * 
-   * @param redeliveryDelay The delay use to wait before re-delivering messages after a deny.
+   * @param redeliveryDelay The delay in seconds use to wait before re-delivering messages after a deny.
    * @throws ConnectException
    * @throws AdminException
    */
@@ -685,7 +686,47 @@ public class Queue extends Destination implements javax.jms.Queue, QueueMBean {
     // configure redeliveryDelay of UserAgent). In this case we have to overload the
     // processAdminCommand in the MOM Queue class. 
     Properties properties = new Properties();
-    properties.setProperty(Queue.REDELIVERY_DELAY, "5");
+    properties.setProperty(REDELIVERY_DELAY, "" + redeliveryDelay);
     setProperties(properties);
   }
+  
+  /**
+   * Set deliveryDelay attribute.
+   * 
+   * @param deliveryDelay The minimum delay in milliseconds use to wait before delivering each message.
+   * @throws ConnectException
+   * @throws AdminException
+   */
+  public void setDeliveryDelay(int deliveryDelay) throws ConnectException, AdminException {
+    Properties properties = new Properties();
+    properties.setProperty(DELIVERY_DELAY, "" + deliveryDelay);
+    setProperties(properties);
+  }
+
+  /**
+   * Stops / Resumes the message delivery.
+   * 
+   * @param pause if true stops the message delivery, else resumes it.
+   * @exception ConnectException  If the administration connection is closed or broken.
+   * @exception AdminException  If the request fails.
+   */
+  public void setPause(boolean pause) throws ConnectException, AdminException {
+    Properties properties = new Properties();
+    properties.setProperty(AdminCommandConstant.PAUSE, "" + pause);
+    getWrapper().processAdmin(getName(), AdminCommandConstant.CMD_PAUSE, properties);
+  }
+  
+  /**
+   * Administration method to set properties.
+   * 
+   * @param prop the properties to update.
+   * @return the admin reply
+   * 
+   * @exception ConnectException  If the administration connection is closed or broken.
+   * @exception AdminException  If the request fails.
+   */
+  public AdminReply setProperties(Properties prop) throws ConnectException, AdminException {
+    return getWrapper().processAdmin(getName(), AdminCommandConstant.CMD_SET_PROPERTIES, prop);
+  }
+
 }

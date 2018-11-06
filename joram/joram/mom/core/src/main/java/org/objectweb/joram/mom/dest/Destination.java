@@ -1121,7 +1121,9 @@ public abstract class Destination extends Agent implements DestinationMBean {
 			case AdminCommandConstant.CMD_STOP_HANDLER:
 				replyProp = processStopHandler(request.getProp());
 				break;
-
+			case AdminCommandConstant.CMD_PAUSE:
+			  replyProp = processPause(request.getProp());
+			  break;
 			default:
 				throw new Exception("Bad command : \"" + request.getCommand() + "\"");
 			}
@@ -1168,6 +1170,23 @@ public abstract class Destination extends Agent implements DestinationMBean {
   	}
   }
   
+  /**
+   * Pause / Resume the message distribution.
+   * 
+   * @param prop properties for start if needed (can be null)
+   * @return properties for the reply.
+   * @throws Exception
+   */
+  protected Properties processPause(Properties prop) throws Exception {
+    boolean pause = Boolean.parseBoolean(prop.getProperty(AdminCommandConstant.PAUSE));
+    if (this instanceof Queue) {
+      ((Queue) this).setPause(pause);
+      return prop;
+    } else {
+      throw new Exception("processPause :: not a Queue.");
+    }
+  }
+
   /**
    * Interceptors process
    * 
