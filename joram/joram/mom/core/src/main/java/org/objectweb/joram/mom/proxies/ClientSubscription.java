@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2003 - 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2003 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,7 @@ import javax.management.openmbean.TabularData;
 import org.objectweb.joram.mom.dest.Queue;
 import org.objectweb.joram.mom.messages.Message;
 import org.objectweb.joram.mom.messages.MessageJMXWrapper;
+import org.objectweb.joram.mom.messages.MessageView;
 import org.objectweb.joram.mom.util.DMQManager;
 import org.objectweb.joram.mom.util.JoramHelper;
 import org.objectweb.joram.mom.util.MessageIdList;
@@ -66,7 +67,7 @@ import fr.dyade.aaa.common.encoding.Encoder;
  * subscription, and the methods managing the delivery and acknowledgement
  * of the messages.
  */
-class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encodable {
+public class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encodable {
   /** define serialVersionUID for interoperability */
   private static final long serialVersionUID = 1L;
   
@@ -1087,8 +1088,8 @@ class ClientSubscription implements ClientSubscriptionMBean, Serializable, Encod
     return MessageJMXWrapper.createTabularDataSupport(messagesTable.getMap(), messageIds);
   }
 
-  public List getMessagesView() {
-    List messages = new ArrayList();
+  public List<MessageView> getMessagesView() {
+    List messages = new ArrayList<MessageView>();
     
     // DF: should be avoided with swap... (check the table type?)
     for (int i = 0; i < messageIds.size(); i++) {

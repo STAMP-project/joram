@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,10 +24,10 @@ package org.objectweb.joram.mom.messages;
 
 import java.util.Map;
 
+/**
+ * Allows to observe a message.
+ */
 public interface MessageView {
-
-  public String getText();
-
   public int getType();
 
   public int getPriority();
@@ -44,6 +44,7 @@ public interface MessageView {
   
   public String getId();
   
+  public String getText();
+  
   public Map getProperties();
-
 }

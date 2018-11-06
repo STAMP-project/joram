@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2006 - 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2006 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,7 +52,7 @@ import fr.dyade.aaa.util.Transaction;
  * A message content is always wrapped as a bytes array, it is characterized
  * by properties and "header" fields.
  */
-public final class Message implements Serializable, MessageView, Encodable {
+public final class Message implements Serializable, Encodable {
   /** define serialVersionUID for interoperability */
   private static final long serialVersionUID = 2L;
 
@@ -566,8 +566,8 @@ public final class Message implements Serializable, MessageView, Encodable {
     try {
 	    return msg.getText();
     } catch (Exception e) {
-    	if (logger.isLoggable(BasicLevel.WARN))
-        logger.log(BasicLevel.WARN, "getText()", e);
+    	if (logger.isLoggable(BasicLevel.INFO))
+        logger.log(BasicLevel.INFO, "getText()", e);
 	    return null;
     }
   }

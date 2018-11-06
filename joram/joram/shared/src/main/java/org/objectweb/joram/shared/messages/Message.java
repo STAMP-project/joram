@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2006 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2006 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -354,9 +354,10 @@ public final class Message implements Cloneable, Serializable, Streamable, Encod
   			obj = ois.readObject(); 
   		}
   	} catch (Exception exc) {
-  		if (logger.isLoggable(BasicLevel.ERROR))
-  			logger.log(BasicLevel.ERROR, "ERROR: fromBytes(body)", exc);
-  		// Don't forget to rethrow the Exception
+  		if (logger.isLoggable(BasicLevel.INFO))
+  			logger.log(BasicLevel.INFO, "ERROR: fromBytes(body) -> " + id, exc);
+  		else
+  		  logger.log(BasicLevel.WARN, "ERROR: fromBytes(body) -> " + id);
   		throw exc;
   	} finally {
   		try {

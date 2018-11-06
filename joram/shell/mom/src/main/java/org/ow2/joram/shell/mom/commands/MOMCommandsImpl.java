@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2012 - ScalAgent Distributed Technologies
+ * Copyright (C) 2012 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1192,7 +1192,7 @@ public class MOMCommandsImpl implements MOMCommands {
   private List<MessageView> getQueueMessages(String queueName) throws QueueNotFoundException {
     QueueMBean queue = findQueue(queueName);
     @SuppressWarnings("unchecked")
-    List<MessageView> msgs = queue.getMessagesView();
+    List<MessageView> msgs = ((org.objectweb.joram.mom.dest.Queue) queue).getMessagesView();
     return msgs==null?new ArrayList<MessageView>():msgs;
   }
   
@@ -1207,7 +1207,7 @@ public class MOMCommandsImpl implements MOMCommands {
   private List<MessageView> getSubscriptionMessages(String userName, String subscriptionName) throws UserNotFoundException, SubscriptionNotFoundException {
     ClientSubscriptionMBean sub = findClientSubscription(userName, subscriptionName);
     @SuppressWarnings("unchecked")
-    List<MessageView> msgs = sub.getMessagesView();
+    List<MessageView> msgs = ((org.objectweb.joram.mom.proxies.ClientSubscription) sub).getMessagesView();
     return msgs==null?new ArrayList<MessageView>():msgs;
   }
   
