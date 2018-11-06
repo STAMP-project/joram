@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2009 - 2010 ScalAgent Distributed Technologies
+ * Copyright (C) 2009 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,9 +42,9 @@ import org.objectweb.joram.mom.util.MessageIdList;
 import fr.dyade.aaa.common.stream.Properties;
 
 public class MessageJMXWrapper {
-  private final static String[] itemNames = { "order", "identifier", "priority", "timestamp", "expiration", "properties" };
+  private final static String[] itemNames = { "order", "identifier", "priority", "timestamp", "expiration", "properties", "type" };
 
-  private final static String[] itemDescs = { "order", "identifier", "priority", "timestamp", "expiration", "properties" };
+  private final static String[] itemDescs = { "order", "identifier", "priority", "timestamp", "expiration", "properties", "type" };
 
   private static OpenType[] itemTypes;
 
@@ -54,7 +54,7 @@ public class MessageJMXWrapper {
     try {
       ArrayType a1 = new ArrayType(1, SimpleType.STRING);
 
-      itemTypes = new OpenType[] { SimpleType.LONG, SimpleType.STRING, SimpleType.INTEGER, SimpleType.LONG, SimpleType.LONG,  a1};
+      itemTypes = new OpenType[] { SimpleType.LONG, SimpleType.STRING, SimpleType.INTEGER, SimpleType.LONG, SimpleType.LONG,  a1, SimpleType.STRING};
       rowType = new CompositeType("Message", "Message", itemNames, itemDescs, itemTypes);
     } catch (OpenDataException exc) {
       // Should never happened
@@ -86,6 +86,33 @@ public class MessageJMXWrapper {
       }
     }
     
+    String type = "UNKNOWN";
+    switch (msg.getType()) {
+      case org.objectweb.joram.shared.messages.Message.SIMPLE:
+        type="SIMPLE";
+        break;
+      case org.objectweb.joram.shared.messages.Message.TEXT:
+        type="TEXT";
+        break;
+      case org.objectweb.joram.shared.messages.Message.OBJECT:
+        type="OBJECT";
+        break;
+      case org.objectweb.joram.shared.messages.Message.MAP:
+        type="MAP";
+        break;
+      case org.objectweb.joram.shared.messages.Message.STREAM:
+        type="STREAM";
+        break;
+      case org.objectweb.joram.shared.messages.Message.BYTES:
+        type="BYTES";
+        break;
+      case org.objectweb.joram.shared.messages.Message.ADMIN:
+        type="ADMIN";
+        break;
+      default:
+        break;
+    }
+
     CompositeDataSupport cds = new CompositeDataSupport(rowType, itemNames,
                                                         new Object[] {
                                                                       new Long(msg.order),
@@ -93,7 +120,8 @@ public class MessageJMXWrapper {
                                                                       new Integer(msg.getPriority()),
                                                                       new Long(msg.getTimestamp()),
                                                                       new Long(msg.getExpiration()),
-                                                                      props
+                                                                      props,
+                                                                      type
                                                                       });
     return cds;
   }
