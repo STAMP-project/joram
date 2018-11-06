@@ -38,6 +38,7 @@ import javax.management.openmbean.TabularData;
 
 import org.objectweb.joram.mom.messages.Message;
 import org.objectweb.joram.mom.messages.MessageJMXWrapper;
+import org.objectweb.joram.mom.messages.MessageView;
 import org.objectweb.joram.mom.notifications.AbortReceiveRequest;
 import org.objectweb.joram.mom.notifications.AbstractRequestNot;
 import org.objectweb.joram.mom.notifications.AcknowledgeRequest;
@@ -128,6 +129,7 @@ public class Queue extends Destination implements QueueMBean {
    *
    * @return the threshold value of this queue; -1 if not set.
    */
+  @Override
   public int getThreshold() {
     return threshold;
   }
@@ -137,6 +139,7 @@ public class Queue extends Destination implements QueueMBean {
    *
    * @param threshold The threshold value to be set (-1 for unsetting previous value).
    */
+  @Override
   public void setThreshold(int threshold) {
     this.threshold = threshold;
   }
@@ -152,7 +155,7 @@ public class Queue extends Destination implements QueueMBean {
   }
 
   /** 
-   * The re-delivery delay use to wait before re-delivering 
+   * The re-delivery delay in seconds use to wait before re-delivering 
    * messages after a deny. 
    */
   private int redeliveryDelay = 0;
@@ -161,8 +164,12 @@ public class Queue extends Destination implements QueueMBean {
   static int defaultRedeliveryDelay = -1;
 
   /**
+   * Returns the delay in seconds use to wait before re-delivering messages
+   * after a deny. 
+   * 
    * @return the reDeliveryDelay
    */
+  @Override
   public final int getRedeliveryDelay() {
     if (redeliveryDelay == 0)
       return getDefaultRedeliveryDelay();
@@ -170,11 +177,15 @@ public class Queue extends Destination implements QueueMBean {
   }
 
   /**
+   * Sets the delay in seconds use to wait before re-delivering messages
+   * after a deny.
+   * 
    * @param reDeliveryDelay the reDeliveryDelay to set
    */
+  @Override
   public final void setRedeliveryDelay(int redeliveryDelay) {
-//    logger.log(BasicLevel.FATAL, "Queue.setRedeliveryDelay: " + REDELIVERY_DELAY + "=" + redeliveryDelay);
     this.redeliveryDelay = redeliveryDelay;
+    setSave();
   }
 
   /** Static method returning the default redelivery delay for a server. */
@@ -185,7 +196,50 @@ public class Queue extends Destination implements QueueMBean {
   public static final void setDefaultRedeliveryDelay(int reDeliveryDelay) {
     defaultRedeliveryDelay = reDeliveryDelay;
   }
+  
+  /** 
+   * The delivery delay in milliseconds used to wait before delivering a message.
+   * If set the resulting delay is the max between this value and the message
+   * property.
+   */
+  private int deliveryDelay = 0;
 
+  /**
+   * Returns the Queue deliveryDelay in milliseconds.
+   * @return the DeliveryDelay
+   */
+  @Override
+  public final int getDeliveryDelay() {
+    return deliveryDelay;
+  }
+
+  /**
+   * Sets the Queue deliveryDelay in milliseconds.
+   * @param deliveryDelay the deliveryDelay to set
+   */
+  @Override
+  public final void setDeliveryDelay(int deliveryDelay) {
+    this.deliveryDelay = deliveryDelay;
+    setSave();
+  }
+
+  private boolean pause = false;
+  
+  @Override
+  public boolean isPause() {
+    return pause;
+  }
+  
+  @Override
+  public void setPause(boolean pause) {
+    if (this.pause == pause) return;
+    
+    this.pause = pause;
+    setSave();
+    if (!pause)
+      Channel.sendTo(getId(), new QueueDeliveryTimeNot(null, false));
+  }
+  
   /** <code>true</code> if all the stored messages have the same priority. */
   private boolean samePriorities;
 
@@ -214,8 +268,6 @@ public class Queue extends Destination implements QueueMBean {
   protected Queue(String name, boolean fixed, int stamp) {
     super(name, fixed, stamp);
   }
-
-  public static final String REDELIVERY_DELAY = "redeliveryDelay";
   
   /**
    * Configures an {@link Queue} instance.
@@ -227,8 +279,12 @@ public class Queue extends Destination implements QueueMBean {
     super.setProperties(properties, firstTime);
     
     // Set redeliveryDelay if defined.
-    if (properties != null && properties.containsKey(REDELIVERY_DELAY)) {
-      setRedeliveryDelay(ConversionHelper.toInt(properties.get(REDELIVERY_DELAY)));
+    if (properties != null && properties.containsKey(DestinationConstants.REDELIVERY_DELAY)) {
+      setRedeliveryDelay(ConversionHelper.toInt(properties.get(DestinationConstants.REDELIVERY_DELAY)));
+    }
+    // Set deliveryDelay if defined.
+    if (properties != null && properties.containsKey(DestinationConstants.DELIVERY_DELAY)) {
+      setDeliveryDelay(ConversionHelper.toInt(properties.get(DestinationConstants.DELIVERY_DELAY)));
     }
   }
   
@@ -1207,6 +1263,9 @@ public class Queue extends Destination implements QueueMBean {
     ClientMessages clientMsgs = preProcess(from, cm);
    
     long currentTime = System.currentTimeMillis();
+    long deliveryTime = currentTime;
+    if (deliveryDelay > 0)
+      deliveryTime += deliveryDelay;
     
     if (clientMsgs != null) {
       Message msg;
@@ -1216,6 +1275,12 @@ public class Queue extends Destination implements QueueMBean {
         org.objectweb.joram.shared.messages.Message sharedMsg = (org.objectweb.joram.shared.messages.Message) msgs.next();
         msg = new Message(sharedMsg);
         msg.order = arrivalState.getAndIncrementArrivalCount(msg.isPersistent());
+
+        if (logger.isLoggable(BasicLevel.DEBUG))
+          logger.log(BasicLevel.DEBUG, "Queue.doClientMessages() -> " + msg.getId() + ',' + msg.order);
+
+        if ((deliveryTime > currentTime) && (deliveryTime > sharedMsg.deliveryTime))
+          sharedMsg.deliveryTime = deliveryTime;
         
         if (sharedMsg.deliveryTime > currentTime) {
           if (logger.isLoggable(BasicLevel.DEBUG))
@@ -1277,23 +1342,23 @@ public class Queue extends Destination implements QueueMBean {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "Queue.processDeliveryTime(" + from + ", " + not + ')');
 
-    if (not.msg == null) return;
-    
-    // Adds a message in the list of messages to deliver.
-    addMessage(not.msg, not.throwsExceptionOnFullDest);
-    //msg.order = arrivalState.getAndIncrementArrivalCount(msg.isPersistent());
-    
-    // Remove msgId to the deliveryTimeTable
-    deliveryTimeTable.remove(not.msg.getId());
+    if (not.msg != null) {
+      // Adds a message in the list of messages to deliver.
+      addMessage(not.msg, not.throwsExceptionOnFullDest);
+      //msg.order = arrivalState.getAndIncrementArrivalCount(msg.isPersistent());
 
+      // Remove msgId to the deliveryTimeTable
+      deliveryTimeTable.remove(not.msg.getId());
+    }
+    
     // Launching a delivery sequence:
     deliverMessages(0);
 
-    ClientMessages clientMsgs = new ClientMessages();
-    clientMsgs.addMessage(not.msg.getMsg());
-    
-    if (clientMsgs != null)
+    if (not.msg != null) {
+      ClientMessages clientMsgs = new ClientMessages();
+      clientMsgs.addMessage(not.msg.getMsg());
       postProcess(clientMsgs);
+    }
   }
 
   /**
@@ -1734,8 +1799,8 @@ public class Queue extends Destination implements QueueMBean {
   public TabularData getMessages() throws Exception {
     return MessageJMXWrapper.createTabularDataSupport(messages);
   }
-
-  public List getMessagesView() {
+  
+  public List<MessageView> getMessagesView() {
     return messages;
   }
 
@@ -1763,6 +1828,8 @@ public class Queue extends Destination implements QueueMBean {
     // Cleaning the possibly expired messages.
     DMQManager dmqManager = cleanPendingMessage(current);
 
+    if (pause) return;
+    
     // Processing each request as long as there are deliverable messages:
     while (! messages.isEmpty() && index < requests.size()) {
       notRec = (ReceiveRequest) requests.get(index);
@@ -1864,6 +1931,11 @@ public class Queue extends Destination implements QueueMBean {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "Queue.addClientMessage(" + clientMsgs + ')');
     
+    long currentTime = System.currentTimeMillis();
+    long deliveryTime = currentTime;
+    if (deliveryDelay > 0)
+      deliveryTime += deliveryDelay;
+
     if (clientMsgs != null) {
       Message msg;
       // Storing each received message:
@@ -1873,6 +1945,9 @@ public class Queue extends Destination implements QueueMBean {
         
         if (logger.isLoggable(BasicLevel.DEBUG))
           logger.log(BasicLevel.DEBUG, "Queue.addClientMessage() -> " + msg.getId() + ',' + msg.order);
+
+        if ((deliveryTime > currentTime) && (deliveryTime > msg.getDeliveryTime()))
+          msg.setDeliveryTime(deliveryTime);;
 
         if (interceptorsAvailable()) {
         	// get the shared message
@@ -1894,8 +1969,15 @@ public class Queue extends Destination implements QueueMBean {
       		}
       	}
         
-        // store message
-        storeMessage(msg, throwsExceptionOnFullDest);
+        if (msg.getDeliveryTime() > currentTime) {
+          if (logger.isLoggable(BasicLevel.DEBUG))
+            logger.log(BasicLevel.DEBUG, "Queue.doClientMessages: deliveryTimeTable.put " + msg + ')');
+          // TODO: We can not set the client context id, fix to -1. Is it a problem?
+          addDeliveryTimeMessage(msg, -1, throwsExceptionOnFullDest, false);
+        } else {
+          // store message
+          storeMessage(msg, throwsExceptionOnFullDest);
+        }
       }
     }
     // Launching a delivery sequence:
@@ -1947,7 +2029,8 @@ public class Queue extends Destination implements QueueMBean {
   
   public int getEncodedSize() throws Exception {
     int encodedSize = super.getEncodedSize();
-    encodedSize += INT_ENCODED_SIZE * 5;
+    encodedSize += INT_ENCODED_SIZE * 6;
+    encodedSize += BOOLEAN_ENCODED_SIZE;
     encodedSize += LONG_ENCODED_SIZE;
     for (ReceiveRequest request : requests) {
       encodedSize += request.getEncodedSize();
@@ -1961,6 +2044,8 @@ public class Queue extends Destination implements QueueMBean {
     encoder.encodeUnsignedLong(nbMsgsDeniedSinceCreation);
     encoder.encodeUnsignedInt(priority);
     encoder.encodeSignedInt(threshold);
+    encoder.encodeBoolean(pause);
+    encoder.encodeSignedInt(deliveryDelay);
     encoder.encodeSignedInt(redeliveryDelay);
     encoder.encodeUnsignedInt(requests.size());
     for (ReceiveRequest request : requests) {
@@ -1974,6 +2059,8 @@ public class Queue extends Destination implements QueueMBean {
     nbMsgsDeniedSinceCreation = decoder.decodeUnsignedLong();
     priority = decoder.decodeUnsignedInt();
     threshold = decoder.decodeSignedInt();
+    pause = decoder.decodeBoolean();
+    deliveryDelay = decoder.decodeSignedInt();
     redeliveryDelay = decoder.decodeSignedInt();
     int requestsSize = decoder.decodeUnsignedInt();
     requests = new Vector<ReceiveRequest>(requestsSize);
@@ -1992,5 +2079,4 @@ public class Queue extends Destination implements QueueMBean {
     }
     
   }
-  
 }
