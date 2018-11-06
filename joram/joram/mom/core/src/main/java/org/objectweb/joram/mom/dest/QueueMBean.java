@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2004 - 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -146,13 +146,9 @@ public interface QueueMBean extends DestinationMBean {
    */
   public TabularData getMessages() throws Exception;
 
-  /**
-   * Returns the description of all pending messages.
-   * 
-   * @return the description of the message.
-   */
-  public List getMessagesView();
+// No longer needed (JORAM-304).
 
+//  public List getMessagesView();
 //  public CompositeData[] getMessages() throws Exception;
   
   /**
@@ -164,4 +160,19 @@ public interface QueueMBean extends DestinationMBean {
    * @param reDeliveryDelay the reDeliveryDelay to set(unit: second)
    */
   void setRedeliveryDelay(int reDeliveryDelay);
+  
+  /**
+   * Returns the Queue deliveryDelay in milliseconds.
+   * @return the DeliveryDelay
+   */
+  int getDeliveryDelay();
+  
+  /**
+   * Sets the Queue deliveryDelay in milliseconds.
+   * @param deliveryDelay the deliveryDelay to set
+   */
+  void setDeliveryDelay(int deliveryDelay);
+  
+  boolean isPause();
+  void setPause(boolean pause);
 }
