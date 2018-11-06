@@ -31,7 +31,10 @@ public final class DestinationConstants {
   
   /** The property name for the remote JMS destination in Acquisition/Distribution bridge destinations */
   public static final String DESTINATION_NAME_PROP = "jms.destination";
-  
+
+  public static final String REDELIVERY_DELAY = "redeliveryDelay";
+  public static final String DELIVERY_DELAY = "deliveryDelay";
+
   /** The property name for the distribution handler class name. */
   public static final String DISTRIBUTION_CLASS_NAME = "distribution.className";
   /** */

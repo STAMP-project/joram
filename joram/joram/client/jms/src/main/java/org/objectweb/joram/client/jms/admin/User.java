@@ -35,6 +35,7 @@ import javax.naming.StringRefAddr;
 
 import org.objectweb.joram.client.jms.Message;
 import org.objectweb.joram.client.jms.Queue;
+import org.objectweb.joram.shared.DestinationConstants;
 import org.objectweb.joram.shared.admin.AdminCommandConstant;
 import org.objectweb.joram.shared.admin.AdminCommandReply;
 import org.objectweb.joram.shared.admin.AdminReply;
@@ -82,9 +83,9 @@ import fr.dyade.aaa.util.management.MXWrapper;
  * of the message is stopped.
  * <p>
  * There is two distinct chains of interceptors:<ul>
- * <li>The first one “interceptors_in” handles each message that’s entering the server (result
+ * <li>The first one "interceptors_in" handles each message that's entering the server (result
  * of a send method on a connection from the selected user).</li>
- * <li>The second one “interceptors_out” handles each message that’s exiting the server (result
+ * <li>The second one "interceptors_out" handles each message that's exiting the server (result
  * of a receive method on a connection from the selected user).</li>
  * </ul>
  * These two interceptor chains are configurable for each user.
@@ -93,7 +94,7 @@ public class User extends AdministeredObject implements UserMBean {
   /** define serialVersionUID for interoperability */
   private static final long serialVersionUID = 1L;
   
-  public static final String REDELIVERY_DELAY = "redeliveryDelay";
+  public static final String REDELIVERY_DELAY = DestinationConstants.REDELIVERY_DELAY;
 
   public static Logger logger = Debug.getLogger(User.class.getName());
 
