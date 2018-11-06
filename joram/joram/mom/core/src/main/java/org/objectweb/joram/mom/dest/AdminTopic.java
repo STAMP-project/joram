@@ -736,6 +736,7 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
       if (! DestinationConstants.compatible(destDesc.getType(), type)) {
         throw new RequestException("Destination type not compliant");
       }
+      // TODO (AF): May be we have to send a SetProperties to the destination (JORAM-267).
       strbuf.append("Request [").append(requestClassName)
       .append("], processed by AdminTopic on server [").append(serverId)
       .append("], successful [true]: destination [")
