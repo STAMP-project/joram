@@ -252,6 +252,9 @@ public class TcpConnectionListener extends Daemon {
         return;
       }
 
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, " -> open connection, proxyId=" + proxyId);
+      
       IOControl ioctrl;
       ReliableConnectionContext ctx;
       if (key == -1) {

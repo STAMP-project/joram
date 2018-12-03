@@ -380,6 +380,8 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
       AgentId proxyId = getProxyId(not.getIdentity(), not.getInAddr());
       not.Return(proxyId);
     } catch (Exception exc) {
+      logger.log(BasicLevel.ERROR, 
+                 "AdminTopic.handleGetProxyIdNot " + not.getIdentity(), exc);
       not.Throw(exc);
     }
   }
