@@ -7805,15 +7805,35 @@
   </target>
   
   <target name="rest.client9" depends="init.rest"
-            description=" --> REST test TextMessage perf">
+	            description=" --> REST test TextMessage perf">
     <antcall target="test.start" inheritAll="true">
-      <param name="testid" value="rest.client9"/>
-      <param name="className" value="joram.rest.ClientRESTTextPerf"/>
-      <param name="SCAdminClass" value="framework.SCAdminOSGi"/>
-      <param name="isOSGi" value="true"/>
-      <param name="jndiconf" value="jndi.properties"/>
-      <param name="a3conf" value="a3servers.xml"/>
-      <param name="args" value="100 1000 100 false"/>
+	      <param name="testid" value="rest.client9"/>
+	      <param name="className" value="joram.rest.ClientRESTTextPerf"/>
+	      <param name="SCAdminClass" value="framework.SCAdminOSGi"/>
+	      <param name="isOSGi" value="true"/>
+	      <param name="jndiconf" value="jndi.properties"/>
+	      <param name="a3conf" value="a3servers.xml"/>
+	      <param name="args" value="1 10000 1000 false"/>
+	    </antcall>
+
+	    <antcall target="test.start" inheritAll="true">
+	      <param name="testid" value="rest.client9"/>
+	      <param name="className" value="joram.rest.ClientRESTTextPerf"/>
+	      <param name="SCAdminClass" value="framework.SCAdminOSGi"/>
+	      <param name="isOSGi" value="true"/>
+	      <param name="jndiconf" value="jndi.properties"/>
+	      <param name="a3conf" value="a3servers.xml"/>
+	      <param name="args" value="10 10000 1000 false"/>
+	    </antcall>
+
+	    <antcall target="test.start" inheritAll="true">
+	      <param name="testid" value="rest.client9"/>
+	      <param name="className" value="joram.rest.ClientRESTTextPerf"/>
+	      <param name="SCAdminClass" value="framework.SCAdminOSGi"/>
+	      <param name="isOSGi" value="true"/>
+	      <param name="jndiconf" value="jndi.properties"/>
+	      <param name="a3conf" value="a3servers.xml"/>
+	      <param name="args" value="20 10000 1000 false"/>
     </antcall>
   </target>
   
