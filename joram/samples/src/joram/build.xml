@@ -145,6 +145,17 @@
     </antcall>
   </target>
 
+	  <!-- Start a single server with JDBCTransaction and Derby data store -->
+	  <!-- Be careful: Needs the derby.jar bundle        -->
+	  <target name="jdbc_server" depends="init"
+	          description="--> Starts a single server in persistent mode with a Derby repository">
+	    <antcall target="server">
+	      <param name="sid" value="0"/>
+	      <param name="a3.conf" value="${conf.dir}/jdbc_a3servers.xml"/>
+	      <param name="osgi.conf" value="${conf.dir}/config_derby.properties"/>
+	    </antcall>
+	  </target>
+
   <!-- Start a single server in NullTransaction mode with all extension bundles -->
   <target name="extended_server" depends="init"
           description="--> Starts a single server in non-persistent mode">
@@ -295,6 +306,7 @@
        ************************************************** -->
   
   <!-- SEIP Bridge server, /!\ the configuration file is inherited from efbridge -->
+  <!-- Needs to run a ngt_server -->
   <target name="seipbridge_server" depends="simple_init"
           description="--> Starts the SEIP bridge server">
     <antcall target="server">
@@ -370,7 +382,7 @@
     <java classname="rest.PerfProducer" failonerror="no" fork="yes"
           dir="${run.dir}">
       <classpath path="${project.class.path}"/>
-5      <jvmarg line="-DNbClient=2 -DNbMsgPerRound=1000 -DRound=50 -DMsgSize=1000 -DMsgTransient=false -Dmps=1000" />
+      <jvmarg line="-DNbClient=2 -DNbMsgPerRound=1000 -DRound=50 -DMsgSize=1000 -DMsgTransient=false -Dmps=1000" />
       <!-- jvmarg line="-DNbClient=1 -DNbMsgPerRound=100 -DRound=200 -DMsgSize=1000 -DMsgTransient=false -Dmps=120" / -->
     </java>
   </target>
@@ -1633,10 +1645,12 @@
     <java classname="perfs.Producer" failonerror="no" fork="yes"
           dir="${run.dir}">
       <classpath path="${project.class.path}"/>
-      <jvmarg line="-DNbClient=1 -DRound=10000 -DNbMsgPerRound=1000 -Dmps=10000 -DMsgSize=10000 -DMsgTransient=true -DTransacted=true" />
+      <!-- jvmarg line="-DNbClient=1 -DRound=100 -DNbMsgPerRound=1000 -Dmps=10000 -DMsgSize=10000 -DMsgTransient=false -DTransacted=false" / -->
       <!-- jvmarg line="-DNbClient=1 -DRound=1000 -DNbMsgPerRound=10000 -Dmps=10000 -DMsgSize=500 -DMsgTransient=false -DTransacted=false -DSwapAllowed=true" / -->
       <!-- jvmarg line="-DNbClient=1 -DRound=1600 -DNbMsgPerRound=100 -Dmps=500 -DMsgSize=32768 -DMsgTransient=false -DTransacted=false -DSwapAllowed=true" / -->
       <!-- jvmarg line="-DNbClient=25 -DRound=40 -DNbMsgPerRound=50 -Dmps=50 -DMsgSize=500 -DMsgTransient=false -DTransacted=false" / -->
+      <jvmarg line="-DNbClient=5 -DRound=20 -DNbMsgPerRound=200 -Dmps=50 -DMsgSize=500 -DMsgTransient=false -DTransacted=false" />
+      <!-- jvmarg line="-DNbClient=1 -DRound=10 -DNbMsgPerRound=1000 -Dmps=500 -DMsgSize=500 -DMsgTransient=false -DTransacted=false" / -->
       <arg line="queue"/>
     </java>
   </target>
@@ -1647,7 +1661,7 @@
     <java classname="perfs.Consumer" failonerror="no" fork="yes"
           dir="${run.dir}">
       <classpath path="${project.class.path}"/>
-      <jvmarg line=" -DTransacted=true -DNbMaxMessage=10000000" />
+      <jvmarg line=" -DTransacted=true -DNbMaxMessage=100000" />
       <arg line="queue"/>
     </java>
   </target>

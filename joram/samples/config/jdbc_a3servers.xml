@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+  - Copyright (C) 2000 - 2012 ScalAgent Distributed Technologies
+  - 
+  - This library is free software; you can redistribute it and/or
+  - modify it under the terms of the GNU Lesser General Public
+  - License as published by the Free Software Foundation; either
+  - version 2.1 of the License, or any later version.
+  - 
+  - This library is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  - Lesser General Public License for more details.
+  - 
+  - You should have received a copy of the GNU Lesser General Public
+  - License along with this library; if not, write to the Free Software
+  - Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+  - USA.
+-->
+<config>
+  <property name="Transaction" value="fr.dyade.aaa.ext.JDBCTransaction"/>
+                  
+  <property name="org.ow2.joram.jdbc.transaction.driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+  <property name="org.ow2.joram.jdbc.transaction.url" value="jdbc:derby:s0/JoramDB;create=true"/>
+
+<!--   <property name="org.ow2.joram.jdbc.transaction.protocol" value="jdbc:derby"/>
+  <property name="org.ow2.joram.jdbc.transaction.host" value="fr.dyade.aaa.util.DerbyDBTransaction"/>
+  <property name="org.ow2.joram.jdbc.transaction.port" value="fr.dyade.aaa.util.DerbyDBTransaction"/>
+  <property name="org.ow2.joram.jdbc.transaction.dbname" value="JoramDB"/>
+ -->
+  <property name="org.ow2.joram.jdbc.transaction.user" value="user1"/>
+  <property name="org.ow2.joram.jdbc.transaction.password" value="user1"/>
+ 
+<!--   <property name="org.ow2.joram.jdbc.transaction.dbinit" value="CREATE TABLE JoramDB (name VARCHAR(256), content LONG VARCHAR FOR BIT DATA, PRIMARY KEY(name))"/> -->
+  <property name="org.ow2.joram.jdbc.transaction.dbinit" value="CREATE TABLE JoramDB (name VARCHAR(256), content BLOB(16M), PRIMARY KEY(name))"/>
+
+  <server id="0" name="S0" hostname="localhost">
+    <service class="org.objectweb.joram.mom.proxies.ConnectionManager"
+             args="root root"/>
+    <service class="org.objectweb.joram.mom.proxies.tcp.TcpProxyService" 
+             args="16010"/>
+    <service class="fr.dyade.aaa.jndi2.server.JndiServer" args="16400"/>
+  </server>
+</config>
