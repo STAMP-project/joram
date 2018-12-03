@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -90,6 +90,12 @@ public class DistributionQueue extends Queue {
    *          The initial set of properties.
    */
   public void setProperties(Properties properties, boolean firstTime) throws Exception {
+    if (properties != null && ! properties.containsKey(DestinationConstants.WAKEUP_PERIOD)) {
+      logger.log(BasicLevel.WARN,
+                 "DistributionQueue.setProperties, " + DestinationConstants.WAKEUP_PERIOD + "not defined, set to 1000");
+      properties.setProperty(DestinationConstants.WAKEUP_PERIOD, "1000");
+    }
+
     super.setProperties(properties, firstTime);
 
     if (logger.isLoggable(BasicLevel.DEBUG)) {
@@ -302,7 +308,7 @@ public class DistributionQueue extends Queue {
         nbMsgsDeliverSinceCreation++;
 
         if (logger.isLoggable(BasicLevel.DEBUG))
-          logger.log(BasicLevel.DEBUG, "DistributionQueue.removeAndDeleteMessages() - removes " + id);
+          logger.log(BasicLevel.DEBUG, "DistributionQueue.removeAndDeleteMessages() - removes " + id + ", " + message.order);
 
         if (logmsg.isLoggable(BasicLevel.INFO))
           logmsg.log(BasicLevel.INFO, getName() + ": removes message " + id);
