@@ -860,8 +860,16 @@ public final class Message implements Cloneable, Serializable, Streamable, Encod
   }
   
   public int getEncodedSize() throws Exception {
+    if (id == null) { // TODO (AF): JORAM-308
+      logger.log(BasicLevel.WARN, "Message: Null id.");
+      id = "";
+    }
     int encodedSize = EncodableHelper.getStringEncodedSize(id);
     
+    if (toId == null) { // TODO (AF): JORAM-308
+      logger.log(BasicLevel.WARN, "Message: Null toId.");
+      toId = "";
+    }
     encodedSize += EncodableHelper.getStringEncodedSize(toId);
     encodedSize += EncodableHelper.getNullableStringEncodedSize(toName);
     encodedSize += BYTE_ENCODED_SIZE + LONG_ENCODED_SIZE + BOOLEAN_ENCODED_SIZE + LONG_ENCODED_SIZE + SHORT_ENCODED_SIZE;
@@ -869,6 +877,8 @@ public final class Message implements Cloneable, Serializable, Streamable, Encod
     if (type != org.objectweb.joram.shared.messages.Message.SIMPLE) { encodedSize += BYTE_ENCODED_SIZE; }
     if (replyToId != null) {
       encodedSize += EncodableHelper.getStringEncodedSize(replyToId);
+      // TODO (AF): Should be a NullableString (be careful to data store compatibility).
+      if (replyToName == null) replyToName = "";
       encodedSize += EncodableHelper.getStringEncodedSize(replyToName);
       encodedSize += BYTE_ENCODED_SIZE;
     }
@@ -882,8 +892,7 @@ public final class Message implements Cloneable, Serializable, Streamable, Encod
     if (bodyLength < 0) {
       encodedSize += EncodableHelper.getNullableByteArrayEncodedSize(body);
     } else {
-      encodedSize += EncodableHelper.getNullableByteArrayEncodedSize(body,
-          bodyLength);
+      encodedSize += EncodableHelper.getNullableByteArrayEncodedSize(body, bodyLength);
     }
     encodedSize += EncodableHelper.getNullableStringEncodedSize(clientID);
     
@@ -918,6 +927,7 @@ public final class Message implements Cloneable, Serializable, Streamable, Encod
     if (type != org.objectweb.joram.shared.messages.Message.SIMPLE) { encoder.encodeByte((byte) type); }
     if (replyToId != null) {
       encoder.encodeString(replyToId);
+      // TODO (AF): Should be a NullableString (be careful to data store compatibility).
       encoder.encodeString(replyToName);
       encoder.encodeByte(replyToType);
     }

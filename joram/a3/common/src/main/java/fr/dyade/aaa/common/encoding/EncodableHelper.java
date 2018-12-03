@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2013 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ public class EncodableHelper {
    * @return the size of the encoded string
    */
   public static final int getStringEncodedSize(String s) {
+    // TODO (AF): Prevents a NPE, encodes an empty string if null
     return Encodable.INT_ENCODED_SIZE + s.length();
   }
   
