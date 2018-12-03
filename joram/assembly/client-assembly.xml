@@ -6,6 +6,18 @@
   <formats>
     <format>jar</format>
   </formats>
+  
+  <fileSets>
+    <fileSet>
+      <directory>.</directory>
+      <outputDirectory>.</outputDirectory>
+      <lineEnding>unix</lineEnding>
+      <fileMode>0744</fileMode>
+      <includes>
+        <include>a3debug.cfg</include>
+      </includes>
+    </fileSet>
+  </fileSets>
 
   <dependencySets>
     <dependencySet>

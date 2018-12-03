@@ -109,7 +109,7 @@ public final class AdminModule {
    */
   public static void main(String[] args) {
     if (args.length != 1) {
-      System.err.println("usage: java ... org.objectweb.joram.client.jms.admin.AdminModule <path of XML script file>");
+      System.err.println("usage: java -jar joram-assembly-client.jar <path of XML script file>");
       System.exit(-1);
     }
     
