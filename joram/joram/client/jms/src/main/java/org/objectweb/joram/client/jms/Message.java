@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2006 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2006 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,6 @@ import fr.dyade.aaa.common.Debug;
  * </ul>
  */
 public class Message implements javax.jms.Message {
-  /** logger */
   public static Logger logger = Debug.getLogger(Message.class.getName());
 
   protected org.objectweb.joram.shared.messages.Message momMsg;
@@ -125,6 +124,14 @@ public class Message implements javax.jms.Message {
     return momMsg.compressionLevel;
   }
   
+  /**
+   * Builds a Joram/JMS message from a Joram shared message.
+   * 
+   * @param session
+   * @param momMsg
+   * @return
+   * @throws JMSException
+   */
   public static Message wrapMomMessage(Session session,
                                        org.objectweb.joram.shared.messages.Message momMsg) throws JMSException {
     switch (momMsg.type) {
@@ -841,7 +848,62 @@ public class Message implements javax.jms.Message {
       throw new MessageFormatException("Can't set non primitive Java object as a property value.");
     }
   }
- 
+  
+  private final void checkIdentifier(String identifier) throws IllegalArgumentException {
+    if (! strictVerificationWarn()) return;
+    
+    char[] chars = identifier.toCharArray();
+    if (!Character.isJavaIdentifierStart(chars[0])) {
+      if (strictVerificationError()) {
+        throw new IllegalArgumentException("Invalid property name: " + identifier);
+      } else {
+        if (strictVerificationWarn())
+          logger.log(BasicLevel.WARN,
+                     "Invalid property name \"" + identifier + "\" in JMS message.");
+        return;
+      }
+    }
+
+    for (int i=1; i<chars.length; i++) {
+      if (!Character.isJavaIdentifierPart(chars[i])) {
+        if (strictVerificationError()) {
+          throw new IllegalArgumentException("Invalid property name: " + identifier);
+        } else {
+          if (strictVerificationWarn())
+            logger.log(BasicLevel.WARN,
+                       "Invalid property name \"" + identifier + "\" in JMS message.");
+          return;
+        }
+      }
+    }
+  }
+  
+  private static boolean first = true;
+  private static boolean strictVerificationError = false;
+  private static boolean strictVerificationWarn = true;
+
+  private static final void initStrictVerification() {
+    if (first) {
+      first = false;
+      String value = System.getProperty("org.objectweb.joram.jms.strict.identifier", "warn");
+      if (! value.equalsIgnoreCase("warn")) {
+        Boolean bool = Boolean.parseBoolean(value);
+        strictVerificationError = bool;
+        strictVerificationWarn = bool;
+      }
+    }
+  }
+  
+  private static final boolean strictVerificationError() {
+    initStrictVerification();
+    return strictVerificationError;
+  }
+  
+  private static final boolean strictVerificationWarn() {
+    initStrictVerification();
+    return strictVerificationError;
+  }
+
   /**
    * Method actually setting a new property.
    *
@@ -856,7 +918,10 @@ public class Message implements javax.jms.Message {
   private final void doSetProperty(String name, Object value) throws JMSException {
     if (name == null || name.equals(""))
       throw new IllegalArgumentException("Invalid property name: " + name);
+    
+    checkIdentifier(name);
 
+    
     if (name.startsWith("JMSX")) {
       if (name.equals("JMSXGroupID")) {
         momMsg.setProperty(name, ConversionHelper.toString(value));
@@ -1071,6 +1136,7 @@ public class Message implements javax.jms.Message {
 
   /**
    * Converts a non-Joram JMS message into a Joram message.
+   * Can be used to duplicate a message.
    *
    * @param jmsMsg a JMS message.
    * @return a Joram message.
