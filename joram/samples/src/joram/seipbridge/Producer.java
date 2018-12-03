@@ -56,6 +56,7 @@ public class Producer {
     for (int i = 1; i < 11; i++) {
       String str = "Joram message number " + i + " sent through distribution bridge queue.";
       msg.writeBytes(str.getBytes());
+      msg.setStringProperty("mqtt_topic", "/topic/toto");
       System.out.println("send msg = " + str);
       bridgeProducer.send(msg);
     }

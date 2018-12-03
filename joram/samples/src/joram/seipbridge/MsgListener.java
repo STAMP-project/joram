@@ -40,14 +40,15 @@ public class MsgListener implements MessageListener {
   
   public void onMessage(Message msg) {
     try {
+      String topic = msg.getStringProperty("mqtt_topic");
       if (msg instanceof TextMessage)
-        System.out.println(who + " receive on mqs queue: " + ((TextMessage) msg).getText());
+        System.out.println(who + " receive on mqs queue: " + ((TextMessage) msg).getText() + "\nfrom: " + topic);
       else if (msg instanceof BytesMessage) {
         BytesMessage m = (BytesMessage) msg;
         int len = (int) m.getBodyLength();
         byte[] payload = new byte[len];
         len = m.readBytes(payload);
-        System.out.println(who + " receive on mqs queue [" + len + ", " + payload.length + "]: " + new String(payload));
+        System.out.println(who + " receive on mqs queue [" + len + ", " + payload.length + "]: " + new String(payload) + "\nfrom: " + topic);
       }
     }
     catch (JMSException exc) {
