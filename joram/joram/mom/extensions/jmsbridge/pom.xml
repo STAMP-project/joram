@@ -38,7 +38,8 @@
               org.objectweb.joram.shared.messages,
               org.objectweb.joram.shared.selectors,
               org.objectweb.util.monolog,
-              org.objectweb.util.monolog.api</Import-Package>
+              org.objectweb.util.monolog.api
+            </Import-Package>
             <Export-Package>org.objectweb.joram.mom.dest.jmsbridge,org.objectweb.joram.mom.dest.jms</Export-Package>
             <DynamicImport-Package>*</DynamicImport-Package>
           </instructions>
