@@ -306,7 +306,10 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
     
     try {
       if (clientID == null) {
-        cnx.setClientID("joramBridge_" + name + "_" + AgentServer.getServerId());
+        // Be careful, durable subscriptions need a ClientID !!
+        logger.log(BasicLevel.WARN,
+                   "JMSModule.doConnect: Connection " + name + " does not define a ClientID");
+//        cnx.setClientID("joramBridge_" + name + "_" + AgentServer.getServerId());
       } else {
         cnx.setClientID(clientID);
       }
@@ -343,7 +346,7 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
    */
   public void onException(JMSException exc) {
   	if (logger.isLoggable(BasicLevel.WARN)) {
-  		logger.log(BasicLevel.WARN, "JMSModule.onException(" + exc + ')');
+  		logger.log(BasicLevel.WARN, "JMSModule.onException()", exc);
   	}
 
   	if (listeners != null) {
@@ -353,6 +356,16 @@ public class JMSModule implements ExceptionListener, Serializable, JMSModuleMBea
   		}
   		listeners.clear();
   	}
+  	
+  	// JORAM-306: Close the connection
+    if (cnx != null) {
+      try {
+        cnx.close();
+      } catch (JMSException exc2) {
+        logger.log(BasicLevel.INFO, "JMSModule.onException(), error closing the connection", exc2);
+      }
+    }
+
   	reconnectionDaemon.start();
   }
 
