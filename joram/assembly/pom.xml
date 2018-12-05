@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.ow2.joram</groupId>
 		<artifactId>parent</artifactId>
-		<version>5.16.0</version>
+		<version>5.17.0-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -366,8 +366,13 @@
 		</dependency>
 	</dependencies>
 
-	<!-- This repository is needed to the jetty 3.0.100 artifact -->
 	<repositories>
+	  <!-- This repository is needed to the javax.activation bundle -->
+		<repository>
+			<id>mulesoft</id>
+			<url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+		</repository>
+	  <!-- This repository is needed to the jetty 3.0.100 artifact -->
 		<repository>
 			<id>jabylon</id>
 			<url>http://www.jabylon.org/maven/</url>
