@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 - 2011 ScalAgent Distributed Technologies
+ * Copyright (C) 2007 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.objectweb.util.monolog.api.BasicLevel;
 import org.objectweb.util.monolog.api.Logger;
 
+import fr.dyade.aaa.agent.AgentServer;
 import fr.dyade.aaa.common.Debug;
 
 /**
@@ -94,23 +95,15 @@ import fr.dyade.aaa.common.Debug;
  * @see Repository
  */
 public final class MySqlDBRepository implements Repository {
-  /*
-  String driver = "org.apache.derby.jdbc.EmbeddedDriver";
-  String connurl = "jdbc:derby:";
-//   String driver = "org.hsqldb.jdbcDriver";
-//   String connurl = "jdbc:hsqldb:file:";
-  */
-  String driver = System.getProperty("DBDriver", "org.gjt.mm.mysql.Driver");
-  String connurl = System.getProperty("ConnURL", "jdbc:mysql://localhost:3306/mysql");
-  String user = System.getProperty("DBUser", "root");
-  String pass = System.getProperty("DBPass", "");
+  public static Logger logger = Debug.getLogger("fr.dyade.aaa.util.MySqlDBRepository");
+
+  String driver = AgentServer.getProperty("DBDriver", "org.gjt.mm.mysql.Driver");
+  String connurl = AgentServer.getProperty("ConnURL", "jdbc:mysql://localhost:3306/mysql");
+  String user = AgentServer.getProperty("DBUser", "root");
+  String pass = AgentServer.getProperty("DBPass", "");
  
   BasicDataSource ds = null;
   boolean reconnectLoop = false;
-
-  public static Logger logger =
-      Debug.getLogger("fr.dyade.aaa.util.MySqlDBRepository");
-
   File dir = null;
 
   private int nbsaved = 0;

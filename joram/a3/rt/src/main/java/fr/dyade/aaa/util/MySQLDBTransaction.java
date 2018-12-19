@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 - 2012 ScalAgent Distributed Technologies
+ * Copyright (C) 2007 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,8 @@ import java.util.Properties;
 
 import org.objectweb.util.monolog.api.BasicLevel;
 
+import fr.dyade.aaa.agent.AgentServer;
+
 /**
  *  The MySQLDBTransaction class implements a transactionnal storage through
  * a MySQL database.
@@ -45,7 +47,7 @@ public final class MySQLDBTransaction extends DBTransaction {
 
   protected void initDB() throws IOException {
     
-    String configFile = System.getProperty("MySQLDBTransactionConfigFile", "MySQL.properties");
+    String configFile = AgentServer.getProperty("MySQLDBTransactionConfigFile", "MySQL.properties");
     Properties prop = new Properties();
     try {
       prop.load(new FileInputStream(configFile));
