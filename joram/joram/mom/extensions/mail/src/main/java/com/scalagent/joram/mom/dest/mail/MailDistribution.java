@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 - 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,6 @@ import org.objectweb.util.monolog.api.Logger;
 import fr.dyade.aaa.common.Debug;
 
 public class MailDistribution implements DistributionHandler {
-
   public static Logger logger = Debug.getLogger(MailDistribution.class.getName());
 
   private String smtpServer = null;

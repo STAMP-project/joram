@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2010 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2010 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,7 +51,6 @@ import org.objectweb.util.monolog.api.Logger;
 import fr.dyade.aaa.common.Debug;
 
 public class MailAcquisition implements AcquisitionHandler {
-
   private static final Logger logger = Debug.getLogger(MailAcquisition.class.getName());
 
   private String popServer = null;
@@ -98,9 +97,9 @@ public class MailAcquisition implements AcquisitionHandler {
     }
   }
 
-  public javax.mail.Message[] popMail(String popServer, String popUser, String popPassword,
-      boolean expunge) {
-
+  public javax.mail.Message[] popMail(String popServer,
+                                      String popUser, String popPassword,
+                                      boolean expunge) {
     if (logger.isLoggable(BasicLevel.DEBUG)) {
       logger.log(BasicLevel.DEBUG, "--- " + this + " popMail : " + "popServer=" + popServer + ", popUser="
           + popUser + ", expunge=" + expunge);
