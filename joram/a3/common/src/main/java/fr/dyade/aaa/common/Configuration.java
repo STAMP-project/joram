@@ -32,6 +32,18 @@ public class Configuration {
   private static Properties properties = new Properties(System.getProperties());
 
   /**
+   * Returns a Properties object initialized with defaults specified from AgentServer
+   * configuration file and System properties.
+   * 
+   * @return a Properties object initialized with specified defaults.
+   */
+  public static Properties getProperties() {
+    // Do not return the original copy to avoid modification by external components.
+    // Returns an empty copy with the specified defaults.
+    return new Properties(properties);
+  }
+  
+  /**
    * Searches for the property with the specified key in the property list.
    * 
    * @param key
