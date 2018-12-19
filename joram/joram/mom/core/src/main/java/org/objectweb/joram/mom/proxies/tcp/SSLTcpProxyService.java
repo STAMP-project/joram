@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2005 - 2009 ScalAgent Distributed Technologies
+ * Copyright (C) 2005 - 2018 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -108,10 +108,10 @@ public class SSLTcpProxyService extends TcpProxyService {
   }
 
   private static ServerSocketFactory createServerSocketFactory() throws Exception {
-    char[] keyStorePass =  System.getProperty(KS_PASS, "jorampass").toCharArray();
-    String keystoreFile = System.getProperty(KS, "./joram_ks");
-    String sslContext = System.getProperty(SSLCONTEXT, "SSL");
-    String ksType = System.getProperty(KS_TYPE, "JKS");
+    char[] keyStorePass =  AgentServer.getProperty(KS_PASS, "jorampass").toCharArray();
+    String keystoreFile = AgentServer.getProperty(KS, "./joram_ks");
+    String sslContext = AgentServer.getProperty(SSLCONTEXT, "SSL");
+    String ksType = AgentServer.getProperty(KS_TYPE, "JKS");
 
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG,
@@ -157,7 +157,7 @@ public class SSLTcpProxyService extends TcpProxyService {
   }
 
   private static String [] getCipherList() throws Exception {
-    String cipherList = System.getProperty(CIPHER,null);
+    String cipherList = AgentServer.getProperty(CIPHER,null);
     String[] cipherTable = null;
     if ( cipherList != null ) {
       StringTokenizer tokenizer = new StringTokenizer( cipherList,",");
