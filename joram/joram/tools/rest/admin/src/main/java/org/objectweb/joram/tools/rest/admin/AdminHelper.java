@@ -58,6 +58,9 @@ public class AdminHelper {
   public static final String BUNDLE_REST_ADMIN_PASS = "rest.admin.password";
   public static final String BUNDLE_REST_ADMIN_IP_ALLOWED = "rest.admin.ipallowed";
   
+  public static final String BUNDLE_JMS_USER = "rest.admin.jms.user";
+  public static final String BUNDLE_JMS_PASS = "rest.admin.jms.password";
+  
   // Singleton
   private static AdminHelper helper = null;
   
@@ -119,11 +122,17 @@ public class AdminHelper {
         restAdminPass != null && !restAdminPass.isEmpty();
   }
   
+  String jmsRootUser = null;
+  String jmsRootPassword = null;
+  
   public void startJoramAdmin(String name) throws ConnectException, AdminException, JMSException {
     if (joramAdmin == null) {
       ConnectionFactory cf = LocalConnectionFactory.create();
-      cnx = cf.createConnection(LocalConnectionFactory.getDefaultRootLogin(), 
-          LocalConnectionFactory.getDefaultRootPassword());
+      if (jmsRootUser == null)
+        jmsRootUser = LocalConnectionFactory.getDefaultRootLogin();
+      if (jmsRootPassword == null)
+        jmsRootPassword = LocalConnectionFactory.getDefaultRootPassword();
+      cnx = cf.createConnection(jmsRootUser, jmsRootPassword);
       cnx.start();
       joramAdmin = new JoramAdmin(cnx, name);
       if (logger.isLoggable(BasicLevel.DEBUG))
@@ -160,6 +169,9 @@ public class AdminHelper {
     ipfilter = new IPFilter(restAdminIPAllowed);
     
     String name = "dlft-admin";
+
+    jmsRootUser = bundleContext.getProperty(BUNDLE_JMS_USER);
+    jmsRootPassword = bundleContext.getProperty(BUNDLE_JMS_USER);
 
     startJoramAdmin(name);
     
