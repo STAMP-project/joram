@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2017 - 2018 ScalAgent Distributed Technologies
+ * Copyright (C) 2017 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,7 @@ import java.util.Set;
 import javax.jms.MessageFormatException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -153,7 +154,7 @@ public class RESTAcquisition implements AcquisitionHandler {
       wTarget = wTarget.queryParam("user", userName);
     if (password != null)
       wTarget = wTarget.queryParam("password", password);
-    response = wTarget.request().accept(MediaType.TEXT_PLAIN).post(null);
+    response = wTarget.request().accept(MediaType.TEXT_PLAIN).post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
 //    if (logger.isLoggable(BasicLevel.DEBUG))
 //      logger.log(BasicLevel.DEBUG, "RESTAcquisition.createConsumer: response = " + response);
     if (201 == response.getStatus()) {

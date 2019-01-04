@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2017 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -190,7 +190,7 @@ public class RESTDistribution implements DistributionHandler {
       if (password != null) target = target.queryParam("password", password);
       if (idleTimeout != null)  target = target.queryParam("idle-timeout", idleTimeout);
 
-      response  = target.request().accept(MediaType.TEXT_PLAIN).post(null);
+      response  = target.request().accept(MediaType.TEXT_PLAIN).post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
     } catch (Exception exc) {
       if (logger.isLoggable(BasicLevel.ERROR))
         logger.log(BasicLevel.ERROR,

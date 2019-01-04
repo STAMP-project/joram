@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2017 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@ import java.util.Set;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -247,7 +248,7 @@ public class RestAcquisitionAsync implements AcquisitionDaemon {
       if (userName != null) target = target.queryParam("user", userName);
       if (password != null) target = target.queryParam("password", password);
 
-      response = target.request().accept(MediaType.TEXT_PLAIN).post(null);
+      response = target.request().accept(MediaType.TEXT_PLAIN).post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
     } catch (Exception exc) {
       if (logger.isLoggable(BasicLevel.ERROR))
         logger.log(BasicLevel.ERROR,
