@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import javax.jms.Message;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -66,23 +67,29 @@ public class JmsService {
     buff.append("<h3>create a producer (POST)</h3>");
     buff.append("<pre>");
     buff.append(uriInfo.getAbsolutePathBuilder() + "/[queue|topic]/{<b>destination-name</b>}/"+JMS_CREATE_PROD);
+    buff.append("\n<b>Be careful, you needs to specify a content type with application/x-www-form-urlencoded.</b>");
     buff.append("\n<b>options:</b>");
     buff.append("\n  <b>client-id:</b> The client identifier for the JMSContext's connection");
     buff.append("\n  <b>name:</b> The producer name for the producer JMSContext");
     buff.append("\n  <b>session-mode:</b> AUTO_ACKNOWLEDGE, CLIENT_ACKNOWLEDGE,  DUPS_OK_ACKNOWLEDGE or SESSION_TRANSACTED");
     buff.append("\n  <b>persistent:</b> Specifies the delivery mode of messages that are sent using this JMSProducer");
-    buff.append("\n  <b>delivery-delay:</b> Sets the minimum length of time in milliseconds that must elapse after a message is sent before the JMS provider may deliver the message to a consumer");
-    buff.append("\n  <b>correlation-id:</b> Specifies that messages sent using this JMSProducer will have their JMSCorrelationID header value set to the specified correlation ID");
+    buff.append("\n  <b>delivery-delay:</b> Sets the minimum length of time in milliseconds that must elapse after a message is sent before" +
+                "\n     the JMS provider may deliver the message to a consumer");
+    buff.append("\n  <b>correlation-id:</b> Specifies that messages sent using this JMSProducer will have their JMSCorrelationID header value" +
+                "\n     set to the specified correlation ID");
     buff.append("\n  <b>priority:</b> Specifies the priority of messages that are sent using this JMSProducer");
     buff.append("\n  <b>time-to-live:</b> Specifies the time to live of messages that are sent using this JMSProducer");
     buff.append("\n  <b>idle-timeout:</b> Allows to set the idle time in milliseconds in which the producer context will be closed if idle");
-    buff.append("\n  <b>user:</b> Specifies the userName for the JMS connection");
-    buff.append("\n  <b>password:</b> Specifies the password for the JMS connection");
+    buff.append("\n  <b>user:</b> Specifies the userName for the JMS connection. This parameter is deprecated, you should use a form parameter" +
+                "\n     instead.");
+    buff.append("\n  <b>password:</b> Specifies the password for the JMS connection. This parameter is deprecated, you should use a form" +
+                "\n     parameter instead.");
     buff.append("</pre>");
     
     buff.append("<h3>create a consumer (POST)</h3>");
     buff.append("<pre>");
     buff.append(uriInfo.getAbsolutePathBuilder() + "/[queue|topic]/{<b>destination-name</b>}/"+JMS_CREATE_CONS);
+    buff.append("\n<b>Be careful, you needs to specify a content type with application/x-www-form-urlencoded.</b>");
     buff.append("\n<b>options:</b>");
     buff.append("\n  <b>client-id:</b> The client identifier for the JMSContext's connection");
     buff.append("\n  <b>name:</b> The producer name for the producer JMSContext");
@@ -93,8 +100,10 @@ public class JmsService {
     buff.append("\n  <b>shared:</b> true for shared");
     buff.append("\n  <b>sub-name:</b> the name used to identify this subscription");
     buff.append("\n  <b>idle-timeout:</b> Allows to set the idle time in milliseconds in which the consumer context will be closed if idle");
-    buff.append("\n  <b>user:</b> Specifies the userName for the JMS connection");
-    buff.append("\n  <b>password:</b> Specifies the password for the JMS connection");
+    buff.append("\n  <b>user:</b> Specifies the userName for the JMS connection. This parameter is deprecated, you should use a form parameter" +
+                "\n     instead.");
+    buff.append("\n  <b>password:</b> Specifies the password for the JMS connection. This parameter is deprecated, you should use a form" +
+                "\n     parameter instead.");
     buff.append("</pre>");
 
     buff.append("<h3>close a producer or a consumer (DELETE)</h3>");
@@ -109,6 +118,7 @@ public class JmsService {
   @POST
   @Path("/topic/{destName}/"+JMS_CREATE_PROD)
   @Produces(MediaType.TEXT_PLAIN)
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   public Response createTopicProducer(
       @Context HttpHeaders headers,
       @PathParam("destName") String destName,
@@ -121,13 +131,23 @@ public class JmsService {
       @DefaultValue(""+Message.DEFAULT_PRIORITY)@QueryParam("priority") int priority,
       @DefaultValue(""+Message.DEFAULT_TIME_TO_LIVE)@QueryParam("time-to-live")long timeToLive,
       @DefaultValue("0")@QueryParam("idle-timeout") long idleTimeout,
-      @QueryParam("user") String userName,
-      @QueryParam("password")String password,
+      @QueryParam("user") String userName,      // TODO: deprecates
+      @QueryParam("password")String password,   // TODO: deprecates
+      @FormParam("user") String userName2,
+      @FormParam("password")String password2,
       @Context UriInfo uriInfo) {
 
     if (logger.isLoggable(BasicLevel.INFO))
       logger.log(BasicLevel.INFO, "POST: " + uriInfo.getAbsolutePathBuilder());
     
+    if (userName2 != null) {
+      // Overrides JMS identity with parameters from HTML body
+      if (userName != null)
+        logger.log(BasicLevel.WARN, "POST: overrides JMS identity from HTML body");
+      userName = userName2;
+      password = password2;
+    }
+
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "createProducer(" + headers + ", " + destName + ", " + clientID + ", " + prodName + ", " + 
           sessionMode + ", " + deliveryMode + ", " + deliveryDelay + ", " + correlationID + ", " + priority + ", " + timeToLive + ", " + 
@@ -186,6 +206,7 @@ public class JmsService {
   @POST
   @Path("/queue/{destName}/"+JMS_CREATE_PROD)
   @Produces(MediaType.TEXT_PLAIN)
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   public Response createQueueProducer(
       @Context HttpHeaders headers,
       @PathParam("destName") String destName,
@@ -198,13 +219,23 @@ public class JmsService {
       @DefaultValue(""+Message.DEFAULT_PRIORITY)@QueryParam("priority") int priority,
       @DefaultValue(""+Message.DEFAULT_TIME_TO_LIVE)@QueryParam("time-to-live")long timeToLive,
       @DefaultValue("0")@QueryParam("idle-timeout") long idleTimeout,
-      @QueryParam("user") String userName,
-      @QueryParam("password")String password,
+      @QueryParam("user") String userName,      // TODO: deprecates
+      @QueryParam("password")String password,   // TODO: deprecates
+      @FormParam("user") String userName2,
+      @FormParam("password")String password2,
       @Context UriInfo uriInfo) {
 
     if (logger.isLoggable(BasicLevel.INFO))
       logger.log(BasicLevel.INFO, "POST: " + uriInfo.getAbsolutePathBuilder());
     
+    if (userName2 != null) {
+      // Overrides JMS identity with parameters from HTML body
+      if (userName != null)
+        logger.log(BasicLevel.WARN, "POST: overrides JMS identity from HTML body");
+      userName = userName2;
+      password = password2;
+    }
+
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "createProducer(" + headers + ", " + destName + ", " + clientID + ", " + prodName + ", " + 
           sessionMode + ", " + deliveryMode + ", " + deliveryDelay + ", " + correlationID + ", " + priority + ", " + timeToLive + ", " + 
@@ -263,6 +294,7 @@ public class JmsService {
   @POST
   @Path("/topic/{destName}/"+JMS_CREATE_CONS)
   @Produces(MediaType.TEXT_PLAIN)
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   public Response createTopicConsumer(
       @Context HttpHeaders headers,
       @PathParam("destName") String destName,
@@ -275,12 +307,23 @@ public class JmsService {
       @DefaultValue("false")@QueryParam("shared") boolean shared,
       @QueryParam("sub-name") String subName,
       @DefaultValue("0")@QueryParam("idle-timeout") long idleTimeout,
-      @QueryParam("user") String userName,
-      @QueryParam("password")String password,
+      @QueryParam("user") String userName,      // TODO: deprecates
+      @QueryParam("password")String password,   // TODO: deprecates
+      @FormParam("user") String userName2,
+      @FormParam("password")String password2,
       @Context UriInfo uriInfo) {
+    
     if (logger.isLoggable(BasicLevel.INFO))
       logger.log(BasicLevel.INFO, "POST: " + uriInfo.getAbsolutePathBuilder());
     
+    if (userName2 != null) {
+      // Overrides JMS identity with parameters from HTML body
+      if (userName != null)
+        logger.log(BasicLevel.WARN, "POST: overrides JMS identity from HTML body");
+      userName = userName2;
+      password = password2;
+    }
+
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "createConsumer(" + headers + ", " + destName + ", " + clientID + ", " + consName + ", " + 
           sessionMode + ", " + messageSelector + ", " + noLocal + ", " + durable + ", " + shared + ", " + subName + ", " + 
@@ -338,6 +381,7 @@ public class JmsService {
   @POST
   @Path("/queue/{destName}/"+JMS_CREATE_CONS)
   @Produces(MediaType.TEXT_PLAIN)
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
   public Response createQueueConsumer(
       @Context HttpHeaders headers,
       @PathParam("destName") String destName,
@@ -350,13 +394,23 @@ public class JmsService {
       @DefaultValue("false")@QueryParam("shared") boolean shared,
       @QueryParam("sub-name") String subName,
       @DefaultValue("0")@QueryParam("idle-timeout") long idleTimeout,
-      @QueryParam("user") String userName,
-      @QueryParam("password")String password,
+      @QueryParam("user") String userName,      // TODO: deprecates
+      @QueryParam("password")String password,   // TODO: deprecates
+      @FormParam("user") String userName2,
+      @FormParam("password")String password2,
       @Context UriInfo uriInfo) {
 
     if (logger.isLoggable(BasicLevel.INFO))
       logger.log(BasicLevel.INFO, "POST: " + uriInfo.getAbsolutePathBuilder());
     
+    if (userName2 != null) {
+      // Overrides JMS identity with parameters from HTML body
+      if (userName != null)
+        logger.log(BasicLevel.WARN, "POST: overrides JMS identity from HTML body");
+      userName = userName2;
+      password = password2;
+    }
+
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "createConsumer(" + headers + ", " + destName + ", " + clientID + ", " + consName + ", " + 
           sessionMode + ", " + messageSelector + ", " + noLocal + ", " + durable + ", " + shared + ", " + subName + ", " + 
