@@ -86,7 +86,8 @@ public class ClientRESTSSL extends TestCase {
       response = client.target(uriCreateProd)
           .queryParam("user", "anonymous")
           .queryParam("password", "anonymous")
-          .request().accept(MediaType.TEXT_PLAIN).post(null);
+          .request().accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-producer", 201, response.getStatus());
 
       URI uriCloseProd = response.getLink("close-context").getUri();
@@ -94,19 +95,26 @@ public class ClientRESTSSL extends TestCase {
 
       // Send next message
       String message = "Test message.";
-      response = client.target(uriSendNextMsg).request().
-          accept(MediaType.TEXT_PLAIN).post(Entity.entity(message, MediaType.TEXT_PLAIN));
+      response = client.target(uriSendNextMsg)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(message, MediaType.TEXT_PLAIN));
       assertEquals("send-next-message", 200, response.getStatus());
 
       // Create the consumer
-      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
+      response = client.target(uriCreateCons)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-consumer", 201, response.getStatus());
 
       URI uriCloseCons = response.getLink("close-context").getUri();
 
       // receive the message
       URI uriReceive = response.getLink("receive-next-message").getUri();
-      builder = client.target(uriReceive).request().accept(MediaType.TEXT_PLAIN);
+      builder = client.target(uriReceive)
+          .request()
+          .accept(MediaType.TEXT_PLAIN);
       response = builder.get();
       String msg = response.readEntity(String.class);
       assertEquals("receive-next-message", 200, response.getStatus());

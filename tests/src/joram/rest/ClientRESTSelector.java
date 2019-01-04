@@ -69,7 +69,7 @@ public class ClientRESTSelector extends TestCase {
           .getUri();
 
       // Create the producer
-      Response response = client.target(uriCreateProd).request().accept(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON).post(null);
+      Response response = client.target(uriCreateProd).request().accept(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON).post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-producer jms (myQueue1)", 201, response.getStatus());
 
       URI uriCloseProd = response.getLink("close-context").getUri();
@@ -94,8 +94,10 @@ public class ClientRESTSelector extends TestCase {
       String json = gson.toJson(maps);
 
       // Send next message 1
-      response = client.target(uriSendNextMsg).request().accept(MediaType.TEXT_PLAIN).post( 
-          Entity.entity(json, MediaType.APPLICATION_JSON));
+      response = client.target(uriSendNextMsg)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(json, MediaType.APPLICATION_JSON));
       assertEquals("send-next-message 1", 200, response.getStatus());
       uriSendNextMsg = response.getLink("send-next-message").getUri();
       // Send next message 2
@@ -104,7 +106,10 @@ public class ClientRESTSelector extends TestCase {
       assertEquals("send-next-message 2", 200, response.getStatus());
 
       // Create the consumer
-      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
+      response = client.target(uriCreateCons)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-consumer jms (myQueue1)", 201, response.getStatus());
       URI uriCloseCons = response.getLink("close-context").getUri();
 
@@ -118,7 +123,10 @@ public class ClientRESTSelector extends TestCase {
       assertEquals("receive-next-message", body, msg);
       
       // Create the consumer invalid selector
-      response = client.target(uriCreateConsInvalidSelector).request().accept(MediaType.TEXT_PLAIN).post(null);
+      response = client.target(uriCreateConsInvalidSelector)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-consumer jms (myQueue1) invalid selector", 201, response.getStatus());
       URI uriCloseConsInvalid = response.getLink("close-context").getUri();
 

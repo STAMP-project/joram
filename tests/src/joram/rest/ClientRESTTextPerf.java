@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 -2018 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 -2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -174,7 +174,12 @@ public class ClientRESTTextPerf extends TestCase {
     URI uri = target.path("admin").path("queue").path(queueName).getUri();
     String encodedUserPassword = Base64.getEncoder().encodeToString("admin:admin".getBytes());
     // Create a queue
-    Response response = client.target(uri).queryParam("bind", true).request().header("Authorization", encodedUserPassword).accept(MediaType.TEXT_PLAIN).get();
+    Response response = client.target(uri)
+        .queryParam("bind", true)
+        .request()
+        .header("Authorization", encodedUserPassword)
+        .accept(MediaType.TEXT_PLAIN)
+        .get();
     if (response.getStatus() != Response.Status.CREATED.getStatusCode())
       throw new Exception("admin createQueue " + response.getStatus());
   }
@@ -183,7 +188,11 @@ public class ClientRESTTextPerf extends TestCase {
     URI uri = target.path("admin").path("queue").path(queueName).getUri();
     String encodedUserPassword = Base64.getEncoder().encodeToString("admin:admin".getBytes());
     // Create a queue
-    Response response = client.target(uri).request().header("Authorization", encodedUserPassword).accept(MediaType.TEXT_PLAIN).delete();
+    Response response = client.target(uri)
+        .request()
+        .header("Authorization", encodedUserPassword)
+        .accept(MediaType.TEXT_PLAIN)
+        .delete();
     if (response.getStatus() != Response.Status.OK.getStatusCode())
       throw new Exception("admin deleteQueue " + response.getStatus());
   }
@@ -283,7 +292,9 @@ public class ClientRESTTextPerf extends TestCase {
       target = target.queryParam("client-id", clientId);
     if (name != null)
       target = target.queryParam("name", name);
-    Response response = target.request().accept(MediaType.TEXT_PLAIN).post(null);
+    Response response = target.request()
+        .accept(MediaType.TEXT_PLAIN)
+        .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
     if (response.getStatus() != Response.Status.CREATED.getStatusCode())
       throw new Exception("createConsumer = " + response.getStatus() + ", target = " + target);
     return response;
@@ -295,14 +306,17 @@ public class ClientRESTTextPerf extends TestCase {
       target = target.queryParam("client-id", clientId);
     if (name != null)
       target = target.queryParam("name", name);
-    Response response = target.request().accept(MediaType.TEXT_PLAIN).post(null);
+    Response response = target.request()
+        .accept(MediaType.TEXT_PLAIN)
+        .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
     if (response.getStatus() != Response.Status.CREATED.getStatusCode())
       throw new Exception("createProducer = " + response.getStatus() + ", " + target);
     return response;
   }
   
   private URI send(URI uriSendNext, int count, int modulo) throws Exception {
-    Response response = client.target(uriSendNext).request()
+    Response response = client.target(uriSendNext)
+        .request()
         .accept(MediaType.TEXT_PLAIN)
         .post(Entity.entity("mon message de test next " + count, MediaType.TEXT_PLAIN));
     if (response.getStatus() != Response.Status.OK.getStatusCode())
@@ -314,7 +328,10 @@ public class ClientRESTTextPerf extends TestCase {
   }
   
   private URI consume(URI uriConsume, int count, int modulo) throws Exception {
-    Response response = client.target(uriConsume).request().accept(MediaType.TEXT_PLAIN).get();
+    Response response = client.target(uriConsume)
+        .request()
+        .accept(MediaType.TEXT_PLAIN)
+        .get();
     String msg = response.readEntity(String.class);
     if (response.getStatus() == Response.Status.OK.getStatusCode() && msg != null) {
       if (DEBUG &&count%modulo == 0)

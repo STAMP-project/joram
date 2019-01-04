@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -71,24 +71,31 @@ public class ClientRESTTopic extends TestCase {
       URI uriCreateProd = response.getLink("create-producer").getUri();
       URI uriCreateCons = response.getLink("create-consumer").getUri();
 
-      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
+      response = client.target(uriCreateCons)
+          .request().accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-consumer", 201, response.getStatus());
       URI uriCloseCons = response.getLink("close-context").getUri();
       URI uriConsume = response.getLink("receive-message").getUri();
 
-      response = client.target(uriCreateProd).request().accept(MediaType.TEXT_PLAIN).post(null);
+      response = client.target(uriCreateProd)
+          .request().accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-producer", 201, response.getStatus());
 
       URI uriCloseProd = response.getLink("close-context").getUri();
 
       String message = "my text message";
-      response = client.target(response.getLink("send-message").getUri()).request().
-          accept(MediaType.TEXT_PLAIN).post(Entity.entity(message, MediaType.TEXT_PLAIN));
+      response = client.target(response.getLink("send-message").getUri())
+          .request().accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(message, MediaType.TEXT_PLAIN));
       assertEquals("send-message", 200, response.getStatus());
 
       String messageNext = "my text message next";
-      response = client.target(response.getLink("send-next-message").getUri()).request().
-          accept(MediaType.TEXT_PLAIN).post(Entity.entity(messageNext, MediaType.TEXT_PLAIN));
+      response = client.target(response.getLink("send-next-message").getUri())
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(messageNext, MediaType.TEXT_PLAIN));
       assertEquals("send-next-message", 200, response.getStatus());
 
       builder = client.target(uriConsume).request().accept(MediaType.TEXT_PLAIN);

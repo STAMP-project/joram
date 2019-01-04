@@ -97,7 +97,7 @@ public class ClientRESTTransacted extends TestCase {
     URI prodTransacted = response.getLink("create-producer-transacted").getUri();
     response = client.target(prodTransacted)
         .queryParam("name", "prodTransacted")
-        .request().accept(MediaType.TEXT_PLAIN).post(null);
+        .request().accept(MediaType.TEXT_PLAIN).post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
     assertEquals("create-producer-transacted", 201, response.getStatus());
 
     URI uriCloseProd = response.getLink("close-context").getUri();
@@ -116,7 +116,7 @@ public class ClientRESTTransacted extends TestCase {
     URI sendNextMsg = response.getLink("send-next-message").getUri();
     
     // create a consumer
-    response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
+    response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
     assertEquals("create-consumer", 201, response.getStatus());
 
     URI uriCloseCons = response.getLink("close-context").getUri();
@@ -197,7 +197,7 @@ public class ClientRESTTransacted extends TestCase {
 
     // create a transacted producer
     response = client.target(response.getLink("create-producer").getUri())
-        .request().accept(MediaType.TEXT_PLAIN).post(null);
+        .request().accept(MediaType.TEXT_PLAIN).post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
     assertEquals("create-producer", 201, response.getStatus());
 
     URI uriCloseProd = response.getLink("close-context").getUri();
@@ -217,7 +217,7 @@ public class ClientRESTTransacted extends TestCase {
     assertEquals("send-next-message", 200, response.getStatus());
     
     // create a transacted consumer
-    response = client.target(uriCreateConsTransacted).request().accept(MediaType.TEXT_PLAIN).post(null);
+    response = client.target(uriCreateConsTransacted).request().accept(MediaType.TEXT_PLAIN).post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
     assertEquals("create-consumer-transacted", 201, response.getStatus());
 
     URI uriCloseCons = response.getLink("close-context").getUri();

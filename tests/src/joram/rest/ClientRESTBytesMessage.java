@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -65,13 +65,17 @@ public class ClientRESTBytesMessage extends TestCase {
       WebTarget target = client.target(Helper.getBaseJmsURI());
 
       URI uriCreateProd = target.path("jms").path("queue").path("myQueue1").path("create-producer")
-          .queryParam("name", "prod1").getUri();
+          .queryParam("name", "prod1")
+          .getUri();
       URI uriCreateCons = target.path("jms").path("queue").path("myQueue1").path("create-consumer")
           .queryParam("name", "cons1")
           .getUri();
 
       // Create the producer
-      Response response = client.target(uriCreateProd).request().accept(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON).post(null);
+      Response response = client.target(uriCreateProd)
+          .request()
+          .accept(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-producer jms (myQueue1)", 201, response.getStatus());
 
       URI uriCloseProd = response.getLink("close-context").getUri();
@@ -100,12 +104,17 @@ public class ClientRESTBytesMessage extends TestCase {
 //      System.out.println("send json = " + json);
 
       // Send next message
-      response = client.target(uriSendNextMsg).request().accept(MediaType.TEXT_PLAIN).post( 
-          Entity.entity(json, MediaType.APPLICATION_JSON));
+      response = client.target(uriSendNextMsg)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(json, MediaType.APPLICATION_JSON));
       assertEquals("send-next-message", 200, response.getStatus());
 
       // Create the consumer
-      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
+      response = client.target(uriCreateCons)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-consumer jms (myQueue1)", 201, response.getStatus());
 
       URI uriCloseCons = response.getLink("close-context").getUri();

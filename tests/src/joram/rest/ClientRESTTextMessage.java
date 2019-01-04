@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2016 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -70,7 +70,10 @@ public class ClientRESTTextMessage extends TestCase {
 
       URI uriCreateCons = response.getLink("create-consumer").getUri();
 
-      response = client.target(response.getLink("create-producer").getUri()).request().accept(MediaType.TEXT_PLAIN).post(null);
+      response = client.target(response.getLink("create-producer").getUri())
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-producer", 201, response.getStatus());
 
       URI uriCloseProd = response.getLink("close-context").getUri();
@@ -78,21 +81,30 @@ public class ClientRESTTextMessage extends TestCase {
       String message = "my test message";
       String messageNext = "my test message next";
       
-      response = client.target(response.getLink("send-message").getUri()).request().
-          accept(MediaType.TEXT_PLAIN).post(Entity.entity(message, MediaType.TEXT_PLAIN));
+      response = client.target(response.getLink("send-message").getUri())
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(message, MediaType.TEXT_PLAIN));
       assertEquals("send-message", 200, response.getStatus());
 
-      response = client.target(response.getLink("send-next-message").getUri()).request().
-          accept(MediaType.TEXT_PLAIN).post(Entity.entity(messageNext, MediaType.TEXT_PLAIN));
+      response = client.target(response.getLink("send-next-message").getUri())
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(messageNext, MediaType.TEXT_PLAIN));
       assertEquals("send-next-message", 200, response.getStatus());
 
-      response = client.target(uriCreateCons).request().accept(MediaType.TEXT_PLAIN).post(null);
+      response = client.target(uriCreateCons)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .post(Entity.entity(null, MediaType.APPLICATION_FORM_URLENCODED));
       assertEquals("create-consumer", 201, response.getStatus());
 
       URI uriCloseCons = response.getLink("close-context").getUri();
 
       URI uriConsume = response.getLink("receive-message").getUri();
-      builder = client.target(uriConsume).request().accept(MediaType.TEXT_PLAIN);
+      builder = client.target(uriConsume)
+          .request()
+          .accept(MediaType.TEXT_PLAIN);
       response = builder.get();
       String msg = response.readEntity(String.class);
       assertEquals(200, response.getStatus());
@@ -100,17 +112,25 @@ public class ClientRESTTextMessage extends TestCase {
       assertEquals("receive-message", message, msg);
 
       uriConsume = response.getLink("receive-next-message").getUri();
-      builder = client.target(uriConsume).request().accept(MediaType.TEXT_PLAIN);
+      builder = client.target(uriConsume)
+          .request()
+          .accept(MediaType.TEXT_PLAIN);
       response = builder.get();
       msg = response.readEntity(String.class);
       assertEquals(200, response.getStatus());
       assertNotNull("receive-next-message", msg);
       assertEquals("receive-next-message", messageNext, msg);
 
-      response = client.target(uriCloseProd).request().accept(MediaType.TEXT_PLAIN).delete();
+      response = client.target(uriCloseProd)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .delete();
       assertEquals("close-producer", 200, response.getStatus());
 
-      response = client.target(uriCloseCons).request().accept(MediaType.TEXT_PLAIN).delete();
+      response = client.target(uriCloseCons)
+          .request()
+          .accept(MediaType.TEXT_PLAIN)
+          .delete();
       assertEquals("close-consumer", 200, response.getStatus());
 
     } catch (Throwable exc) {
