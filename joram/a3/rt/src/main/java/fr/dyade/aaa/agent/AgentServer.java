@@ -281,14 +281,19 @@ public final class AgentServer {
     strbuf.append(
         "<config>\n");
     if (props != null) {
+      // Fixes the Transaction property if needed.
+      if (props.getProperty("Transaction") == null)
+        props.setProperty("Transaction", "fr.dyade.aaa.ext.NGTransaction");
       for (Enumeration e = props.keys(); e.hasMoreElements();) {
         String key = (String) e.nextElement();
         strbuf.append("<property name=\"").append(key).append("\" value=\"").append(props.getProperty(key)).append("\"/>\n");
       }
+    } else {
+      // There is no property defined, set the Transaction property.
+      strbuf.append(
+                    "<property name=\"Transaction\" value=\"fr.dyade.aaa.ext.NGTransaction\"/>\n" +
+          "<server id=\"").append(sid).append("\" name=\"S").append(sid).append("\" hostname=\"").append(host).append("\">\n");
     }
-    strbuf.append(
-        "<property name=\"Transaction\" value=\"fr.dyade.aaa.ext.NGTransaction\"/>\n" +
-        "<server id=\"").append(sid).append("\" name=\"S").append(sid).append("\" hostname=\"").append(host).append("\">\n");
     if (joram > 0) {
       strbuf.append(
           "<service class=\"org.objectweb.joram.mom.proxies.ConnectionManager\" args=\"").append(adminuid).append(' ').append(adminpwd).append("\"/>\n" +
