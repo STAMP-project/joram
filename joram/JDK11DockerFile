@@ -1,0 +1,77 @@
+FROM openjdk:11
+
+ENV MAVEN_HOME /usr/share/maven
+ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
+
+#######
+# Maven
+#######
+
+# Preparation
+
+ENV MAVEN_VERSION 3.2.3
+ENV MAVEN_HOME /etc/maven-${MAVEN_VERSION}
+
+# Installation
+
+RUN cd /tmp
+RUN wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz
+RUN mkdir maven-${MAVEN_VERSION}
+RUN tar -zxvf apache-maven-${MAVEN_VERSION}-bin.tar.gz --directory maven-${MAVEN_VERSION} --strip-components=1
+RUN mv maven-${MAVEN_VERSION} ${MAVEN_HOME}
+ENV PATH ${PATH}:${MAVEN_HOME}/bin
+
+# Cleanup
+
+RUN rm apache-maven-${MAVEN_VERSION}-bin.tar.gz
+RUN unset MAVEN_VERSION
+
+#####
+# Ant
+#####
+
+# Preparation
+
+ENV ANT_VERSION 1.10.4
+ENV ANT_HOME /etc/ant-${ANT_VERSION}
+
+# Installation
+
+RUN cd /tmp
+RUN wget http://www.us.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz
+RUN mkdir ant-${ANT_VERSION}
+RUN tar -zxvf apache-ant-${ANT_VERSION}-bin.tar.gz --directory ant-${ANT_VERSION} --strip-components=1
+RUN mv ant-${ANT_VERSION} ${ANT_HOME}
+ENV PATH ${PATH}:${ANT_HOME}/bin
+
+# Cleanup
+
+RUN rm apache-ant-${ANT_VERSION}-bin.tar.gz
+RUN unset ANT_VERSION
+
+#########
+# Testing
+#########
+
+RUN env
+RUN java -version
+RUN javac -version
+RUN mvn -version
+RUN ant -version
+
+#########
+# Use:
+#   1. Creates the docker image
+#     docker build -t openjdk11 -f .\JDK11DockerFile .
+#   2. Creates and launches the docker container
+#     docker run --network=host -m 1024M -v F:\Users\freyssin\git\joram:/home/joram -v C:\Users\freyssin\.m2:/root/.m2 -it openjdk11 /bin/bash
+#   3. Build OW2/Joram
+#     cd /home/joram/joram && mvn clean install
+#   4. Test OW2/Joram
+#     cd /home/joram/tests
+#     cd src/a3 && ant clean tests.all
+#     cd src/jndi2 && ant clean tests.all
+#     cd src/joram && ant clean tests.all
+#
+# Note: You can share the Maven repository using '-v "$HOME/.m2":/root/.m2
+#########
