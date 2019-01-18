@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2018 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2019 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -92,6 +92,7 @@ import fr.dyade.aaa.common.Debug;
 import fr.dyade.aaa.common.encoding.Decoder;
 import fr.dyade.aaa.common.encoding.EncodableHelper;
 import fr.dyade.aaa.common.encoding.Encoder;
+import fr.dyade.aaa.common.stream.StreamUtil;
 import fr.dyade.aaa.util.management.MXWrapper;
 
 /**
@@ -627,7 +628,7 @@ public abstract class Destination extends Agent implements DestinationMBean {
           String name = st.nextToken();
           if (isValidJMXAttribute(name)) {
             Object value = MXWrapper.getAttribute(getMBeanName(), name);
-            if ((value != null) && ((value instanceof String) || (value instanceof Number)))
+            if (StreamUtil.isStreamable(value))
               stats.put(name, value);
           }
 
@@ -640,7 +641,7 @@ public abstract class Destination extends Agent implements DestinationMBean {
             String name = (String) attributes.get(k);
             if (isValidJMXAttribute(name)) {
               Object value = MXWrapper.getAttribute(getMBeanName(), name);
-              if ((value != null) && ((value instanceof String) || (value instanceof Number)))
+              if (StreamUtil.isStreamable(value))
                 stats.put(name, value);
             }
           }
