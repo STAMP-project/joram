@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 - 2015 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import fr.dyade.aaa.common.stream.StreamUtil;
 
 public final class MXWrapper {
   /**
@@ -89,7 +91,24 @@ public final class MXWrapper {
     return null;
   }
   
+  /**
+   * Returns an hashtable containing the values of each JMX attributes described in list.
+   * 
+   * @param list        List of attributes (may contain wildcards)
+   * @return            The values of each JMX attributes described in list.
+   */
   public static Hashtable dumpAttributes(String[] list) {
+    return dumpAttributes(list, false);
+  }
+  
+  /**
+   * Returns an hashtable containing the values of each JMX attributes described in list.
+   * 
+   * @param list        List of attributes (may contain wildcards)
+   * @param streamable  If true adds only streamable values (see StreamUtil class).
+   * @return            The values of each JMX attributes described in list.
+   */
+  public static Hashtable dumpAttributes(String[] list, boolean streamable) {
     Hashtable records = new Hashtable();
 
     for (int i=0; i<list.length; i++) {
@@ -119,7 +138,11 @@ public final class MXWrapper {
                   for (int j = 0; j < attributes.size(); j++) {
                     String attname = (String) attributes.get(j);
                     try {
-                      records.put(mBean + "+" + attname, MXWrapper.getAttribute(mBean, attname));
+                      Object value = MXWrapper.getAttribute(mBean, attname);
+                      if (StreamUtil.isStreamable(value))
+                        records.put(mBean + "+" + attname, value);
+                      else
+                        records.put(mBean + "+" + attname, "not streamable");
                     } catch (Exception exc) {
                       records.put(mBean + "+" + attname, exc.getMessage());
                     }
@@ -132,7 +155,11 @@ public final class MXWrapper {
               // Get the specific attribute
               String attname = token.trim();
               try {
-                records.put(mBean + "+" + attname, MXWrapper.getAttribute(mBean, attname));
+                Object value = MXWrapper.getAttribute(mBean, attname);
+                if (StreamUtil.isStreamable(value))
+                  records.put(mBean + "+" + attname, value);
+                else
+                  records.put(mBean + "+" + attname, "not streamable");
               } catch (Exception exc) {
                 records.put(mBean + "+" + attname, exc.getMessage());
               }

@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2006 - 2010 ScalAgent Distributed Technologies
+ * Copyright (C) 2006 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -407,6 +407,24 @@ public final class StreamUtil {
   static final byte DOUBLE = 7;
   static final byte STRING = 8;
   static final byte BYTEARRAY = 9;
+  
+  /**
+   * Test if an object is writable to an output stream.
+   *
+   * @param obj the object to write
+   * @param os  the stream to write the object to
+   */
+  public static boolean isStreamable(Object obj) {
+    if ((obj == null) ||
+        (obj instanceof Boolean) || 
+        (obj instanceof Byte) || (obj instanceof Short) || (obj instanceof Integer)  || (obj instanceof Long) || 
+        (obj instanceof Float) || (obj instanceof Double) ||
+        (obj instanceof String) || (obj instanceof byte[])) {
+      return true;
+    } else {
+      return false; 
+    }
+  }
 
   /**
    * This  method allows to write an  object to the output stream.
