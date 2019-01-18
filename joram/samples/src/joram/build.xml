@@ -570,6 +570,17 @@
     </java>
   </target>
 
+  <!-- Monitor the classic configuration -->
+  <target name="classic_monitor" depends="simple_init"
+          description="--> Runs Monitoring code for classic sample (centralized architecture)">
+    <java classname="classic.Monitor"
+      failonerror="no" fork="yes"
+      dir="${run.dir}">
+      <classpath path="${project.class.path}"/>
+      <!-- jvmarg line="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y" / -->
+    </java>
+  </target>
+
   <!-- Setup the classic configuration -->
   <target name="classic_adminxml" depends="simple_init"
           description="-->  Runs XML administration script for classic sample (centralized architecture)">
