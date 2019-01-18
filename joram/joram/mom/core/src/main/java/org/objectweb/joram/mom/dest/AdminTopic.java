@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2018 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2019 ScalAgent Distributed Technologies
  * Copyright (C) 1996 - 2000 Dyade
  *
  * This library is free software; you can redistribute it and/or
@@ -1315,12 +1315,12 @@ public final class AdminTopic extends Topic implements AdminTopicMBean {
     AgentId destId = AgentId.fromString(request.getDest());
 
     if (destId.isNullId()) {
-      logger.log(BasicLevel.FATAL, "GetJMXAttsRequest -> " + request.attributes);
+      logger.log(BasicLevel.DEBUG, "GetJMXAttsRequest -> " + request.attributes);
       // Get attribute list from request
       String[] atts = request.getAttributes();
-      Hashtable stats = MXWrapper.dumpAttributes(atts);
+      Hashtable stats = MXWrapper.dumpAttributes(atts, true);
       GetJMXAttsReply reply = new GetJMXAttsReply(stats);
-      logger.log(BasicLevel.FATAL, "GetJMXAttsRequest -> " + stats);
+      logger.log(BasicLevel.DEBUG, "GetJMXAttsRequest -> " + stats);
       distributeReply(replyTo, msgId, reply);
     } else {
       forward(destId, new FwdAdminRequestNot(request, replyTo, msgId, createMessageId()));
