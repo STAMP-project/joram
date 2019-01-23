@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2013 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,10 +42,12 @@ import fr.dyade.aaa.common.encoding.EncodableHelper;
 import fr.dyade.aaa.common.encoding.Encoder;
 
 public class QueueDeliveryTable implements Encodable, Serializable {
-  
   public static Logger logger = Debug.getLogger(QueueDeliveryTable.class.getName());
   
   public static QueueDeliveryTable load(String txName) throws Exception {
+    if (logger.isLoggable(BasicLevel.DEBUG))
+      logger.log(BasicLevel.DEBUG, "QueueDeliveryTable.load() " + txName);
+
     // TODO: as we know the type, the method 'loadByteArray' would be more efficient
     QueueDeliveryTable res = (QueueDeliveryTable) AgentServer.getTransaction().load(txName);
     res.txName = txName;
@@ -104,6 +106,7 @@ public class QueueDeliveryTable implements Encodable, Serializable {
   public void save() throws IOException {
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "QueueDeliveryTable.save() " + modified);
+    
     if (modified) {
       // Calls 'save' and not 'saveByteArray' in order to enable lazy encoding
       // (and potentially 'delete') when reactions are grouped.
@@ -134,7 +137,7 @@ public class QueueDeliveryTable implements Encodable, Serializable {
   /**
    * Do not encode the transient messages.
    */
-  public void encode(Encoder encoder) throws Exception {    
+  public void encode(Encoder encoder) throws Exception {
     int persistentMessageCount = 0;
     Iterator<Entry<String, QueueDelivery>> iterator = deliveries.entrySet().iterator();
     while (iterator.hasNext()) {
