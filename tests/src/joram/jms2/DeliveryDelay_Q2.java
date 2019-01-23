@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C)  2016 ScalAgent Distributed Technologies
+ * Copyright (C)  2016 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,7 @@ import org.objectweb.joram.client.jms.tcp.TcpConnectionFactory;
 import framework.TestCase;
 
 /**
- * Test the delivery delay.
+ * Test the delivery delay: Verify that a delayed message is delivered after restart.
  */
 public class DeliveryDelay_Q2 extends TestCase {
 
@@ -77,16 +77,13 @@ public class DeliveryDelay_Q2 extends TestCase {
     AdminModule.disconnect();
   }
 
-  long send = 0L;
-  long recv = 0L;
-
   void test() throws Exception {
     JMSContext context = cf.createContext(JMSContext.AUTO_ACKNOWLEDGE);
     JMSProducer producer = context.createProducer();
     producer.setDeliveryMode(DeliveryMode.PERSISTENT);
     producer.setDeliveryDelay(10000L);
-    Message msg = context.createTextMessage("test redeliveryTime");
-    send = System.currentTimeMillis();
+    Message msg = context.createTextMessage("test DeliveryDelay");
+
     producer.send(dest, msg);
     System.out.println("Message sent.");
     context.close();

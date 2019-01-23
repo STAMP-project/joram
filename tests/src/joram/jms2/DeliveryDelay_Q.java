@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C)  2016 ScalAgent Distributed Technologies
+ * Copyright (C)  2016 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -110,7 +110,7 @@ public class DeliveryDelay_Q extends TestCase implements javax.jms.MessageListen
     // Wait to receive the message.
     Thread.sleep(10000);
 
-    assertTrue("The rollback or recover message not received after the redelivery delay", (recv - send) > 5000);
+    assertTrue("The message is received before the delivery delay", (recv - send) > 5000);
 
     context.close();
     prodCtx.close();
