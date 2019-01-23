@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2013 ScalAgent Distributed Technologies
+ * Copyright (C) 2013 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -69,6 +69,8 @@ public class Test7 extends TestCase implements CompletionListener{
         // Test to commit the context from CompletionListener.
         TextMessage msg = context.createTextMessage("commit");
         producer.send(queue, msg);
+        // TODO (AF): The commit below involves a deadlock with the commit
+        // in CompletionListener !!
         context.commit();
         Thread.sleep(2000L);
         assertTrue("Should expect message completion", nbmsg == 1);
