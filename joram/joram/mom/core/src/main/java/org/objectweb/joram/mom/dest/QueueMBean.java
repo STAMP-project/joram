@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2004 - 2018 ScalAgent Distributed Technologies
+ * Copyright (C) 2004 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,6 @@
  * Contributor(s): 
  */
 package org.objectweb.joram.mom.dest;
-
-import java.util.List;
 
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
@@ -62,6 +60,13 @@ public interface QueueMBean extends DestinationMBean {
    */
   int getPendingMessageCount();
   
+  /**
+   * Returns the number of messages waiting for a delay.
+   *
+   * @return The number of messages waiting for a delay.
+   */
+  int getDelayedMessageCount();
+ 
 //  /**
 //   * Returns the load averages for the last minute.
 //   * @return the load averages for the last minute.
