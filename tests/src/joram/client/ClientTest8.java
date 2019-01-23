@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2005 - 2007 ScalAgent Distributed Technologies
+ * Copyright (C) 2005 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,57 +41,45 @@ import framework.TestCase;
 
 /**
  * Testing:
- * - receive a message from a temporary
- * queue with a timeout. Then once the timeout has expired
- * deleting the queue should not raise an 
- * InvalidDestinationException.
+ * - receive a message from a temporary queue with a timeout. Then once the timeout has expired
+ *  deleting the queue should not raise an InvalidDestinationException.
  * 
  */
 public class ClientTest8 extends TestCase {
-
-    Exception excp=null;
+  Exception excp = null;
+  
   public static void main(String[] args) {
     new ClientTest8().run();
   }
 
   public void run() {
     try {
-      startAgentServer(
-        (short)0, new String[]{"-DTransaction=fr.dyade.aaa.util.NullTransaction"});
+      startAgentServer((short)0, new String[]{"-DTransaction=fr.dyade.aaa.util.NullTransaction"});
 
-      AdminModule.connect("localhost", 2560,
-                          "root", "root", 60);
+      AdminModule.connect("localhost", 2560, "root", "root", 60);
 
       User.create("anonymous", "anonymous", 0);
+      ConnectionFactory cf = org.objectweb.joram.client.jms.tcp.TcpConnectionFactory.create("localhost", 2560);
 
-      ConnectionFactory cf = 
-        org.objectweb.joram.client.jms.tcp.TcpConnectionFactory.create(
-          "localhost", 2560);
-      
-      Connection connection = cf.createConnection(
-        "anonymous", "anonymous");
+      Connection connection = cf.createConnection("anonymous", "anonymous");
       connection.setExceptionListener(
-        new ExceptionListener() {
-            public void onException(JMSException exc) {
-              excp = exc;
-            }
-          });
-      
-      Session recSession = connection.createSession(
-        false,
-        Session.CLIENT_ACKNOWLEDGE);
+                                      new ExceptionListener() {
+                                        public void onException(JMSException exc) {
+                                          excp = exc;
+                                        }
+                                      });
+
+      Session recSession = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
       TemporaryQueue tmpQ = recSession.createTemporaryQueue();
       MessageConsumer consumer = recSession.createConsumer(tmpQ);
 
-      Session sendSession = connection.createSession(
-        false,
-        Session.CLIENT_ACKNOWLEDGE);
+      Session sendSession = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
       MessageProducer producer = sendSession.createProducer(tmpQ);
 
       connection.start();
 
       // TextMessage msg = sendSession.createTextMessage("msg#1");
-//       producer.send(msg);
+      //       producer.send(msg);
 
       consumer.receive(1000);
 
@@ -101,11 +89,12 @@ public class ClientTest8 extends TestCase {
 
       // Let the exception coming
       Thread.sleep(5000);
-     
-      assertEquals(null,excp);
+
+      assertEquals(null, excp);
 
       connection.close();
       Thread.sleep(5000);
+      
       // exception on close
       assertTrue(excp instanceof javax.jms.IllegalStateException);
     } catch (Throwable exc) {
