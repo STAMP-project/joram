@@ -628,7 +628,7 @@ public abstract class Destination extends Agent implements DestinationMBean {
           String name = st.nextToken();
           if (isValidJMXAttribute(name)) {
             Object value = MXWrapper.getAttribute(getMBeanName(), name);
-            if (StreamUtil.isStreamable(value))
+            if ((value != null) && StreamUtil.isStreamable(value))
               stats.put(name, value);
           }
 
@@ -641,7 +641,7 @@ public abstract class Destination extends Agent implements DestinationMBean {
             String name = (String) attributes.get(k);
             if (isValidJMXAttribute(name)) {
               Object value = MXWrapper.getAttribute(getMBeanName(), name);
-              if (StreamUtil.isStreamable(value))
+              if ((value != null) && StreamUtil.isStreamable(value))
                 stats.put(name, value);
             }
           }
