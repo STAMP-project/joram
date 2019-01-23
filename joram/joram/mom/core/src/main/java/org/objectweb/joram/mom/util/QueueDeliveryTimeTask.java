@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2013 - 2016 ScalAgent Distributed Technologies
+ * Copyright (C) 2013 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,8 +34,6 @@ import fr.dyade.aaa.agent.Channel;
  * Timer Task sending a QueueDeliveryTimeNot to a Queue destination.
  */
 public class QueueDeliveryTimeTask extends TimerTask {
-  private static final long serialVersionUID = 1L;
-  
   private AgentId destId = null;
   private Message msg = null;
   private boolean throwsExceptionOnFullDest;
@@ -54,5 +52,4 @@ public class QueueDeliveryTimeTask extends TimerTask {
   public void run() {
     Channel.sendTo(destId, new QueueDeliveryTimeNot(msg, throwsExceptionOnFullDest));
   }
-
 }
