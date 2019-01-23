@@ -11,7 +11,7 @@
     <property name="conf.dir" location="../../config"/>
     <property name="felix.dir" location="${ship.dir}/bin/"/>
     <property name="bundle.dir" location="${ship.dir}/bundle" />
-  	
+
   	<!-- Project classpath needed for execution -->
     <path id="project.class.path">
       <pathelement path="${java.class.path}/"/>
@@ -46,15 +46,15 @@
     <delete quiet="true" dir="${obj.dir}"/>
   </target>
 
-  <!-- Compiles -->
+  <!-- Compiles (be careful, deprecation, nowarn and verbose properties are not defined -->
   <target name="compile" depends="init,clean"
     description="--> Compile all samples">
     <mkdir dir="${obj.dir}/joram"/>
     <javac srcdir="${src.dir}"
            destdir="${obj.dir}/joram"
-           source="1.7" target="1.7" debug="true"
+           debug="true"
+           optimize="false"
            deprecation="${deprecation}"
-           optimize="${optimize}"
            nowarn="${nowarn}"
            verbose="${verbose}"
            includeantruntime="false">
