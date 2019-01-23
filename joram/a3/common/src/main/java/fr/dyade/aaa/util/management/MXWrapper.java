@@ -139,7 +139,7 @@ public final class MXWrapper {
                     String attname = (String) attributes.get(j);
                     try {
                       Object value = MXWrapper.getAttribute(mBean, attname);
-                      if (StreamUtil.isStreamable(value))
+                      if ((value != null) && StreamUtil.isStreamable(value))
                         records.put(mBean + "+" + attname, value);
                       else
                         records.put(mBean + "+" + attname, "not streamable");
@@ -156,7 +156,7 @@ public final class MXWrapper {
               String attname = token.trim();
               try {
                 Object value = MXWrapper.getAttribute(mBean, attname);
-                if (StreamUtil.isStreamable(value))
+                if ((value != null) && StreamUtil.isStreamable(value))
                   records.put(mBean + "+" + attname, value);
                 else
                   records.put(mBean + "+" + attname, "not streamable");
