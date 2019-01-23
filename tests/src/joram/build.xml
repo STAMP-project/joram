@@ -30,12 +30,20 @@
     <antcall target="tests.noreg"/>
     <antcall target="tests.xa"/>
     <antcall target="tests.bridge.jms.new"/>
+    <antcall target="tests.bridge.amqp"/>
+    <antcall target="tests.schedqueue"/>
+    <antcall target="tests.clusterTopic"/>
+    <antcall target="tests.clusterQueue"/>
+    <antcall target="tests.hierarchical"/>
+    <antcall target="tests.ssl"/>
     <antcall target="tests.jca"/>
     <antcall target="tests.dmq"/>
     <antcall target="tests.ttl"/>
     <antcall target="tests.sub"/>
-    <antcall target="tests.distribution"/>
-    <antcall target="tests.jms2"/>
+    <antcall target="tests.monitoring"/>
+    <antcall target="tests.collector"/>
+    <antcall target="tests.interceptors"/>
+  	<antcall target="tests.jms2"/>
     <antcall target="tests.rest"/>
     <antcall target="tests.bridge.rest" />
   </target>
@@ -7142,7 +7150,7 @@
     <antcall target="jms2.test6"/>
     <!-- antcall target="jms2.test7"/ -->
     <antcall target="jms2.test8"/>
-    <!-- antcall target="jms2.test9"/ -->
+    <antcall target="jms2.test9"/>
     <antcall target="jms2.test10"/>
     <antcall target="jms2.test11"/>
     <antcall target="jms2.test12"/>
@@ -7150,11 +7158,13 @@
   	<antcall target="jms2.sharedTest2"/>
     <antcall target="jms2.deliveryDelay_Q"/>
     <antcall target="jms2.deliveryDelay_Q2"/>
+    <antcall target="jms2.deliveryDelay_Q3"/>
     <antcall target="jms2.deliveryDelay_T"/>
     <antcall target="jms2.deliveryDelay_T2"/>
     <antcall target="jms2.deliveryDelay_T3"/>
     <antcall target="jms2.redeliveryDelay"/>
     <antcall target="jms2.queueDeliveryDelay"/>
+    <antcall target="jms2.queueDeliveryDelay2"/>
     <antcall target="jms2.queuePause"/>
   </target>
 
@@ -7391,6 +7401,19 @@
         <param name="args" value=""/>
       </antcall>
   </target>
+  
+  <target name="jms2.deliveryDelay_Q3" depends="init.a3props,compile"
+            description=" --> Test delivery delay with a queue after server restart">
+      <antcall target="test.run" inheritAll="true">
+        <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
+        <param name="testid" value="jms2.deliveryDelay_Q3"/>
+        <param name="className" value="joram.jms2.DeliveryDelay_Q3"/>
+        <param name="jndiconf" value="jms2/jndi.properties"/>
+        <param name="a3conf" value="jms2/a3servers.xml"/>
+        <param name="jvmargs" value=""/>
+        <param name="args" value=""/>
+      </antcall>
+  </target>
 
   <target name="jms2.deliveryDelay_T2" depends="init.a3props,compile"
             description=" --> Test delivery delay with a topic after server restart">
@@ -7613,17 +7636,12 @@
       <param name="args" value="2 C"/>
     </antcall>
   </target>
-	  
-  <target name="jms2.queueDeliveryDelay"
-	      description=" --> launch all jms2.queueDeliveryDelay tests">
-	<antcall target="jms2.queueDeliveryDelay1"/>
-  </target>
 
-  <target name="jms2.queueDeliveryDelay1" depends="init.a3props,compile"
+  <target name="jms2.queueDeliveryDelay" depends="init.a3props,compile"
           description=" --> Test queue delivery delay">
 	<antcall target="test.run" inheritAll="true">
 	  <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
-	  <param name="testid" value="jms2.queueDeliveryDelay1"/>
+	  <param name="testid" value="jms2.queueDeliveryDelay"/>
 	  <param name="className" value="joram.jms2.QueueDeliveryDelay"/>
 	  <param name="jndiconf" value="jms2/jndi.properties"/>
 	  <param name="a3conf" value="jms2/a3servers1.xml"/>
@@ -7631,7 +7649,20 @@
 	  <param name="args" value=""/>
 	</antcall>
   </target>
-	  
+
+  <target name="jms2.queueDeliveryDelay2" depends="init.a3props,compile"
+          description=" --> Test queue delivery delay">
+	<antcall target="test.run" inheritAll="true">
+	  <param name="transaction" value="fr.dyade.aaa.ext.NGTransaction"/>
+	  <param name="testid" value="jms2.queueDeliveryDelay2"/>
+	  <param name="className" value="joram.jms2.QueueDeliveryDelay2"/>
+	  <param name="jndiconf" value="jms2/jndi.properties"/>
+	  <param name="a3conf" value="jms2/a3servers1.xml"/>
+	  <param name="jvmargs" value=""/>
+	  <param name="args" value=""/>
+	</antcall>
+  </target>
+
   <target name="jms2.queuePause"
 	      description=" --> launch all jms2.queuePause tests">
 	<antcall target="jms2.queuePause1"/>
