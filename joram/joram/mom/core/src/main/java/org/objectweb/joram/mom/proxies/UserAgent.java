@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2001 - 2017 ScalAgent Distributed Technologies
+ * Copyright (C) 2001 - 2019 ScalAgent Distributed Technologies
  * Copyright (C) 2004 France Telecom R&D
  * Copyright (C) 2003 - 2004 Bull SA
  * Copyright (C) 1996 - 2000 Dyade
@@ -1740,7 +1740,8 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
       }
       dest.setName(req.getName());
       dest.setAdminId(getId());
-      dest.setFreeWriting(true); // Setting free WRITE right on the destination
+      // Setting free WRITE right on the destination
+      dest.setFreeWriting(true);
       if (!DestinationConstants.isTemporary(req.getType()))
         dest.setFreeReading(true); // Setting free READ right on the destination
       destId = dest.getId();
@@ -1750,8 +1751,7 @@ public final class UserAgent extends Agent implements UserAgentMBean, ProxyAgent
         throw new RequestException("Could not create destination:" + exc.getMessage());
       }
       // Registers the newly created destination
-      AdminTopic.registerDest(destId, (req.getName() == null) ? destId.toString() : req.getName(),
-          req.getType());
+      AdminTopic.registerDest(destId, (req.getName() == null) ? destId.toString() : req.getName(), req.getType());
 
       if (DestinationConstants.isTemporary(req.getType())) {
         // Registers the temporary destination in order to clean it at the end
