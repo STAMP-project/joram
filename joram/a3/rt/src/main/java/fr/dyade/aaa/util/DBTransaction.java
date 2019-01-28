@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 - 2012 ScalAgent Distributed Technologies
+ * Copyright (C) 2006 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@ import java.util.Vector;
 
 import org.objectweb.util.monolog.api.BasicLevel;
 
+import fr.dyade.aaa.agent.AgentServer;
 import fr.dyade.aaa.common.Pool;
 
 /**
@@ -50,6 +51,18 @@ import fr.dyade.aaa.common.Pool;
  * @see DerbyDBTransaction
  */
 public abstract class DBTransaction extends AbstractTransaction implements DBTransactionMBean {
+  public final static String DB_TRANSACTION_PREFIX = "org.ow2.joram.dbtransaction"; 
+
+  public final static String TABLE_NAME_PROP = DB_TRANSACTION_PREFIX + ".dbtable";
+  public final static String DFLT_TABLE_PREFIX = "JoramDB";
+  
+  private String dbtable;
+
+  @Override
+  public String getDBTableName() {
+    return dbtable;
+  }
+  
   /**
    *  Number of pooled operation, by default 1000.
    *  This value can be adjusted for a particular server by setting
@@ -65,6 +78,7 @@ public abstract class DBTransaction extends AbstractTransaction implements DBTra
    *
    * @return The pool size for <code>operation</code> objects.
    */
+  @Override
   public int getLogThresholdOperation() {
     return LogThresholdOperation;
   }
@@ -78,12 +92,14 @@ public abstract class DBTransaction extends AbstractTransaction implements DBTra
   public DBTransaction() {}
 
   public void initRepository() throws IOException {
+    dbtable = AgentServer.getProperty(TABLE_NAME_PROP, DFLT_TABLE_PREFIX + AgentServer.getServerId());
+
     initDB();
 
     try {
-      insertStmt = conn.prepareStatement("INSERT INTO JoramDB VALUES (?, ?)");
-      updateStmt = conn.prepareStatement("UPDATE JoramDB SET content=? WHERE name=?");
-      deleteStmt = conn.prepareStatement("DELETE FROM JoramDB WHERE name=?");
+      insertStmt = conn.prepareStatement("INSERT INTO " + dbtable + " VALUES (?, ?)");
+      updateStmt = conn.prepareStatement("UPDATE " + dbtable + " SET content=? WHERE name=?");
+      deleteStmt = conn.prepareStatement("DELETE FROM " + dbtable + " WHERE name=?");
     } catch (SQLException sqle) {
       sqle.printStackTrace();
       throw new IOException(sqle.getMessage());
@@ -122,7 +138,7 @@ public abstract class DBTransaction extends AbstractTransaction implements DBTra
     try {
       // Creating a statement lets us issue commands against the connection.
       Statement s = conn.createStatement();
-      ResultSet rs = s.executeQuery("SELECT name FROM JoramDB WHERE name LIKE '" + prefix + "%'");
+      ResultSet rs = s.executeQuery("SELECT name FROM " + dbtable + " WHERE name LIKE '" + prefix + "%'");
 
       Vector<String> v = new Vector<String>();
       while (rs.next()) {
@@ -208,7 +224,7 @@ public abstract class DBTransaction extends AbstractTransaction implements DBTra
       // Creating a statement lets us issue commands against the connection.
       Statement s = conn.createStatement();
       //
-      ResultSet rs = s.executeQuery("SELECT content FROM JoramDB WHERE name='" + name + "'");
+      ResultSet rs = s.executeQuery("SELECT content FROM " + dbtable + " WHERE name='" + name + "'");
 
       if (!rs.next()) return null;
 

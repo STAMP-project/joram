@@ -36,4 +36,6 @@ public interface DBTransactionMBean extends TransactionMBean {
   public int getPhase();
 
   public String getPhaseInfo();
+  
+  public String getDBTableName();
 }
