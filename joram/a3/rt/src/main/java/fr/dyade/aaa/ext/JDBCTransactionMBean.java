@@ -25,6 +25,8 @@ public interface JDBCTransactionMBean {
   String getDriver();
   String getURL();
   
+  String getDBName();
+
   String getDBInitStatement();
   Properties getClientInfo();
   

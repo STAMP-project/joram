@@ -1,6 +1,6 @@
 /*
  * JORAM: Java(TM) Open Reliable Asynchronous Messaging
- * Copyright (C) 2018 ScalAgent Distributed Technologies
+ * Copyright (C) 2018 - 2019 ScalAgent Distributed Technologies
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,7 +50,7 @@ public class JDBCTransaction extends DBTransaction implements JDBCTransactionMBe
   public final static String JDBC_DB_PASS_PROP = JDBC_TRANSACTION_PREFIX + ".password";
   
   public final static String JDBC_DB_NAME_PROP = JDBC_TRANSACTION_PREFIX + ".dbname";
-  public final static String DFLT_JDBC_DB_NAME = "JoramDB" + AgentServer.getServerId();
+  public final static String DFLT_JDBC_DB_PREFIX = "JoramDB";
   
   public final static String JDBC_DB_INIT_PROP = JDBC_TRANSACTION_PREFIX + ".dbinit";
   // For MySQL: "CREATE TABLE JoramDB (name VARCHAR(255), content LONGBLOB, PRIMARY KEY(name))";
@@ -124,7 +124,7 @@ public class JDBCTransaction extends DBTransaction implements JDBCTransactionMBe
       throw new IOException("Bad JDBC configuration");
     }
 
-    dbname = AgentServer.getProperty(JDBC_DB_NAME_PROP, DFLT_JDBC_DB_NAME);
+    dbname = AgentServer.getProperty(JDBC_DB_NAME_PROP, DFLT_JDBC_DB_PREFIX + AgentServer.getServerId());
     
     dbinit = AgentServer.getProperty(JDBC_DB_INIT_PROP);
     if (dbinit == null) {
@@ -194,6 +194,11 @@ public class JDBCTransaction extends DBTransaction implements JDBCTransactionMBe
     } catch (SQLException exc) {
       return null;
     }
+  }
+
+  @Override
+  public String getDBName() {
+    return dbname;
   }
 
   @Override
