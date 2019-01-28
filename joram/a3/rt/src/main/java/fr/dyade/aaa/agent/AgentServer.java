@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Timer;
 
 import org.objectweb.util.monolog.api.BasicLevel;
@@ -219,7 +220,38 @@ public final class AgentServer {
    * Default value for JMS listening port: 16010.
    */
   public final static int CFG_JMS_PORT_DFLT = 16010;
+  
 
+  /**
+   *  Name of property allowing to configure the minimum value for listening port of the JMS
+   * server when using the default server configuration with random port choice (if listening
+   * port is set to -3).
+   *  By default this values is set to CFG_MIN_JORAM_PORT_DFLT.
+   * <p>
+   *  This property can only be fixed from <code>java</code> launching command.
+   */
+  public final static String CFG_MIN_JORAM_PORT_PROPERTY = "fr.dyade.aaa.agent.A3CONF_MIN_JMS_PORT";
+  
+  /**
+   * Default value for minimum JMS listening port: 16000.
+   */
+  public final static int CFG_MIN_JORAM_PORT_DFLT = 16000;
+  
+  /**
+   *  Name of property allowing to configure the maximum value for listening port of the JMS
+   * server when using the default server configuration with random port choice (if listening
+   * port is set to -3).
+   *  By default this values is set to CFG_MAX_JORAM_PORT_DFLT.
+   * <p>
+   *  This property can only be fixed from <code>java</code> launching command.
+   */
+  public final static String CFG_MAX_JORAM_PORT_PROPERTY = "fr.dyade.aaa.agent.A3CONF_MAX_JMS_PORT";
+  
+  /**
+   * Default value for maximum JMS listening port: 16100.
+   */
+  public final static int CFG_MAX_JORAM_PORT_DFLT = 16100;
+  
   /**
    *  Name of property allowing to configure the listening port of the JNDI server when
    * using the default server configuration, by default CFG_JNDI_PORT_PROPERTY. This Configuration
@@ -294,7 +326,21 @@ public final class AgentServer {
                     "<property name=\"Transaction\" value=\"fr.dyade.aaa.ext.NGTransaction\"/>\n" +
           "<server id=\"").append(sid).append("\" name=\"S").append(sid).append("\" hostname=\"").append(host).append("\">\n");
     }
-    if (joram > 0) {
+    if (joram > 0) { // Joram/JMS service and TCP connector
+      strbuf.append(
+          "<service class=\"org.objectweb.joram.mom.proxies.ConnectionManager\" args=\"").append(adminuid).append(' ').append(adminpwd).append("\"/>\n" +
+          "<service class=\"org.objectweb.joram.mom.proxies.tcp.TcpProxyService\" args=\"").append(joram).append("\"/>\n");
+    } else if (joram == -1) { // No Joram/JMS service
+      strbuf.append(
+          "<!-- No Joram/JMS service -->\n");
+    } else if (joram == -2) { // Joram/JMS service without TCP connector
+      strbuf.append(
+          "<service class=\"org.objectweb.joram.mom.proxies.ConnectionManager\" args=\"").append(adminuid).append(' ').append(adminpwd).append("\"/>\n");
+    } else if (joram == -2) { // Joram/JMS service without TCP connector
+      int min = Integer.getInteger(AgentServer.CFG_MIN_JORAM_PORT_PROPERTY, CFG_MIN_JORAM_PORT_DFLT);
+      int max = Integer.getInteger(AgentServer.CFG_MAX_JORAM_PORT_PROPERTY, CFG_MAX_JORAM_PORT_DFLT);
+      joram = min + new Random().nextInt(max-min);
+      // TODO (AF): We should try if this listening port is free.
       strbuf.append(
           "<service class=\"org.objectweb.joram.mom.proxies.ConnectionManager\" args=\"").append(adminuid).append(' ').append(adminpwd).append("\"/>\n" +
           "<service class=\"org.objectweb.joram.mom.proxies.tcp.TcpProxyService\" args=\"").append(joram).append("\"/>\n");
