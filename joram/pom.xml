@@ -97,9 +97,10 @@
     <profile>
       <id>doc</id>
       
+<!-- Incompatible with Java 11, un
     <activation>
       <jdk>[1.8,)</jdk>
-    </activation>
+    </activation> -->
     <properties>
       <javadoc.opts>-Xdoclint:none</javadoc.opts>
     </properties>
@@ -112,6 +113,7 @@
             <artifactId>maven-javadoc-plugin</artifactId>
             <version>${maven-javadoc-plugin.version}</version>
             <configuration>
+              <failOnError>false</failOnError>
               <show>private</show>
               <nohelp>true</nohelp>
               <links>
@@ -170,8 +172,10 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
-          <!-- Needs Java 10/11 JDK
-          <release>10</release> -->
+          <!-- Needs JDK 11
+          <source>11</source>
+          <target>11</target>
+          <release>11</release> -->
         </configuration>
         <dependencies>
           <dependency>
@@ -222,6 +226,8 @@
     <felix.gogo.command.version>1.0.2</felix.gogo.command.version>
     <felix.gogo.shell.version>1.1.0</felix.gogo.shell.version>
     <maven.bundle.plugin.version>4.0.0</maven.bundle.plugin.version>
+    <!-- to prevent [WARNING] Using platform encoding -->
+    <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
     <!-- to prevent [WARNING] Using platform encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <stomp.version>1.0</stomp.version>
