@@ -10,7 +10,7 @@ pipeline {
       }
     }
     stage('Amplify') {
-      when(changeset "joram/joram/mom/core/src/test/**")
+      when { changeset "joram/joram/mom/core/src/test/**" }
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh '''cd joram
