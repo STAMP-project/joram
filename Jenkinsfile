@@ -5,7 +5,7 @@ pipeline {
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh '''cd joram
-	  mvn compile'''
+	  mvn install'''
         }
       }
     }
