@@ -4,14 +4,16 @@ pipeline {
     stage('Build') {
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
-          sh 'mvn compile'
+          sh ''cd joram
+	  mvn compile''
         }
       }
     }
     stage('Unit Tests') {
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
-          sh 'mvn test'
+          sh ''cd joram
+          mvn test''
         }
         junit(testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true)
       }
@@ -19,9 +21,10 @@ pipeline {
     stage('Amplify') {
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
-          sh 'mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e'
+          sh ''cd joram
+          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e''
         }
-        sh 'tree target/dspot/output'
+        sh 'tree joram/target/dspot/output'
       }
     }
 
