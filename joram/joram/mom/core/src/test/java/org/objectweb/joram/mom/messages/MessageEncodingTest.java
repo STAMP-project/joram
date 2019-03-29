@@ -52,7 +52,6 @@ public class MessageEncodingTest {
     sharedMsg.body = null;
     sharedMsg.clientID = null;
     
-    
     Message momMsg = new Message(sharedMsg);
     sharedMsg.toName = "toName"; // null
     sharedMsg.body = new byte[1000];  // null
