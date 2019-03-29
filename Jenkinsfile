@@ -9,22 +9,14 @@ pipeline {
         }
       }
     }
-    stage('Unit Tests') {
-      steps {
-        withMaven(maven: 'maven3', jdk: 'JDK8') {
-          sh '''cd joram
-          mvn test'''
-        }
-        junit(testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true)
-      }
-    }
     stage('Amplify') {
+      when(changeset "joram/joram/mom/core/src/test/**")
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh '''cd joram
           mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e'''
         }
-        sh 'tree joram/target/dspot/output'
+        sh 'cp -rf joram/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
       }
     }
 
