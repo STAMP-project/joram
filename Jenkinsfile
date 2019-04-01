@@ -14,7 +14,7 @@ pipeline {
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh '''cd joram
-          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e'''
+          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e -t org.objectweb.joram.mom.messages.MessageEncodingTest:org.objectweb.joram.mom.notifications.TopicForwardNotTest'''
         }
         sh 'cp -rf joram/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
       }
