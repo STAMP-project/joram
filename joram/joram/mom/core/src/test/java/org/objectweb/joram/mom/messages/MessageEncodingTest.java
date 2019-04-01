@@ -103,6 +103,7 @@ public class MessageEncodingTest {
     Assert.assertEquals(msg.getFullMessage().deliveryTime, msgDec.getFullMessage().deliveryTime);
     
     Assert.assertEquals(msg.getFullMessage().type, msgDec.getFullMessage().type);
+    Assert.assertEquals(msg.getFullMessage().type, msgDec.getFullMessage().type);
     Assert.assertEquals(msg.getFullMessage().replyToId, msgDec.getFullMessage().replyToId);
     Assert.assertEquals(msg.getFullMessage().replyToName, msgDec.getFullMessage().replyToName);
     Assert.assertEquals(msg.getFullMessage().replyToId, msgDec.getFullMessage().replyToId);
