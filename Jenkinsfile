@@ -10,11 +10,11 @@ pipeline {
       }
     }
     stage('Amplify') {
-      // when { changeset "joram/joram/mom/core/src/test/**" }
+      when { changeset "joram/joram/mom/core/src/test/**" }
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh '''cd joram
-          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -t org.objectweb.joram.mom.messages.MessageEncodingTest  -e'''
+          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e'''
         }
         sh 'cp -rf joram/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
       }
