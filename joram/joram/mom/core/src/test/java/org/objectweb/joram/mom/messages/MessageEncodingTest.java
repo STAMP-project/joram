@@ -20,6 +20,7 @@
  * Initial developer(s): ScalAgent Distributed Technologies
  * Contributor(s):
  */
+
 package org.objectweb.joram.mom.messages;
 
 import junit.framework.Assert;
