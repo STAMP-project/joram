@@ -32,8 +32,7 @@ pipeline {
         }
 
         withMaven(maven: 'maven3', jdk: 'JDK8') {
-          sh "cd joram \
-          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e ${dspot_test_param}"
+          sh "mvn -f joram/pom.xml eu.stamp-project:dspot-maven:amplify-unit-tests -e ${dspot_test_param}"
         }
         sh 'cp -rf joram/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
       }
