@@ -23,7 +23,7 @@ pipeline {
               for (int k = 0; k < files.size(); k++) {
                 def file = files[k]
                 if (file.path.endsWith(".java") || file.path.startsWith("joram/joram/mom/core/src/test/java")){
-                  env.dspot_test_param += " -Dtest="+file.path.replace("joram/joram/mom/core/src/test/java","").replace("/",".").replace(".java","");
+                  env.dspot_test_param += " -Dtest="+file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","");
                 }
               }
             }
@@ -33,7 +33,7 @@ pipeline {
 
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh '''cd joram
-          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e '''
+          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e ${env.dspot_test_param}'''
       }
         sh 'cp -rf joram/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
       }
