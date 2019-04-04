@@ -9,11 +9,19 @@ pipeline {
         }
       }
     }
-    stage ('test your test'){
+    stage ('Test your tests'){
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh "mvn -f joram/pom.xml org.pitest:pitest-maven:mutationCoverage -DoutputFormats=HTML"
         }
+         publishHTML (target: [
+          allowMissing: false,
+          alwaysLinkToLastBuild: false,
+          keepAll: true,
+          reportDir: 'joram/joram/mom/core/target/pit-reports',
+          reportFiles: '**/index.html',
+          reportName: "Pit Decartes"
+      ])
       }
     }
 
