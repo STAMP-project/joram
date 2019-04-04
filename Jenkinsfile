@@ -9,6 +9,14 @@ pipeline {
         }
       }
     }
+    stage ('test your test'){
+      steps {
+        withMaven(maven: 'maven3', jdk: 'JDK8') {
+          sh "mvn -f joram/pom.xml org.pitest:pitest-maven:mutationCoverage -DmutationEngine=descartes"
+        }
+      }
+    }
+
     stage('Amplify') {
       when { changeset "joram/joram/mom/core/src/test/**" }
       steps {

@@ -185,7 +185,29 @@
           </dependency>
         </dependencies>
       </plugin>
-      
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>1.4.3</version>
+        <configuration>
+          <mutationEngine>descartes</mutationEngine>
+              <outputFormats>
+                <value>HTML</value>
+                <value>JSON</value>
+                <value>METHODS</value>
+                <value>ISSUES</value>
+              </outputFormats>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>eu.stamp-project</groupId>
+                <artifactId>descartes</artifactId>
+                <version>1.2.4</version>
+              </dependency>
+            </dependencies>
+        </plugin>
+
+
 	  <plugin>
 		<groupId>org.apache.maven.plugins</groupId>
 		<artifactId>maven-surefire-plugin</artifactId>
