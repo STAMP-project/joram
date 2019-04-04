@@ -13,7 +13,7 @@ pipeline {
       when { changeset "joram/joram/mom/core/src/test/**" }
       steps {
       script {
-          env.dspot_test_param = "";
+          dspot_test_param = "";
           def changeLogSets = currentBuild.changeSets
           for (int i = 0; i < changeLogSets.size(); i++) {
             def entries = changeLogSets[i].items
@@ -23,17 +23,17 @@ pipeline {
               for (int k = 0; k < files.size(); k++) {
                 def file = files[k]
                 if (file.path.endsWith(".java") || file.path.startsWith("joram/joram/mom/core/src/test/java")){
-                  env.dspot_test_param += " -Dtest="+file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","");
+                  dspot_test_param += " -Dtest="+file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","");
                 }
               }
             }
           }
-          echo "dspot test param value =  ${env.dspot_test_param}"
+          echo "dspot test param value =  ${dspot_test_param}"
         }
 
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh '''cd joram
-          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e ${env.dspot_test_param}'''
+          mvn eu.stamp-project:dspot-maven:amplify-unit-tests -e ${dspot_test_param}'''
       }
         sh 'cp -rf joram/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
       }
