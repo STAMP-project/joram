@@ -12,7 +12,7 @@ pipeline {
     stage ('test your test'){
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
-          sh "mvn -f joram/pom.xml org.pitest:pitest-maven:mutationCoverage -DmutationEngine=descartes"
+          sh "mvn org.pitest:pitest-maven:mutationCoverage -DoutputFormats=HTML"
         }
       }
     }
