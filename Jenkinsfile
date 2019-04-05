@@ -12,7 +12,7 @@ pipeline {
     stage ('Test your tests'){
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
-          sh "mvn -f joram/pom.xml mvn pitmp:run -DoutputFormats=HTML"
+          sh "mvn -f joram/pom.xml mvn eu.stamp-project:pitmp-maven-plugin:1.3.6:run -DoutputFormats=HTML"
         }
          publishHTML (target: [
           allowMissing: false,
