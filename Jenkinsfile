@@ -34,7 +34,8 @@ pipeline {
     }
 
     stage('Amplify') {
-      when { changeset "joram/joram/mom/core/src/test/**" }
+      when { branch: "^(?!amplifybranch)\w+$", comparator: 'REGEXP' 
+        changeset "joram/joram/mom/core/src/test/**" }
       steps {
       script {
           dspot_test_param = "";
@@ -62,7 +63,8 @@ pipeline {
     }
 
     stage('Pull Request') {
-      when { changeset "joram/joram/mom/core/src/test/**"
+      when { branch: "^(?!amplifybranch)\w+$", comparator: 'REGEXP' 
+            changeset "joram/joram/mom/core/src/test/**"
             expression { fileExists("target/dspot/output/org/")} }
       steps {
         sh 'cp -rf target/dspot/output/org/ joram/joram/mom/core/src/test/java'
