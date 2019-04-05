@@ -34,7 +34,7 @@ pipeline {
     }
 
     stage('Amplify') {
-      when { branch: "^(?!amplifybranch)\w+$", comparator: 'REGEXP' 
+      when { branch: "^(?!amplifybranch)\\w+\$", comparator: 'REGEXP' 
         changeset "joram/joram/mom/core/src/test/**" }
       steps {
       script {
@@ -63,7 +63,7 @@ pipeline {
     }
 
     stage('Pull Request') {
-      when { branch: "^(?!amplifybranch)\w+$", comparator: 'REGEXP' 
+      when { branch: "^(?!amplifybranch)\\w+\$", comparator: 'REGEXP' 
             changeset "joram/joram/mom/core/src/test/**"
             expression { fileExists("target/dspot/output/org/")} }
       steps {
