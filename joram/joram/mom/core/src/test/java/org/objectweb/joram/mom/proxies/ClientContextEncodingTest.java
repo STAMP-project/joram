@@ -69,6 +69,7 @@ public class ClientContextEncodingTest {
         cc.getEncodableClassId(), bytes);
 
     Assert.assertEquals(cc.getId(), ccDec.getId());
+    Assert.assertEquals(cc.getId(), ccDec.getId());
     Assert.assertEquals(cc.getActiveSubList(), ccDec.getActiveSubList());
     Assert.assertEquals(cc.getDeliveringQueueTable(), ccDec.getDeliveringQueueTable());
     Assert.assertEquals(cc.getTempDestinationList(), ccDec.getTempDestinationList());
