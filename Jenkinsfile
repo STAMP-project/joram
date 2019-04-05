@@ -12,7 +12,7 @@ pipeline {
     stage ('Test your tests'){
       steps {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
-          sh "mvn -f joram/pom.xml org.pitest:pitest-maven:mutationCoverage -DoutputFormats=HTML"
+          sh "mvn -f joram/pom.xml mvn pitmp:run -DoutputFormats=HTML"
         }
          publishHTML (target: [
           allowMissing: false,
