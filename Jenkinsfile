@@ -38,7 +38,7 @@ pipeline {
               def files = new ArrayList(entry.affectedFiles)
               for (int k = 0; k < files.size(); k++) {
                 def file = files[k]
-                if (file.path.endsWith(".java") || file.path.startsWith("joram/joram/mom/core/src/test/java")){
+                if (file.path.endsWith("Test.java") || file.path.startsWith("joram/joram/mom/core/src/test/java")){
                   dspot_test_param += " -Dtest="+file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","");
                 }
               }

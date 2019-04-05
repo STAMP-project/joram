@@ -37,7 +37,7 @@ public class ClientContextEncodingTest {
     // Not encoded by ClientContext
     AgentId proxyId = null;
     int id = 40;
-    
+
     ClientContext cc1 = new ClientContext(proxyId, id);
     
     cc1.getActiveSubList().add("sub1");
