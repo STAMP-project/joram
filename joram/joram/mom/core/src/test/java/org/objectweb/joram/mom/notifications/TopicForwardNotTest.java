@@ -61,32 +61,6 @@ public class TopicForwardNotTest {
     
     TopicForwardNot topicForwardNot = new TopicForwardNot(clientMessages, false);
     checkEncoding(topicForwardNot);
-    /*
-    sharedMsg.toName = null;
-    sharedMsg.body = null;
-    sharedMsg.clientID = null;
-    checkEncoding(momMsg);
-    
-    sharedMsg.type = org.objectweb.joram.shared.messages.Message.TEXT;
-    sharedMsg.replyToId = "replyToId";
-    sharedMsg.replyToName = "replyToName";
-    sharedMsg.replyToType = 1;
-    sharedMsg.priority = 10;
-    sharedMsg.expiration = 150;
-    sharedMsg.correlationId = "correlationId";
-    sharedMsg.deliveryCount = 4;
-    sharedMsg.jmsType = "jmsType";
-    sharedMsg.redelivered = true;
-    sharedMsg.persistent = true;
-    checkEncoding(momMsg);
-    
-    Properties properties = new Properties();
-    properties.put(PROPERTY1, "propValue1");
-    properties.put(PROPERTY2, new Integer(1));
-    properties.put(PROPERTY3, new Long(1));
-    properties.put(PROPERTY4, Boolean.TRUE);
-    sharedMsg.properties = properties;
-    checkEncoding(momMsg);*/
   }
 
   private void checkEncoding(TopicForwardNot topicForwardNot) throws Exception {
