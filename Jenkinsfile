@@ -47,12 +47,12 @@ pipeline {
               for (int k = 0; k < files.size(); k++) {
                 def file = files[k]
                 if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")){
-                  dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ", ";
+                  dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ",";
                 }
               }
             }
           }
-          dspot_test_param = "-Dtest=" + dspot_test_param
+          dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
         }
 
         withMaven(maven: 'maven3', jdk: 'JDK8') {

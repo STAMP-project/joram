@@ -96,7 +96,7 @@ public class TopicForwardNotTest {
         topicForwardNot.getEncodableClassId(), bytes);
 
     ClientMessages cm = topicForwardNot.messages;
-    
+
     Assert.assertEquals(topicForwardNot.fromCluster, dec.fromCluster);
     Assert.assertEquals(cm.getProxyId(), dec.messages.getProxyId());
   }
