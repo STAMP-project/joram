@@ -47,12 +47,12 @@ pipeline {
               for (int k = 0; k < files.size(); k++) {
                 def file = files[k]
                 if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")){
-                  dspot_test_param += " -Dtest="+file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","");
+                  dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ", ";
                 }
               }
             }
           }
-          echo "dspot test param value =  ${dspot_test_param}"
+          dspot_test_param = "-Dtest=" + dspot_test_param
         }
 
         withMaven(maven: 'maven3', jdk: 'JDK8') {
@@ -63,9 +63,9 @@ pipeline {
 
     stage('Pull Request') {
       when { changeset "joram/joram/mom/core/src/test/**"
-            expression { fileExists("joram/target/dspot/output/org/")} }
+            expression { fileExists("target/dspot/output/org/")} }
       steps {
-        sh 'cp -rf joram/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
+        sh 'cp -rf target/dspot/output/org/ joram/joram/mom/core/src/test/java'
         sh 'git checkout -b amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}'
         sh 'git commit -a -m "added tests"'
         // CREDENTIALID
