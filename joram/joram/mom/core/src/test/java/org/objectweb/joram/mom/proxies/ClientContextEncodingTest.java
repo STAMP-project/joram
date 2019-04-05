@@ -52,7 +52,7 @@ public class ClientContextEncodingTest {
     cc1.getTempDestinationList().add(tmpDest1);
     AgentId tmpDest2 = new AgentId((short) 120, (short) 130, 140);
     cc1.getTempDestinationList().add(tmpDest2);
-    
+
     // TODO: test XA
     /*
     Xid xid1 = new Xid("bq1".getBytes(), 150, "gti".getBytes());

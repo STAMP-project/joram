@@ -48,15 +48,16 @@ pipeline {
         }
 
         withMaven(maven: 'maven3', jdk: 'JDK8') {
-          sh "mvn -f joram/pom.xml eu.stamp-project:dspot-maven:amplify-unit-tests -e ${dspot_test_param}"
+          sh "mvn -f joram/joram/mom/core/pom.xml eu.stamp-project:dspot-maven:amplify-unit-tests -e ${dspot_test_param}"
         }
-        sh 'cp -rf joram/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
       }
     }
 
     stage('Pull Request') {
-      when { changeset "joram/joram/mom/core/src/test/**" }
+      when { changeset "joram/joram/mom/core/src/test/**"
+            expression { fileExists("joram/target/dspot/output/org/")} }
       steps {
+        sh 'cp -rf joram/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
         sh 'git checkout -b amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}'
         sh 'git commit -a -m "added tests"'
         // CREDENTIALID
