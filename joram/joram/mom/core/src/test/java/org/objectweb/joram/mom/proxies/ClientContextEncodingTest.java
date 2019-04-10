@@ -73,6 +73,7 @@ public class ClientContextEncodingTest {
     Assert.assertEquals(cc.getActiveSubList(), ccDec.getActiveSubList());
     Assert.assertEquals(cc.getDeliveringQueueTable(), ccDec.getDeliveringQueueTable());
     Assert.assertEquals(cc.getTempDestinationList(), ccDec.getTempDestinationList());
+   Assert.assertEquals(cc.getTempDestinationList(), ccDec.getTempDestinationList());
 
     // TODO: test XA
     //Assert.assertEquals(cc.getTransactionsTable(), ccDec.getTransactionsTable());
