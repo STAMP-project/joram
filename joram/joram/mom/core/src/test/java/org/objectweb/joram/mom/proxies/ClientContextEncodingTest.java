@@ -42,6 +42,7 @@ public class ClientContextEncodingTest {
     
     cc1.getActiveSubList().add("sub1");
     cc1.getActiveSubList().add("sub2");
+    cc1.getActiveSubList().add("sub2");
     
     AgentId queue1 = new AgentId((short) 50, (short) 60, 70);
     cc1.getDeliveringQueueTable().put(queue1, queue1);
