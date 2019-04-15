@@ -7,7 +7,7 @@ pipeline {
       steps {
         script {
           stamp.info 'Starting'
-          stamp.lastStabelVersion
+          stamp.lastStableVersion()
         }
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh "mvn -f joram/pom.xml clean compile"
