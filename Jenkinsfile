@@ -5,7 +5,9 @@ pipeline {
   stages {
     stage('Compile') {
       steps {
-        script.info 'Starting'
+        script {
+          script.info 'Starting'
+        }
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh "mvn -f joram/pom.xml clean compile"
         }
