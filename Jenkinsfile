@@ -4,7 +4,7 @@ pipeline {
     stage('Compile') {
       steps {
         script {
-          def lastSuccess = currentBuild.fullDisplayName
+          def lastSuccess = currentBuild.previousBuild.fullDisplayName
           sh "echo ${lastSuccess}"
         }
         withMaven(maven: 'maven3', jdk: 'JDK8') {
