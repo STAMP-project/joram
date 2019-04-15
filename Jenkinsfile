@@ -3,10 +3,6 @@ pipeline {
   stages {
     stage('Compile') {
       steps {
-        script {
-          def lastSuccess = currentBuild.previousBuild.fullDisplayName
-          sh "echo ${lastSuccess}"
-        }
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh "mvn -f joram/pom.xml clean compile"
         }
