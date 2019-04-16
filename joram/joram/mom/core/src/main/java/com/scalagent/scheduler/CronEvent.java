@@ -84,7 +84,8 @@ public class CronEvent extends ScheduleEvent {
 
     String sched[] = new String[CRON_MAX];
     for (int i = 0; i < CRON_MAX; i++) {
-      sched[i] = st.nextToken();
+    
+	    sched[i] = st.nextToken();
     }
 
     for (int i = 0; i < CRON_MAX; i++) {
