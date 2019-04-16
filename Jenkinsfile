@@ -1,6 +1,5 @@
 @Library('stamp') _
 
-
 pipeline {
   agent any
   stages {
