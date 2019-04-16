@@ -1,6 +1,5 @@
 @Library('stamp') _
 
-
 pipeline {
   agent any
   stages {
@@ -42,7 +41,7 @@ pipeline {
     stage('Amplify') {
 //      when { not {branch "amplifybranch*"} 
 //           changeset "joram/joram/mom/core/src/test/**" }
-//      steps {
+      steps {
 //      script {
 //          dspot_test_param = "";
 //          def changeLogSets = currentBuild.changeSets
@@ -69,6 +68,7 @@ pipeline {
         }
       }
     }
+  }
 
 //    stage('Pull Request') {
 //      when { not {branch "amplifybranch*"}
