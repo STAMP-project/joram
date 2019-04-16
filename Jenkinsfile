@@ -64,7 +64,7 @@ pipeline {
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           dir ("joram/joram/mom/core") {
           sh "mvn clean eu.stamp-project:dspot-diff-test-selection:list -Dpath-dir-second-version=${WORKSPACE}/oldVersion/joram/joram/mom/core"
-          sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dpath-to-test-list-csv=testsThatExecuteTheChange.csv -Dverbose -Dtest-criterion=ChangeDetectorSelector  -Dpath-to-properties=src/main/resources/tavern.properties -Damplifiers=NumberLiteralAmplifier -Diteration=2"
+          sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dpath-to-test-list-csv=testsThatExecuteTheChange.csv -Dverbose -Dtest-criterion=ChangeDetectorSelector -Damplifiers=NumberLiteralAmplifier -Diteration=2"
         }
       }
     }
