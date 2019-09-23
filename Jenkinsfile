@@ -39,6 +39,7 @@ pipeline {
 //      when { not {branch "amplifybranch*"} 
 //           changeset "joram/joram/mom/core/src/test/**" }
       steps {
+         sh "echo 'amplify'"
 //      script {
 //          dspot_test_param = "";
 //          def changeLogSets = currentBuild.changeSets
