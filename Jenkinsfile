@@ -58,12 +58,12 @@ pipeline {
  //         dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
  //       }
 
-        withMaven(maven: 'maven3', jdk: 'JDK8') {
-          dir ("joram/joram/mom/core") {
-          sh "mvn clean eu.stamp-project:dspot-diff-test-selection:list -Dpath-dir-second-version=${WORKSPACE}/oldVersion/joram/joram/mom/core"
-          sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dpath-to-test-list-csv=testsThatExecuteTheChange.csv -Dverbose -Dtest-criterion=ChangeDetectorSelector -Damplifiers=NumberLiteralAmplifier -Diteration=2"
-        }
-      }
+ //       withMaven(maven: 'maven3', jdk: 'JDK8') {
+ //         dir ("joram/joram/mom/core") {
+ //         sh "mvn clean eu.stamp-project:dspot-diff-test-selection:list -Dpath-dir-second-version=${WORKSPACE}/oldVersion/joram/joram/mom/core"
+ //         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dpath-to-test-list-csv=testsThatExecuteTheChange.csv -Dverbose -Dtest-criterion=ChangeDetectorSelector -Damplifiers=NumberLiteralAmplifier -Diteration=2"
+ //       }
+ //     }
     }
   }
 
