@@ -23,7 +23,7 @@
     <module>licenses</module>
     <module>conf</module>
     <module>assembly</module>
-    <module>samples</module>
+    <!-- <module>samples</module> -->
     <module>shell</module>
   </modules>
 
