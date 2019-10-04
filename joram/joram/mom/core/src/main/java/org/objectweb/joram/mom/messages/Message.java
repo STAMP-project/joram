@@ -391,7 +391,7 @@ public final class Message implements Serializable, Encodable {
   transient String txname = null;
 
   public void setTxName(String txname) {
-    this.txname = txname;
+    this.txname = txname.trim();
   }
 
   public String getTxName() {
