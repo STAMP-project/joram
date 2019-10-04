@@ -58,7 +58,7 @@ pipeline {
              }
            }
          }
-         echo 'building input tests for DSpot...'
+         echo 'building input tests for DSpot with: ' + dspot_test_param
          dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
        }
 
