@@ -44,36 +44,36 @@ pipeline {
      when { not {branch "amplifybranch*"} 
           changeset "joram/joram/mom/core/src/main/**" }
       steps {
-       sh "echo 'Code change detected, start to amplify test cases with DSpot...'"
-    script {
-         dspot_test_param = "";
-         def changeLogSets = currentBuild.changeSets
-         for (int i = 0; i < changeLogSets.size(); i++) {
-           def entries = changeLogSets[i].items
-           for (int j = 0; j < entries.length; j++) {
-             def entry = entries[j]
-             def files = new ArrayList(entry.affectedFiles)
-             for (int k = 0; k < files.size(); k++) {
-               def file = files[k]
-                echo 'current file: ' + file.path
-               if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")){
-                  echo file.path ' selected for amplification'
-                 dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ",";
-               }
-             }
-           }
+        sh "echo 'Code change detected, start to amplify test cases with DSpot...'"
+        script {
+           dspot_test_param = "";
+           def changeLogSets = currentBuild.changeSets
+           for (int i = 0; i < changeLogSets.size(); i++) {
+             def entries = changeLogSets[i].items
+             for (int j = 0; j < entries.length; j++) {
+               def entry = entries[j]
+               def files = new ArrayList(entry.affectedFiles)
+               for (int k = 0; k < files.size(); k++) {
+                  def file = files[k]
+                  echo 'current file: ' + file.path
+                  if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")) {
+                    echo file.path ' selected for amplification'
+                    dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ",";
+                  }
+                }
+              }
+            }
+            echo 'building input tests for DSpot with: ' + dspot_test_param
+           //dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
          }
-         echo 'building input tests for DSpot with: ' + dspot_test_param
-         //dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
-       }
 
-       withMaven(maven: 'maven3', jdk: 'JDK8') {
-         dir ("joram/joram/mom/core") {
-         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dverbose -Diteration=2 -Damplifiers=TestDataMutator"
-       }
-     }
+         withMaven(maven: 'maven3', jdk: 'JDK8') {
+            dir ("joram/joram/mom/core") {
+            sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dverbose -Diteration=2 -Damplifiers=TestDataMutator"
+          }
+        }
+      }
     }
-  }
 
 //    stage('Pull Request') {
 //      when { not {branch "amplifybranch*"}
