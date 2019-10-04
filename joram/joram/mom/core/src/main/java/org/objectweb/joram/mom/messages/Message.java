@@ -395,7 +395,7 @@ public final class Message implements Serializable, Encodable {
   }
 
   public String getTxName() {
-    return txname.toUpperCase();
+    return txname.toUpperCase().trim();
   }
 
   public static Message load(String txname) throws IOException, ClassNotFoundException {
