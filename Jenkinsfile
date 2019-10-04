@@ -52,11 +52,13 @@ pipeline {
                def file = files[k]
                 echo 'current file: ' + file.path
                if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")){
+                  echo file.path ' selected for amplification'
                  dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ",";
                }
              }
            }
          }
+         echo 'building input tests for DSpot...'
          dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
        }
 
