@@ -36,35 +36,35 @@ pipeline {
     }
 
     stage('Amplify') {
-//      when { not {branch "amplifybranch*"} 
-//           changeset "joram/joram/mom/core/src/test/**" }
+     when { not {branch "amplifybranch*"} 
+          changeset "joram/joram/mom/core/src/test/**" }
       steps {
          sh "echo 'amplify'"
-//      script {
-//          dspot_test_param = "";
-//          def changeLogSets = currentBuild.changeSets
-//          for (int i = 0; i < changeLogSets.size(); i++) {
-//            def entries = changeLogSets[i].items
-//            for (int j = 0; j < entries.length; j++) {
-//              def entry = entries[j]
-//              def files = new ArrayList(entry.affectedFiles)
-//              for (int k = 0; k < files.size(); k++) {
-//                def file = files[k]
- //               if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")){
- //                 dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ",";
- //               }
- //             }
- //           }
- //         }
- //         dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
- //       }
+     script {
+         dspot_test_param = "";
+         def changeLogSets = currentBuild.changeSets
+         for (int i = 0; i < changeLogSets.size(); i++) {
+           def entries = changeLogSets[i].items
+           for (int j = 0; j < entries.length; j++) {
+             def entry = entries[j]
+             def files = new ArrayList(entry.affectedFiles)
+             for (int k = 0; k < files.size(); k++) {
+               def file = files[k]
+               if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")){
+                 dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ",";
+               }
+             }
+           }
+         }
+         dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
+       }
 
- //       withMaven(maven: 'maven3', jdk: 'JDK8') {
- //         dir ("joram/joram/mom/core") {
- //         sh "mvn clean eu.stamp-project:dspot-diff-test-selection:list -Dpath-dir-second-version=${WORKSPACE}/oldVersion/joram/joram/mom/core"
- //         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dpath-to-test-list-csv=testsThatExecuteTheChange.csv -Dverbose -Dtest-criterion=ChangeDetectorSelector -Damplifiers=NumberLiteralAmplifier -Diteration=2"
- //       }
- //     }
+       withMaven(maven: 'maven3', jdk: 'JDK8') {
+         dir ("joram/joram/mom/core") {
+         sh "mvn clean eu.stamp-project:dspot-diff-test-selection:list -Dpath-dir-second-version=${WORKSPACE}/oldVersion/joram/joram/mom/core"
+         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dpath-to-test-list-csv=testsThatExecuteTheChange.csv -Dverbose -Dtest-criterion=ChangeDetectorSelector -Damplifiers=NumberLiteralAmplifier -Diteration=2"
+       }
+     }
     }
   }
 
