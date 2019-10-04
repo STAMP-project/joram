@@ -59,13 +59,12 @@ pipeline {
            }
          }
          echo 'building input tests for DSpot with: ' + dspot_test_param
-         dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
+         //dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
        }
 
        withMaven(maven: 'maven3', jdk: 'JDK8') {
          dir ("joram/joram/mom/core") {
-         sh "mvn clean eu.stamp-project:dspot-diff-test-selection:list -Dpath-dir-second-version=${WORKSPACE}/oldVersion/joram/joram/mom/core"
-         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dpath-to-test-list-csv=testsThatExecuteTheChange.csv -Dverbose -Dtest-criterion=ChangeDetectorSelector -Damplifiers=NumberLiteralAmplifier -Diteration=2"
+         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dverbose -Dtest-criterion=ChangeDetectorSelector -Damplifiers=NumberLiteralAmplifier -Diteration=2"
        }
      }
     }
