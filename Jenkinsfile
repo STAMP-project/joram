@@ -43,15 +43,14 @@ pipeline {
      script {
          dspot_test_param = "";
          def changeLogSets = currentBuild.changeSets
-         echo 'Changeset: ' + changeLogSets
          for (int i = 0; i < changeLogSets.size(); i++) {
            def entries = changeLogSets[i].items
            for (int j = 0; j < entries.length; j++) {
              def entry = entries[j]
              def files = new ArrayList(entry.affectedFiles)
-             echo 'files: ' + files
              for (int k = 0; k < files.size(); k++) {
                def file = files[k]
+                echo 'current file: ' + file
                if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")){
                  dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ",";
                }
