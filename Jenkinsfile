@@ -24,11 +24,11 @@ pipeline {
         changeset "joram/joram/mom/core/src/test/**"
       }
       steps {
-        sh "Test case change detected, start to assess them with Pit..."
+        echo 'Test case change detected, start to assess them with Pit...'
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh "mvn -f joram/pom.xml eu.stamp-project:pitmp-maven-plugin:1.3.6:descartes -DoutputFormats=HTML"
         }
-        sh "Test case change detected, assessment with Pit finished, publishing HTML report..."
+        echo 'Test case change detected, assessment with Pit finished, publishing HTML report...'
         publishHTML (target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
@@ -44,8 +44,8 @@ pipeline {
      when { not {branch "amplifybranch*"} 
           changeset "joram/joram/mom/core/src/main/**" }
       steps {
-         sh "echo 'amplify'"
-     script {
+       echo 'Code change detected, start to amplify test cases with DSpot...'
+    script {
          dspot_test_param = "";
          def changeLogSets = currentBuild.changeSets
          for (int i = 0; i < changeLogSets.size(); i++) {
