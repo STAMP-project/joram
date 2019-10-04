@@ -20,18 +20,23 @@ pipeline {
     }
 
     stage ('Test your tests'){
+      when {
+        changeset "joram/joram/mom/core/src/test/**"
+      }
       steps {
-        withMaven(maven: 'maven3', jdk: 'JDK8') {
+        sh "Test case change detected, start to assess them with Pit..."
+         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh "mvn -f joram/pom.xml eu.stamp-project:pitmp-maven-plugin:1.3.6:descartes -DoutputFormats=HTML"
         }
-         publishHTML (target: [
-          allowMissing: false,
-          alwaysLinkToLastBuild: false,
-          keepAll: true,
-          reportDir: 'joram/joram/mom/core/target/pit-reports',
-          reportFiles: '**/index.html',
-          reportName: "Pit Decartes"
-      ])
+        sh "Test case change detected, assessment with Pit finished, publishing HTML report..."
+        publishHTML (target: [
+            allowMissing: false,
+            alwaysLinkToLastBuild: false,
+            keepAll: true,
+            reportDir: 'joram/joram/mom/core/target/pit-reports',
+            reportFiles: '**/index.html',
+            reportName: "Pit Decartes"
+        ])
       }
     }
 
@@ -64,7 +69,7 @@ pipeline {
 
        withMaven(maven: 'maven3', jdk: 'JDK8') {
          dir ("joram/joram/mom/core") {
-         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dverbose -Diteration=2"
+         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dverbose -Diteration=2 -Damplifiers=TestDataMutator"
        }
      }
     }
