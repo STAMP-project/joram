@@ -37,7 +37,7 @@ pipeline {
 
     stage('Amplify') {
      when { not {branch "amplifybranch*"} 
-          changeset "joram/joram/mom/core/src/test/**" }
+          changeset "joram/joram/mom/core/src/main/**" }
       steps {
          sh "echo 'amplify'"
      script {
