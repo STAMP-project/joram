@@ -72,7 +72,6 @@ public class TopicForwardNotTest {
     ClientMessages cm = topicForwardNot.messages;
 
     Assert.assertEquals(topicForwardNot.fromCluster, dec.fromCluster);
-    Assert.assertEquals(topicForwardNot.fromCluster, dec.fromCluster);
     Assert.assertEquals(cm.getProxyId(), dec.messages.getProxyId());
   }
 

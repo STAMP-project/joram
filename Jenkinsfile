@@ -25,10 +25,10 @@ pipeline {
       }
       steps {
         sh "Test case change detected, start to assess them with Pit..."
-         withMaven(maven: 'maven3', jdk: 'JDK8') {
+        withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh "mvn -f joram/pom.xml eu.stamp-project:pitmp-maven-plugin:1.3.6:descartes -DoutputFormats=HTML"
         }
-        //sh "Test case change detected, assessment with Pit finished, publishing HTML report..."
+        sh "Test case change detected, assessment with Pit finished, publishing HTML report..."
         publishHTML (target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
