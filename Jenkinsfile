@@ -64,7 +64,7 @@ pipeline {
 
        withMaven(maven: 'maven3', jdk: 'JDK8') {
          dir ("joram/joram/mom/core") {
-         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dverbose -Dtest-criterion=ChangeDetectorSelector -Damplifiers=NumberLiteralAmplifier -Diteration=2"
+         sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dverbose -Diteration=2"
        }
      }
     }
