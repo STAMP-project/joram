@@ -131,6 +131,10 @@ public final class Message implements Serializable, Encodable {
    * @return The contained message.
    */
   public org.objectweb.joram.shared.messages.Message getHeaderMessage() {
+    if (msg == null) {
+      if (logger.isLoggable(BasicLevel.DEBUG))
+        logger.log(BasicLevel.DEBUG, "MessagePersistenceModule.getHeaderMessage() is null");
+    }
     if (logger.isLoggable(BasicLevel.DEBUG))
       logger.log(BasicLevel.DEBUG, "MessagePersistenceModule.getHeaderMessage() -> " + msg);
     return msg;
