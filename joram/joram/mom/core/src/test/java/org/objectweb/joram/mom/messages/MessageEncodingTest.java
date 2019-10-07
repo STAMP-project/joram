@@ -42,7 +42,7 @@ public class MessageEncodingTest {
   @Test
   public void run() throws Exception {
     EncodingHelper.init();
-    
+
     org.objectweb.joram.shared.messages.Message sharedMsg = new org.objectweb.joram.shared.messages.Message();
     sharedMsg.id = "msgId";
     sharedMsg.toId = "toId";
