@@ -73,7 +73,7 @@ pipeline {
           }
         }
         script {
-          dspot-report outputDir: 'joram/joram/mom/core/target/dspot/output/'
+          dspot-report
         }
       }
     }
