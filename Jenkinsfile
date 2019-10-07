@@ -75,22 +75,23 @@ pipeline {
       }
     }
 
-//    stage('Pull Request') {
-//      when { not {branch "amplifybranch*"}
-//            changeset "joram/joram/mom/core/src/test/**"
-//            expression { fileExists("target/dspot/output/org/")} }
-//      steps {
-//        sh 'cp -rf target/dspot/output/org/ joram/joram/mom/core/src/test/java'
-//        sh 'git checkout -b amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}'
-//        sh 'git commit -a -m "added tests"'
-//        // CREDENTIALID
-//        withCredentials([usernamePassword(credentialsId: 'github-user-password', passwordVariable: 'GITHUB_PASSWORD', usernameVariable: 'GITHUB_USER')]) {
-//          // REPOSITORY URL  
-//          sh('git push https://${GITHUB_USER}:${GITHUB_PASSWORD}@${GIT_URL} amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}')
+    stage('Pull Request') {
+        when { not {branch "amplifybranch*"}
+            changeset "joram/joram/mom/core/src/test/**"
+            expression { fileExists("target/dspot/output/org/")} }
+      steps {
+        sh 'cp -rf target/dspot/output/org/ joram/joram/mom/core/src/test/java'
+        sh 'git checkout -b amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}'
+        sh 'git commit -a -m "added tests"'
+        // CREDENTIALID
+        withCredentials([usernamePassword(credentialsId: 'github-user-password', passwordVariable: 'GITHUB_PASSWORD', usernameVariable: 'GITHUB_USER')]) {
+          // REPOSITORY URL  
+          sh('git push https://${GITHUB_USER}:${GITHUB_PASSWORD}@${GIT_URL} amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}')
 //          sh 'hub pull-request -m "Amplify pull request from build ${BUILD_NUMBER} on ${GIT_BRANCH}"'
-//        }
-//      }
-//    }
+          stamp.pullRequest("${GIT_PASSWORD}", "joram", "STAMP-project", "amplify Test", "amplify Test Build Number ${GIT_BRANCH}-${BUILD_NUMBER}", "amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}", "${GIT_BRANCH}")
+        }
+      }
+    }
   }
    environment {
     GIT_URL = sh (script: 'git config remote.origin.url', returnStdout: true).trim().replaceAll('https://','')
