@@ -201,7 +201,7 @@
         <plugin>
            <groupId>eu.stamp-project</groupId>
            <artifactId>dspot-maven</artifactId>
-           <version>2.0.0</version>
+           <version>2.2.1</version>
            <configuration>
             <src>joram/mom/core/src/main/java</src>
             <testSrc>joram/mom/core/src/test/java</testSrc>
