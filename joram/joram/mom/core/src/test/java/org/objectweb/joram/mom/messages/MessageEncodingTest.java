@@ -60,7 +60,6 @@ public class MessageEncodingTest {
     sharedMsg.clientID = "clientId"; // null
     momMsg.order = 999;
 
-
     checkEncoding(momMsg);
     
     sharedMsg.toName = null;
