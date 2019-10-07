@@ -72,9 +72,6 @@ pipeline {
             sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dverbose -Diteration=4"
           }
         }
-        script {
-          dspot-report
-        }
       }
     }
 
