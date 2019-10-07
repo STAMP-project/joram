@@ -88,7 +88,6 @@ public class MessageEncodingTest {
     properties.put(PROPERTY5, "propValue5");
     sharedMsg.properties = properties;
     checkEncoding(momMsg);
-
   }
 
   private void checkEncoding(Message msg) throws Exception {
