@@ -32,7 +32,7 @@ import org.objectweb.joram.mom.util.MessageIdListImpl;
 import fr.dyade.aaa.common.stream.Properties;
 
 public class MessageEncodingTest {
-  
+
   public static final String PROPERTY1 = "property1";
   public static final String PROPERTY2 = "property2";
   public static final String PROPERTY3 = "property3";
