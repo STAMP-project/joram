@@ -89,7 +89,7 @@ pipeline {
           sh('git push https://${GITHUB_USER}:${GITHUB_PASSWORD}@${GIT_URL} amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}')
 //          sh 'hub pull-request -m "Amplify pull request from build ${BUILD_NUMBER} on ${GIT_BRANCH}"'
           script {
-            stamp.pullRequest("${GIT_PASSWORD}", "joram", "STAMP-project", "amplify Test", "amplify Test Build Number ${GIT_BRANCH}-${BUILD_NUMBER}", "amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}", "${GIT_BRANCH}")
+            stamp.pullRequest("${GITHUB_PASSWORD}", "joram", "STAMP-project", "amplify Test", "amplify Test Build Number ${GIT_BRANCH}-${BUILD_NUMBER}", "amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}", "${GIT_BRANCH}")
           }
         }
       }
