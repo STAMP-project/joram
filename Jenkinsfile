@@ -78,9 +78,9 @@ pipeline {
     stage('Pull Request') {
         when { not {branch "amplifybranch*"}
             changeset "joram/joram/mom/core/src/test/**"
-            expression { fileExists("target/dspot/output/org/")} }
+            expression { fileExists("joram/joram/mom/core/target/dspot/output/org")} }
       steps {
-        sh 'cp -rf target/dspot/output/org/ joram/joram/mom/core/src/test/java'
+        sh 'cp -rf joram/joram/mom/core/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
         sh 'git checkout -b amplifybranch-${GIT_BRANCH}-${BUILD_NUMBER}'
         sh 'git commit -a -m "added tests"'
         // CREDENTIALID
