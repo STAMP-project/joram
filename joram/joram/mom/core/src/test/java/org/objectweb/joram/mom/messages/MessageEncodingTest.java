@@ -37,6 +37,7 @@ public class MessageEncodingTest {
   public static final String PROPERTY2 = "property2";
   public static final String PROPERTY3 = "property3";
   public static final String PROPERTY4 = "property4";
+  public static final String PROPERTY5 = "property5";
 
   @Test
   public void run() throws Exception {
@@ -84,6 +85,7 @@ public class MessageEncodingTest {
     properties.put(PROPERTY2, new Integer(1));
     properties.put(PROPERTY3, new Long(1));
     properties.put(PROPERTY4, Boolean.TRUE);
+    properties.put(PROPERTY5, "propValue5");
     sharedMsg.properties = properties;
     checkEncoding(momMsg);
   }
@@ -120,6 +122,7 @@ public class MessageEncodingTest {
       Assert.assertEquals(msg.getFullMessage().properties.get(PROPERTY2), msgDec.getFullMessage().properties.get(PROPERTY2));
       Assert.assertEquals(msg.getFullMessage().properties.get(PROPERTY3), msgDec.getFullMessage().properties.get(PROPERTY3));
       Assert.assertEquals(msg.getFullMessage().properties.get(PROPERTY4), msgDec.getFullMessage().properties.get(PROPERTY4));
+      Assert.assertEquals(msg.getFullMessage().properties.get(PROPERTY5), msgDec.getFullMessage().properties.get(PROPERTY5));
     }
     
     if (msg.getFullMessage().body != null) {
