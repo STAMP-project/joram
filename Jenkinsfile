@@ -72,7 +72,9 @@ pipeline {
             sh "mvn eu.stamp-project:dspot-maven:amplify-unit-tests -Dverbose -Diteration=4"
           }
         }
-        dspot-report outputDir: 'joram/joram/mom/core/target/dspot/output/'
+        script {
+          dspot-report outputDir: 'joram/joram/mom/core/target/dspot/output/'
+        }
       }
     }
 
