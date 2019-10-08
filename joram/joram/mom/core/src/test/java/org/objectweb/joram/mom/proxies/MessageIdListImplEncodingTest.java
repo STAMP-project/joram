@@ -38,7 +38,7 @@ public class MessageIdListImplEncodingTest {
     for (int i = 0; i < 3; i++) {
       list.add("msg" + i, true);
     }
-
+    Assert.assertNotNull(list.toArray(new String[3]));
     checkEncoding(list);
   }
 
