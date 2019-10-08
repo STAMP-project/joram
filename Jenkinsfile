@@ -24,7 +24,7 @@ pipeline {
         changeset "joram/joram/mom/core/src/test/**"
       }
       steps {
-        sh "echo 'Test case change detected, start to assess them with Pit...'"
+        sh "echo 'Test case change detected, start to assess them with PitMP/Descartes...'"
         withMaven(maven: 'maven3', jdk: 'JDK8') {
           sh "mvn -f joram/pom.xml eu.stamp-project:pitmp-maven-plugin:descartes -DoutputFormats=HTML"
         }
@@ -35,7 +35,7 @@ pipeline {
             keepAll: true,
             reportDir: 'joram/joram/mom/core/target/pit-reports',
             reportFiles: '**/index.html',
-            reportName: "Pit Decartes"
+            reportName: "Mutation coverage"
         ])
       }
     }
@@ -45,27 +45,27 @@ pipeline {
           changeset "joram/joram/mom/core/src/main/**" }
       steps {
         sh "echo 'Code change detected, start to amplify test cases with DSpot...'"
-        script {
-           dspot_test_param = "";
-           def changeLogSets = currentBuild.changeSets
-           for (int i = 0; i < changeLogSets.size(); i++) {
-             def entries = changeLogSets[i].items
-             for (int j = 0; j < entries.length; j++) {
-               def entry = entries[j]
-               def files = new ArrayList(entry.affectedFiles)
-               for (int k = 0; k < files.size(); k++) {
-                  def file = files[k]
-                  echo 'current file: ' + file.path
-                  if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")) {
-                    echo file.path + ' selected for amplification'
-                    dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ",";
-                  }
-                }
-              }
-            }
-            echo 'building input tests for DSpot with: ' + dspot_test_param
-           //dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
-         }
+        // script {
+        //    dspot_test_param = "";
+        //    def changeLogSets = currentBuild.changeSets
+        //    for (int i = 0; i < changeLogSets.size(); i++) {
+        //      def entries = changeLogSets[i].items
+        //      for (int j = 0; j < entries.length; j++) {
+        //        def entry = entries[j]
+        //        def files = new ArrayList(entry.affectedFiles)
+        //        for (int k = 0; k < files.size(); k++) {
+        //           def file = files[k]
+        //           echo 'current file: ' + file.path
+        //           if (file.path.endsWith("Test.java") && file.path.startsWith("joram/joram/mom/core/src/test/java")) {
+        //             echo file.path + ' selected for amplification'
+        //             dspot_test_param += file.path.replace("joram/joram/mom/core/src/test/java/","").replace("/",".").replace(".java","") + ",";
+        //           }
+        //         }
+        //       }
+        //     }
+        //     echo 'building input tests for DSpot with: ' + dspot_test_param
+        //    //dspot_test_param = "-Dtest=" + dspot_test_param.substring(0, dspot_test_param.length() - 1)
+        //  }
 
          withMaven(maven: 'maven3', jdk: 'JDK8') {
             dir ("joram/joram/mom/core") {
