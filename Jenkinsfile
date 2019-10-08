@@ -77,7 +77,7 @@ pipeline {
 
     stage('Pull Request') {
         when { not {branch "amplifybranch*"}
-            changeset "joram/joram/mom/core/src/test/**"
+            //changeset "joram/joram/mom/core/src/test/**"
             expression { fileExists("joram/joram/mom/core/target/dspot/output/org")} }
       steps {
         sh 'cp -rf joram/joram/mom/core/target/dspot/output/org/ joram/joram/mom/core/src/test/java'
