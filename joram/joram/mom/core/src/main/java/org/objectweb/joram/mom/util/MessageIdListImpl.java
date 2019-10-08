@@ -23,6 +23,7 @@
 package org.objectweb.joram.mom.util;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -40,7 +41,8 @@ public class MessageIdListImpl implements MessageIdList, Encodable,
 
   private String listId;
 
-  private ArrayList<String> list;
+//  private ArrayList<String> list;
+  private List<String> list;
   
   public MessageIdListImpl() {}
 
