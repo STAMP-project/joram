@@ -20,7 +20,7 @@ pipeline {
     }
 
     stage ('Test your tests'){
-      when {
+      when { {branch "amplifybranch*"}
         changeset "joram/joram/mom/core/src/test/**"
       }
       steps {
