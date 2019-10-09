@@ -35,6 +35,7 @@ public class MessageIdListImplEncodingTest {
   //   Assert.assertEquals(list.size(),-1);
   // }
 
+
   @Test
   public void run() throws Exception {
     EncodingHelper.init();
