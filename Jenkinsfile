@@ -20,9 +20,9 @@ pipeline {
     }
 
     stage ('Test your tests'){
-      when {
+      //when {
         changeset "joram/joram/mom/core/src/test/**"
-      }
+      //}
       steps {
         sh "echo 'Test case change detected, start to assess them with PitMP/Descartes...'"
         withMaven(maven: 'maven3', jdk: 'JDK8') {
