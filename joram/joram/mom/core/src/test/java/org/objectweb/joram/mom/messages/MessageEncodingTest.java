@@ -96,6 +96,7 @@ public class MessageEncodingTest {
     Message msgDec = (Message) EncodingHelper.decode(
         msg.getEncodableClassId(), bytes);
 
+
     Assert.assertEquals(msg.order, msgDec.order);
     Assert.assertEquals(msg.getFullMessage().id, msgDec.getFullMessage().id);
     Assert.assertEquals(msg.getFullMessage().toId, msgDec.getFullMessage().toId);

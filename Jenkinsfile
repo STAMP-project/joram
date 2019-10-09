@@ -21,7 +21,7 @@ pipeline {
 
     stage ('Test your tests'){
       //when {
-        changeset "joram/joram/mom/core/src/test/**"
+      //  changeset "joram/joram/mom/core/src/test/**"
       //}
       steps {
         sh "echo 'Test case change detected, start to assess them with PitMP/Descartes...'"
