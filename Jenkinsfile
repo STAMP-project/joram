@@ -34,7 +34,7 @@ pipeline {
             alwaysLinkToLastBuild: false,
             keepAll: true,
             reportDir: 'joram/joram/mom/core/target/pit-reports',
-            reportFiles: '*/index.html',
+            reportFiles: '2019*/index.html',
             reportName: "Mutation coverage"
         ])
       }
