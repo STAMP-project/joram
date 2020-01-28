@@ -7,12 +7,12 @@
 		<dependency>
 			<groupId>org.ow2.joram</groupId>
 			<artifactId>joram-client-jms</artifactId>
-			<version>5.9.1-SNAPSHOT</version>
+			<version>5.9.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ow2.joram</groupId>
 			<artifactId>jndi-client</artifactId>
-			<version>5.9.1-SNAPSHOT</version>
+			<version>5.9.1</version>
 		</dependency>
 	</dependencies>
 
@@ -41,5 +41,12 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>ow2</id>
+			<name>OW Maven Repository</name>
+			<url>https://repository.ow2.org</url>
+		</repository>
+	</repositories>
 
 </project>

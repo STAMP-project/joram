@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="joram-jca-ra">
+        <wb-resource deploy-path="/" source-path="/src/main/rar" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/" source-path="/src/main/java"/>
+        <dependent-module archiveName="joram-client-jca-5.17.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/joram-client-jca/joram-client-jca">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/ow2/spec/ee/ow2-jms-2.0-spec/1.0.0/ow2-jms-2.0-spec-1.0.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/ow2/spec/ee/ow2-jta-1.1-spec/1.0.13/ow2-jta-1.1-spec-1.0.13.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/ow2/spec/ee/ow2-connector-1.5-spec/1.0.3/ow2-connector-1.5-spec-1.0.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="joram-client-jms-5.17.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/joram-client-jms/joram-client-jms">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="joram-shared-5.17.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/joram-shared/joram-shared">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/objectweb/joram/jcup/5.3.1/jcup-5.3.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="joram-mom-core-5.17.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/joram-mom-core/joram-mom-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/ow2/joram/a3-osgi/5.17.0-SNAPSHOT/a3-osgi-5.17.0-SNAPSHOT.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/ow2/joram/a3-rt/5.17.0-SNAPSHOT/a3-rt-5.17.0-SNAPSHOT.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/ow2/joram/a3-common/5.17.0-SNAPSHOT/a3-common-5.17.0-SNAPSHOT.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jndi-client-5.17.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/jndi-client/jndi-client">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jndi-shared-5.17.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/jndi-shared/jndi-shared">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jndi-server-5.17.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/jndi-server/jndi-server">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/ow2/jonas/osgi/monolog/5.2.0/monolog-5.2.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/objectweb/monolog/monolog/2.1.12/monolog-2.1.12.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/" handle="module:/classpath/var/M2_REPO/org/osgi/org.osgi.core/6.0.0/org.osgi.core-6.0.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="java-output-path" value="/joram-jca-ra/target/classes"/>
+    </wb-module>
+</project-modules>
