@@ -37,7 +37,7 @@ public class MessageEncodingTest {
   public static final String PROPERTY2 = "property2";
   public static final String PROPERTY3 = "property3";
   public static final String PROPERTY4 = "property4";
-  //public static final String PROPERTY5 = "property5";
+  public static final String PROPERTY5 = "property5";
 
   @Test
   public void run() throws Exception {
