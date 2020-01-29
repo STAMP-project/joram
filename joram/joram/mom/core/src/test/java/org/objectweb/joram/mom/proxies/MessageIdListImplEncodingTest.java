@@ -29,12 +29,6 @@ import org.objectweb.joram.mom.util.MessageIdListImpl;
 
 public class MessageIdListImplEncodingTest {
 
-  @Test
-  public void testWhenEmptyMessageIdListImpl() throws Exception {
-    MessageIdListImpl list = new MessageIdListImpl();
-    Assert.assertEquals(list.size(),-1);
-  }
-
 
   @Test
   public void run() throws Exception {
