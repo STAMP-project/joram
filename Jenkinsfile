@@ -19,7 +19,7 @@ pipeline {
       }
     }
 
-    stage ('Test your tests'){
+    stage ('Test your tests with Descartes/PitMP'){
       //when {
       //  changeset "joram/joram/mom/core/src/test/**"
       //}
@@ -40,7 +40,7 @@ pipeline {
       }
     }
 
-    stage('Amplify') {
+    stage('Amplify tests with DSpot') {
      when { not {branch "amplifybranch*"} 
           changeset "joram/joram/mom/core/src/main/**" }
       steps {
