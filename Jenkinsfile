@@ -19,7 +19,7 @@ pipeline {
       }
     }
 
-    stage ('Test your tests with Descartes/PitMP'){
+    stage ('Test your tests with Descartes'){
       //when {
       //  changeset "joram/joram/mom/core/src/test/**"
       //}
