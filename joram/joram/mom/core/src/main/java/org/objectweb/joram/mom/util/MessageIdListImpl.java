@@ -55,7 +55,8 @@ public class MessageIdListImpl implements MessageIdList, Encodable,
   }
 
   public int size() {
-	  return list.size();
+    int size = list.size();
+	  return size;
   }
 
   public String[] toArray(String[] array) {
