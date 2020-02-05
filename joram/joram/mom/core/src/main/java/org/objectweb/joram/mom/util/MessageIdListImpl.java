@@ -36,125 +36,126 @@ import fr.dyade.aaa.common.encoding.EncodableFactory;
 import fr.dyade.aaa.common.encoding.EncodableHelper;
 import fr.dyade.aaa.common.encoding.Encoder;
 
-public class MessageIdListImpl implements MessageIdList, Encodable,
-    Serializable {
+public class MessageIdListImpl implements MessageIdList, Encodable, Serializable {
 
-  private String listId;
+	private String listId;
 
-  private List<String> list;
-  
-  public MessageIdListImpl() {}
+	private List<String> list;
 
-  public MessageIdListImpl(String listId) {
-    this.listId = listId;
-    list = new ArrayList<String>();
-  }
+	public MessageIdListImpl() {
+	}
 
-  void setListId(String listId) {
-    this.listId = listId;
-  }
+	public MessageIdListImpl(String listId) {
+		this.listId = listId;
+		list = new ArrayList<String>();
+	}
 
-  public int size() {
-    int size = list.size();
-	  return size;
-  }
+	void setListId(String listId) {
+		this.listId = listId;
+	}
 
-  public String[] toArray(String[] array) {
-    return list.toArray(array);
-  }
+	public int size() {
+		if (list != null) {
+			return list.size();
 
-  public boolean contains(String msgId) {
-    return list.contains(msgId);
-  }
+		}
+		return -1;
+	}
 
-  /**
-   * The indicator 'persistent' is ignored because the
-   * list is stored as a whole.
-   */
-  public void add(String msgId, boolean persistent) {
-    list.add(msgId);
-  }
+	public String[] toArray(String[] array) {
+		return list.toArray(array);
+	}
 
-  public boolean isEmpty() {
-    return list.isEmpty();
-  }
+	public boolean contains(String msgId) {
+		return list.contains(msgId);
+	}
 
-  public String remove(int index) {
-    return list.remove(index);
-  }
+	/**
+	 * The indicator 'persistent' is ignored because the list is stored as a whole.
+	 */
+	public void add(String msgId, boolean persistent) {
+		list.add(msgId);
+	}
 
-  public String get(int index) {
-    return list.get(index);
-  }
+	public boolean isEmpty() {
+		return list.isEmpty();
+	}
 
-  public void remove(String msgId) {
-    list.remove(msgId);
-  }
+	public String remove(int index) {
+		return list.remove(index);
+	}
 
-  /**
-   * The indicator 'persistent' is ignored because the
-   * list is stored as a whole.
-   */
-  public void add(int index, String msgId, boolean persistent) {
-    list.add(index, msgId);
-  }
+	public String get(int index) {
+		return list.get(index);
+	}
 
-  public Iterator<String> iterator() {
-    return list.iterator();
-  }
+	public void remove(String msgId) {
+		list.remove(msgId);
+	}
 
-  public void clear() {
-    list.clear();
-  }
+	/**
+	 * The indicator 'persistent' is ignored because the list is stored as a whole.
+	 */
+	public void add(int index, String msgId, boolean persistent) {
+		list.add(index, msgId);
+	}
 
-  public void save() throws Exception {
-    // Calls 'save' and not 'saveByteArray' in order to enable lazy encoding
-    // (and potentially 'delete') when reactions are grouped.
-    AgentServer.getTransaction().save(this, listId);
-  }
+	public Iterator<String> iterator() {
+		return list.iterator();
+	}
 
-  public void delete() {
-    AgentServer.getTransaction().delete(listId);
-  }
+	public void clear() {
+		list.clear();
+	}
 
-  public int getEncodableClassId() {
-    return JoramHelper.MESSAGE_ID_LIST_IMPL_CLASS_ID;
-  }
+	public void save() throws Exception {
+		// Calls 'save' and not 'saveByteArray' in order to enable lazy encoding
+		// (and potentially 'delete') when reactions are grouped.
+		AgentServer.getTransaction().save(this, listId);
+	}
 
-  public int getEncodedSize() throws Exception {
-    int res = 4;
-    for (String str : list) {
-      res += EncodableHelper.getStringEncodedSize(str);
-    }
-    return res;
-  }
+	public void delete() {
+		AgentServer.getTransaction().delete(listId);
+	}
 
-  public void encode(Encoder encoder) throws Exception {
-    encoder.encode32(list.size());
-    for (String str : list) {
-      encoder.encodeString(str);
-    }
-  }
+	public int getEncodableClassId() {
+		return JoramHelper.MESSAGE_ID_LIST_IMPL_CLASS_ID;
+	}
 
-  public void decode(Decoder decoder) throws Exception {
-    int listSize = decoder.decode32();
-    list = new ArrayList<String>(listSize);
-    for (int i = 0; i < listSize; i++) {
-      list.add(decoder.decodeString());
-    }
-  }
-  
-  @Override
-  public String toString() {
-    return "MessageIdListImpl [listId=" + listId + ", list=" + list + "]";
-  }
+	public int getEncodedSize() throws Exception {
+		int res = 4;
+		for (String str : list) {
+			res += EncodableHelper.getStringEncodedSize(str);
+		}
+		return res;
+	}
 
-  public static class MessageIdListImplEncodableFactory implements EncodableFactory {
+	public void encode(Encoder encoder) throws Exception {
+		encoder.encode32(list.size());
+		for (String str : list) {
+			encoder.encodeString(str);
+		}
+	}
 
-    public Encodable createEncodable() {
-      return new MessageIdListImpl();
-    }
+	public void decode(Decoder decoder) throws Exception {
+		int listSize = decoder.decode32();
+		list = new ArrayList<String>(listSize);
+		for (int i = 0; i < listSize; i++) {
+			list.add(decoder.decodeString());
+		}
+	}
 
-  }
+	@Override
+	public String toString() {
+		return "MessageIdListImpl [listId=" + listId + ", list=" + list + "]";
+	}
+
+	public static class MessageIdListImplEncodableFactory implements EncodableFactory {
+
+		public Encodable createEncodable() {
+			return new MessageIdListImpl();
+		}
+
+	}
 
 }
